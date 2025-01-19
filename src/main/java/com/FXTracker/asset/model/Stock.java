@@ -5,10 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Asset {
+public class Stock {
 
     private Long id;
-    private AssetType type;
     private String name;
     private Long amount;
     private Double price;

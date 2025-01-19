@@ -1,6 +1,6 @@
 package com.FXTracker.wallet.model;
 
-import com.FXTracker.asset.model.Asset;
+import com.FXTracker.asset.model.Stock;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,7 +14,7 @@ public class Wallet {
     private Long id;
     private Currency currency;
     private Double balance;
-    private Set<Asset> assets;
+    private Set<Stock> stocks;
     private Double profit;
     private Double loss;
 

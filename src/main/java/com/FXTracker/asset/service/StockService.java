@@ -3,5 +3,5 @@ package com.FXTracker.asset.service;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AssetService {
+public class StockService {
 }
