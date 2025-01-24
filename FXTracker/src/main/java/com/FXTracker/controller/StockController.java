@@ -1,7 +1,7 @@
-package com.FXTracker.user;
+package com.FXTracker.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class UserController {
+public class StockController {
 }

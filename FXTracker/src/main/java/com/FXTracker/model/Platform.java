@@ -1,7 +1,5 @@
-package com.FXTracker.tradingPlatform;
+package com.FXTracker.model;
 
-import com.FXTracker.asset.Stock;
-import com.FXTracker.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

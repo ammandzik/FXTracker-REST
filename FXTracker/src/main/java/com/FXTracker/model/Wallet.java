@@ -1,6 +1,5 @@
-package com.FXTracker.portfolio;
+package com.FXTracker.model;
 
-import com.FXTracker.asset.Stock;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,22 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
+
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Portfolio {
+public class Wallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany
-    private List<Stock> stocks;
+    @ManyToOne
+    private User user;
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
     private BigDecimal balance;
-    private BigDecimal profit;
-    private BigDecimal loss;
+
 
 }

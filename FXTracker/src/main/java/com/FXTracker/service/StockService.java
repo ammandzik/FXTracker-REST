@@ -1,7 +1,7 @@
-package com.FXTracker.wallet;
+package com.FXTracker.service;
 
 import org.springframework.stereotype.Service;
 
 @Service
-public class WalletService {
+public class StockService {
 }

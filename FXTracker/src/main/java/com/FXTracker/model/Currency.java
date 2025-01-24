@@ -1,4 +1,4 @@
-package com.FXTracker.wallet;
+package com.FXTracker.model;
 
 public enum Currency {
 

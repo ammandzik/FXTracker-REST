@@ -1,5 +1,6 @@
-package com.FXTracker.portfolio;
+package com.FXTracker.repository;
 
+import com.FXTracker.model.Portfolio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

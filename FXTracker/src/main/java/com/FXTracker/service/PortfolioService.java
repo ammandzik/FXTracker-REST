@@ -1,4 +1,4 @@
-package com.FXTracker.portfolio;
+package com.FXTracker.service;
 
 import org.springframework.stereotype.Service;
 

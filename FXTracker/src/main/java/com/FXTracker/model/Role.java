@@ -1,4 +1,4 @@
-package com.FXTracker.user;
+package com.FXTracker.model;
 
 public enum Role {
 

@@ -1,4 +1,4 @@
-package com.FXTracker.asset;
+package com.FXTracker.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,14 +14,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Stock {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Long amount;
-    private Double price;
-
-
+    private String surname;
+    private String email;
+    private String password;
 }
