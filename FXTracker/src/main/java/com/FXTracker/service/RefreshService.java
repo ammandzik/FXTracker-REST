@@ -34,7 +34,7 @@ public class RefreshService {
         return stockToRefresh.get(stock);
     }
 
-    private void shouldRefreshEvery15Minutes() {
+    private void setRefresh() {
 
         scheduler.scheduleAtFixedRate(() ->
                 stockToRefresh.forEach((stock, value) -> {
