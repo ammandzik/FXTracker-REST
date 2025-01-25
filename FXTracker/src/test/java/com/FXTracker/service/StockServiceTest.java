@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 @SpringBootTest
-public class StockServiceTest {
+class StockServiceTest {
 
     @Autowired
     private StockService stockService;
@@ -22,6 +22,12 @@ public class StockServiceTest {
 
         final BigDecimal price = stockService.findPrice(stock);
         System.out.println(price);
+
+        final BigDecimal change = stockService.findPercentageChange(stock);
+        System.out.println(change);
+
+        final BigDecimal percentageMA200 = stockService.findChangeFrom200AvgPercent(stock);
+        System.out.println(percentageMA200);
 
     }
 }
