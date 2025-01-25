@@ -39,7 +39,7 @@ public class RefreshService {
         scheduler.scheduleAtFixedRate(() ->
                 stockToRefresh.forEach((stock, value) -> {
                     if (stock.getLastAccessed().isBefore(LocalDateTime.now().minus(refreshPeriod))) {
-                        System.out.println("Should refresh" + stock.getStock().getSymbol());
+                        System.out.println("Should refresh" + stock.getSymbol());
                         stockToRefresh.remove(stock);
                         stockToRefresh.put(stock.withLastAccessed(LocalDateTime.now()), true);
                     }

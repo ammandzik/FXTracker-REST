@@ -18,4 +18,6 @@ public class Platform {
     private Set<StockWrapper> stocks;
     @OneToMany
     private List<User> users;
+
+
 }
