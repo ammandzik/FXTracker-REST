@@ -1,6 +1,5 @@
 package com.FXTracker.model;
 
-import com.FXTracker.model.Stock;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +20,7 @@ public class Portfolio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToMany
-    private List<Stock> stocks;
+    private List<StockWrapper> stocks;
     private BigDecimal balance;
     private BigDecimal profit;
     private BigDecimal loss;
