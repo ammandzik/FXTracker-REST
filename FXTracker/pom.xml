@@ -123,13 +123,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- YahooFinanceAPI -->
-        <dependency>
-            <groupId>com.yahoofinance-api</groupId>
-            <artifactId>YahooFinanceAPI</artifactId>
-            <version>3.5.0</version>
-        </dependency>
-
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
