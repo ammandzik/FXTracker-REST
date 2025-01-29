@@ -15,7 +15,7 @@ public class Platform {
     private Long id;
     private String platformName;
     @OneToMany
-    private Set<StockWrapper> stocks;
+    private Set<Stock> stocks;
     @OneToMany
     private List<User> users;
 

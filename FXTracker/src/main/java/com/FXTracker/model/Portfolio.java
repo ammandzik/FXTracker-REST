@@ -20,7 +20,7 @@ public class Portfolio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToMany
-    private List<StockWrapper> stocks;
+    private List<Stock> stocks;
     private BigDecimal balance;
     private BigDecimal profit;
     private BigDecimal loss;

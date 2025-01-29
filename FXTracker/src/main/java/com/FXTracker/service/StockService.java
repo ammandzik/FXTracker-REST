@@ -1,111 +1,48 @@
 package com.FXTracker.service;
 
-import com.FXTracker.exception.StockNotFoundException;
-import com.FXTracker.exception.StockServiceException;
-import com.FXTracker.model.StockWrapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import yahoofinance.YahooFinance;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-
-import static com.FXTracker.mapper.StockMapper.toStock;
-import static com.FXTracker.mapper.StockMapper.toStockWrapper;
-import static java.util.stream.Collectors.toList;
-
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class StockService {
+    private static final String API_KEY = "IZA7PDJIYSW0RL7V";
+    @Autowired
+    private WebClient webClient;
 
-    private final RefreshService refreshService;
+    //todo string to stock class
+    public String getSingleStockData(String ticker) {
 
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/query")
+                        .queryParam("function", "GLOBAL_QUOTE")
+                        .queryParam("symbol", ticker)
+                        .queryParam("apikey", API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
-    public StockWrapper findStock(final String ticker) {
-
-        try {
-
-            var stock = YahooFinance.get(ticker);
-
-            if (stock == (null)) {
-
-                throw new StockNotFoundException(String.format("Stock with ticker: %s not found", ticker));
-            }
-
-            return toStockWrapper(stock);
-
-
-        } catch (IOException e) {
-
-            throw new StockServiceException(e.getMessage(), e.getCause());
-        }
-
+        //                .bodyToMono(AlphaVantageResponse.class)
+        //                .map(AlphaVantageResponse::getGlobalQuote)
     }
 
-    public BigDecimal findPrice(final StockWrapper stock) throws IOException {
+    //todo string to wrapped list of stocks
+    public String findAllStocksByKeyword(String keyword) {
 
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getPrice();
-
-    }
-
-    public List<StockWrapper> findStocks(final List<String> tickers) {
-
-        return tickers.stream()
-                .map(this::findStock)
-                .filter(Objects::nonNull)
-                .collect(toList());
-    }
-
-    public BigDecimal findPercentageChange(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getChangeInPercent();
-    }
-
-    public BigDecimal findChangeFrom50AvgPercent(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getChangeFromAvg50InPercent();
-    }
-
-    public BigDecimal findChangeFrom200AvgPercent(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getChangeFromAvg200InPercent();
-    }
-
-    public BigDecimal findYearlyHigh(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getYearHigh();
-    }
-
-    public BigDecimal findYearlyLow(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getYearLow();
-    }
-
-    public BigDecimal findDailyHigh(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getDayHigh();
-    }
-
-    public BigDecimal findDailyLow(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getDayLow();
-    }
-
-    public BigDecimal getAskPrice(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getAsk();
-    }
-
-    public BigDecimal getBidPrice(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getBid();
-    }
-
-    public BigDecimal findPreviousClose(final StockWrapper stock) throws IOException {
-
-        return toStock(stock).getQuote(refreshService.shouldRefresh(stock)).getPreviousClose();
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/query")
+                        .queryParam("function", "SYMBOL_SEARCH")
+                        .queryParam("keywords", keyword)
+                        .queryParam("apikey", API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
     }
 
 }
