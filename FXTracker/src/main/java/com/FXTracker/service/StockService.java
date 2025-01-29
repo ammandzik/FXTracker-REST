@@ -12,7 +12,8 @@ public class StockService {
     @Autowired
     private WebClient webClient;
 
-    //todo string to stock class
+    //todo string to stock class,
+    // throw stock not found exc
     public String getSingleStockData(String ticker) {
 
         return webClient.get()
