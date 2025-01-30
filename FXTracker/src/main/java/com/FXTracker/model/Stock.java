@@ -6,11 +6,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 public class Stock {
@@ -26,6 +30,22 @@ public class Stock {
     private String price;
     @JsonProperty("10. change percent")
     private String changePercent;
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class StockSearch {
+
+        @JsonProperty("1. symbol")
+        private String symbol;
+        @JsonProperty("2. name")
+        private String name;
+        @JsonProperty("5. marketOpen")
+        private String marketOpen;
+        @JsonProperty("6. marketClose")
+        private String marketClose;
+        @JsonProperty("8. currency")
+        private String currency;
+
+    }
 
 
 }
