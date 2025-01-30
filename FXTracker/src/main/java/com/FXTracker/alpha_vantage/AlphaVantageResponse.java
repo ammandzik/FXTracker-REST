@@ -8,6 +8,6 @@ import lombok.Getter;
 public class AlphaVantageResponse {
 
     @JsonProperty("Global Quote")
-    private Stock globalQuote;
+    private Stock stock;
 
 }

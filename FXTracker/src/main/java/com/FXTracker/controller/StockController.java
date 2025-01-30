@@ -1,9 +1,8 @@
 package com.FXTracker.controller;
 
-import com.FXTracker.exception.StockNotFoundException;
+import com.FXTracker.model.Stock;
 import com.FXTracker.service.StockService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,11 +17,11 @@ class StockController {
     private final StockService stockService;
 
     @GetMapping("/{ticker}")
-    public String getStockData(@PathVariable String ticker) {
+    public ResponseEntity<Stock> getStockData(@PathVariable String ticker) {
 
         var stock = stockService.getSingleStockData(ticker);
 
-        return stock;
+        return ResponseEntity.ok(stock);
     }
 
 }
