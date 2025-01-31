@@ -1,6 +1,5 @@
 package com.FXTracker.model;
 
-import com.FXTracker.model.Stock;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
