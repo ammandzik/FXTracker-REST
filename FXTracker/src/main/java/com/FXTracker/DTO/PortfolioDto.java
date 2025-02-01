@@ -1,11 +1,26 @@
 package com.FXTracker.DTO;
 
+import com.FXTracker.model.Stock;
 import lombok.Builder;
 import lombok.Data;
 
-@Builder
+import java.math.BigDecimal;
+import java.util.TreeMap;
+
 @Data
+@Builder
 public class PortfolioDto {
+
+    private Long id;
+    private Long userId;
+    private String name;
+    private String surname;
+    private String email;
+    private String password;
+    private TreeMap<Stock, Long> stocks;
+    private BigDecimal balance;
+    private BigDecimal profit;
+    private BigDecimal loss;
 
 
 }
