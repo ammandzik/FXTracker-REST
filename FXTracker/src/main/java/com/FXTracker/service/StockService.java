@@ -20,11 +20,8 @@ public class StockService {
 
     private static final String API_KEY = "IZA7PDJIYSW0RL7V";
 
-    @Autowired
     private final WebClient webClient;
-    @Autowired
     private final StockMapper stockMapper;
-    @Autowired
     private final StockMapper.StockSearchMapper stockSearchMapper;
 
     public StockDto getSingleStockData(String ticker) {
