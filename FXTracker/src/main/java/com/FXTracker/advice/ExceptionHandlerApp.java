@@ -33,7 +33,7 @@ public class ExceptionHandlerApp {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleStockServiceServiceError(EntityNotFoundException ex) {
+    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(EntityNotFoundException ex) {
 
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", ex.getMessage());
