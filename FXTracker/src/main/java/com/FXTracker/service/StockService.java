@@ -21,7 +21,7 @@ public class StockService {
     private static final String API_KEY = "IZA7PDJIYSW0RL7V";
 
     @Autowired
-    private WebClient webClient;
+    private final WebClient webClient;
     @Autowired
     private final StockMapper stockMapper;
     @Autowired
