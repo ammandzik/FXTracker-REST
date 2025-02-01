@@ -1,7 +1,7 @@
 package com.FXTracker.controller;
 
 import com.FXTracker.model.Stock;
-import com.FXTracker.model.StockDto;
+import com.FXTracker.DTO.StockDto;
 import com.FXTracker.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

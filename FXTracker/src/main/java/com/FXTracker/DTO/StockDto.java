@@ -1,4 +1,4 @@
-package com.FXTracker.model;
+package com.FXTracker.DTO;
 
 import lombok.Builder;
 import lombok.Data;

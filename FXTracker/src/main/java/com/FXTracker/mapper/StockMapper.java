@@ -1,7 +1,7 @@
 package com.FXTracker.mapper;
 
 import com.FXTracker.model.Stock;
-import com.FXTracker.model.StockDto;
+import com.FXTracker.DTO.StockDto;
 import org.springframework.stereotype.Component;
 @Component
 public class StockMapper {

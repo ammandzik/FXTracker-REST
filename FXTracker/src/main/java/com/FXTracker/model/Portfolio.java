@@ -7,20 +7,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.TreeMap;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "portfolio")
 public class Portfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany
-    private List<Stock> stocks;
+    @OneToOne
+    private User user;
+    private TreeMap<Stock, Long> stocks;
     private BigDecimal balance;
     private BigDecimal profit;
     private BigDecimal loss;

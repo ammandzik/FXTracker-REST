@@ -5,7 +5,7 @@ import com.FXTracker.alpha_vantage.Function;
 import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
-import com.FXTracker.model.StockDto;
+import com.FXTracker.DTO.StockDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
