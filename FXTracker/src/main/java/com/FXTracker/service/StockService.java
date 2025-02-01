@@ -1,6 +1,7 @@
 package com.FXTracker.service;
 
 import com.FXTracker.alpha_vantage.AlphaVantageResponse;
+import com.FXTracker.alpha_vantage.Function;
 import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
@@ -29,7 +30,7 @@ public class StockService {
         var stock = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/query")
-                        .queryParam("function", "GLOBAL_QUOTE")
+                        .queryParam("function", Function.GLOBAL_QUOTE)
                         .queryParam("symbol", ticker)
                         .queryParam("apikey", API_KEY)
                         .build())
@@ -52,7 +53,7 @@ public class StockService {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/query")
-                        .queryParam("function", "SYMBOL_SEARCH")
+                        .queryParam("function", Function.SYMBOL_SEARCH)
                         .queryParam("keywords", keyword)
                         .queryParam("apikey", API_KEY)
                         .build())
