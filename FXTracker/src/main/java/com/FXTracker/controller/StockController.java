@@ -27,7 +27,7 @@ class StockController {
         return ResponseEntity.ok(stock);
     }
 
-    @GetMapping("/keyword/{keyword}")
+    @GetMapping("/search/{keyword}")
     public ResponseEntity<List<Stock.StockSearch>> getStocksByKeyword(@PathVariable String keyword) {
 
         List<Stock.StockSearch> stocks = stockService.findAllStocksByKeyword(keyword);

@@ -1,11 +1,11 @@
 package com.FXTracker.service;
 
+import com.FXTracker.DTO.StockDto;
 import com.FXTracker.alpha_vantage.AlphaVantageResponse;
 import com.FXTracker.alpha_vantage.Function;
 import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
-import com.FXTracker.DTO.StockDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,16 +41,16 @@ public class StockService {
                 .block();
 
         if (stock.getSymbol() == null) {
-            throw new StockNotFoundException("Stock not found for ticker: " + ticker);
+            throw new StockNotFoundException(String.format("Stock not found for ticker: %s ", ticker));
         }
 
         return stock;
     }
 
-    //todo map StockSearch to Dto, handle no search results
+    //todo map StockSearch to Dto
     public List<Stock.StockSearch> findAllStocksByKeyword(String keyword) {
 
-        return webClient.get()
+        List<Stock.StockSearch> stocks = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/query")
                         .queryParam("function", Function.SYMBOL_SEARCH)
@@ -62,6 +62,12 @@ public class StockService {
                 .map(response -> response.getStocks())
                 .defaultIfEmpty(Collections.emptyList())
                 .block();
+
+        if (stocks.isEmpty()) {
+            throw new StockNotFoundException(String.format("No stocks were found for keyword: %s", keyword));
+        }
+
+        return stocks;
     }
 
 }
