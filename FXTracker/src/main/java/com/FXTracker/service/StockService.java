@@ -4,10 +4,10 @@ import com.FXTracker.DTO.StockDto;
 import com.FXTracker.alpha_vantage.AlphaVantageResponse;
 import com.FXTracker.alpha_vantage.Function;
 import com.FXTracker.exception.StockNotFoundException;
+import com.FXTracker.exception.StockServiceException;
 import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -45,6 +45,7 @@ public class StockService {
 
         return stock;
     }
+
     public List<StockDto.StockSearchDto> findAllStocksByKeyword(String keyword) {
 
         List<Stock.StockSearch> stocks = webClient.get()
@@ -63,7 +64,10 @@ public class StockService {
         if (stocks.isEmpty()) {
             throw new StockNotFoundException(String.format("No stocks were found for keyword: %s", keyword));
 
-        } else {
+        } else if(stocks == null){
+            throw new StockServiceException(String.format("Error while fetching stocks."));
+
+        }else {
             return stocks.stream()
                     .map(stockSearchMapper::toDto)
                     .toList();
