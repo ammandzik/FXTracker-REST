@@ -7,8 +7,8 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.TreeMap;
 
-@Data
 @Builder
+@Data
 public class PortfolioDto {
 
     private Long id;
@@ -21,6 +21,5 @@ public class PortfolioDto {
     private BigDecimal balance;
     private BigDecimal profit;
     private BigDecimal loss;
-
 
 }

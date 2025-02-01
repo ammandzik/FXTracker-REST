@@ -8,12 +8,14 @@ import com.FXTracker.exception.StockServiceException;
 import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class StockService {
@@ -64,10 +66,10 @@ public class StockService {
         if (stocks.isEmpty()) {
             throw new StockNotFoundException(String.format("No stocks were found for keyword: %s", keyword));
 
-        } else if(stocks == null){
+        } else if (stocks == null) {
             throw new StockServiceException(String.format("Error while fetching stocks."));
 
-        }else {
+        } else {
             return stocks.stream()
                     .map(stockSearchMapper::toDto)
                     .toList();

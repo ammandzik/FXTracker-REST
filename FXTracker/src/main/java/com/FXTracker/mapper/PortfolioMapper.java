@@ -3,7 +3,9 @@ package com.FXTracker.mapper;
 import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PortfolioMapper {
     public PortfolioDto toDto(Portfolio portfolio) {
 
