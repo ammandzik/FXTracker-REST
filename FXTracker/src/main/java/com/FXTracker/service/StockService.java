@@ -24,6 +24,8 @@ public class StockService {
     private WebClient webClient;
     @Autowired
     private final StockMapper stockMapper;
+    @Autowired
+    private final StockMapper.StockSearchMapper stockSearchMapper;
 
     public StockDto getSingleStockData(String ticker) {
 
@@ -46,9 +48,7 @@ public class StockService {
 
         return stock;
     }
-
-    //todo map StockSearch to Dto
-    public List<Stock.StockSearch> findAllStocksByKeyword(String keyword) {
+    public List<StockDto.StockSearchDto> findAllStocksByKeyword(String keyword) {
 
         List<Stock.StockSearch> stocks = webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -65,9 +65,13 @@ public class StockService {
 
         if (stocks.isEmpty()) {
             throw new StockNotFoundException(String.format("No stocks were found for keyword: %s", keyword));
-        }
 
-        return stocks;
+        } else {
+            return stocks.stream()
+                    .map(stockSearchMapper::toDto)
+                    .toList();
+
+        }
     }
 
 }

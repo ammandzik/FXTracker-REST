@@ -1,8 +1,7 @@
 package com.FXTracker.service;
 
-import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.DTO.StockDto;
-import com.FXTracker.model.Stock;
+import com.FXTracker.exception.StockNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,7 @@ public class StockServiceTest {
 
     @Test
     public void findAllStocksByKeywordCorrectly() {
-        List<Stock.StockSearch> stocksFound = stockService.findAllStocksByKeyword(KEYWORD);
+        List<StockDto.StockSearchDto> stocksFound = stockService.findAllStocksByKeyword(KEYWORD);
 
         assertThat(!stocksFound.isEmpty());
         assertNotNull(stocksFound);

@@ -13,4 +13,16 @@ public class StockDto {
     private String price;
     private String changePercent;
 
+    @Builder
+    @Data
+    public static class StockSearchDto{
+
+        private String symbol;
+        private String name;
+        private String marketOpen;
+        private String marketClose;
+        private String currency;
+
+    }
+
 }

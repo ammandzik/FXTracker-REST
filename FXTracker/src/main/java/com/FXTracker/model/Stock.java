@@ -32,6 +32,10 @@ public class Stock {
     private String changePercent;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @Data
     public static class StockSearch {
 
         @JsonProperty("1. symbol")

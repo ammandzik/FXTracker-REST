@@ -1,6 +1,5 @@
 package com.FXTracker.controller;
 
-import com.FXTracker.model.Stock;
 import com.FXTracker.DTO.StockDto;
 import com.FXTracker.service.StockService;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +27,9 @@ class StockController {
     }
 
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<List<Stock.StockSearch>> getStocksByKeyword(@PathVariable String keyword) {
+    public ResponseEntity<List<StockDto.StockSearchDto>> getStocksByKeyword(@PathVariable String keyword) {
 
-        List<Stock.StockSearch> stocks = stockService.findAllStocksByKeyword(keyword);
+        List<StockDto.StockSearchDto> stocks = stockService.findAllStocksByKeyword(keyword);
 
         return ResponseEntity.ok(stocks);
 
