@@ -23,7 +23,7 @@ class PortfolioController {
 
     }
 
-    @PostMapping("/update/{userId}")
+    @PutMapping("/update/{userId}")
     public ResponseEntity<Portfolio> updatePortfolio(@PathVariable Long userId, @RequestBody PortfolioDto portfolioDto) {
 
         return ResponseEntity.ok(portfolioService.updatePortfolio(portfolioDto));
