@@ -1,5 +1,7 @@
 package com.FXTracker.model;
 
+import com.FXTracker.deserializer.StockDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +23,9 @@ public class Portfolio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
+    @JsonDeserialize(keyUsing = StockDeserializer.class)
     private TreeMap<Stock, Long> stocks;
     private BigDecimal balance;
     private BigDecimal profit;

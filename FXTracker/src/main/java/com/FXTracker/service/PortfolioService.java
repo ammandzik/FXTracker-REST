@@ -5,24 +5,24 @@ import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.repository.PortfolioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class PortfolioService {
 
-    @Autowired
-    PortfolioRepository portfolioRepository;
-    @Autowired
-    PortfolioMapper portfolioMapper;
+    private final PortfolioRepository portfolioRepository;
+    private final PortfolioMapper portfolioMapper;
 
-    public Portfolio createPortfolio(PortfolioDto portfolioDto) {
+    public Portfolio createPortfolio(Portfolio portfolio) {
 
-        return portfolioMapper.toEnity(portfolioDto);
+        portfolioRepository.save(portfolio);
+        return portfolio;
     }
 
     public PortfolioDto portfolioById(Long id) {
@@ -34,13 +34,20 @@ public class PortfolioService {
 
     }
 
-    public Portfolio updatePortfolio(Long id) {
+    public Portfolio updatePortfolio(PortfolioDto portfolioDto) {
 
-        var updated = findUserPortfolio(id);
+        portfolioRepository.findByUserId(portfolioDto.getId()).ifPresent(portfolio -> {
 
-        portfolioRepository.save(updated);
+            portfolio.setBalance(portfolioDto.getBalance());
+            portfolio.setProfit(portfolioDto.getProfit());
+            portfolio.setLoss(portfolioDto.getLoss());
+            portfolio.setStocks(portfolioDto.getStocks());
 
-        return updated;
+            portfolioRepository.save(portfolio);
+
+        });
+
+        return portfolioMapper.toEnity(portfolioDto);
     }
 
     public List<PortfolioDto> getAllPortfolios() {

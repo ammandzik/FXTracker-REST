@@ -17,16 +17,16 @@ class PortfolioController {
     private final PortfolioService portfolioService;
 
     @PostMapping("/create")
-    public ResponseEntity<Portfolio> createNewPortfolio(@RequestBody PortfolioDto portfolioDto) {
+    public ResponseEntity<Portfolio> createNewPortfolio(@RequestBody Portfolio portfolio) {
 
-        return ResponseEntity.ok(portfolioService.createPortfolio(portfolioDto));
+        return ResponseEntity.ok(portfolioService.createPortfolio(portfolio));
 
     }
 
     @PostMapping("/update/{userId}")
-    public ResponseEntity<Portfolio> updatePortfolio(@PathVariable Long userId) {
+    public ResponseEntity<Portfolio> updatePortfolio(@PathVariable Long userId, @RequestBody PortfolioDto portfolioDto) {
 
-        return ResponseEntity.ok(portfolioService.updatePortfolio(userId));
+        return ResponseEntity.ok(portfolioService.updatePortfolio(portfolioDto));
 
     }
 
