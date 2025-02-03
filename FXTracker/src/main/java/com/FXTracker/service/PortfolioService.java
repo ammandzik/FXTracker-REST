@@ -22,11 +22,11 @@ public class PortfolioService {
     private final PortfolioMapper portfolioMapper;
     private final UserRepository userRepository;
 
-    public Portfolio createPortfolio(Portfolio portfolio) {
+    public PortfolioDto createPortfolio(Portfolio portfolio) {
 
         portfolioRepository.save(portfolio);
 
-        return portfolio;
+        return portfolioMapper.toDto(portfolio);
     }
 
     public PortfolioDto portfolioById(Long id) {
@@ -35,7 +35,14 @@ public class PortfolioService {
                 .findById(id)
                 .map(portfolioMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Portfolio not found with Id: %s", id)));
+    }
 
+    public PortfolioDto portfolioByUserId(Long userId) {
+
+        return portfolioRepository
+                .findByUserId(userId)
+                .map(portfolioMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Portfolio not found with Id: %s", userId)));
     }
 
     public PortfolioDto updatePortfolio(Long id, Portfolio portfolio) {
@@ -49,7 +56,6 @@ public class PortfolioService {
         portfolioRepository.save(portfolio);
 
         return portfolioMapper.toDto(portfolio);
-
     }
 
     public List<PortfolioDto> getAllPortfolios() {
@@ -58,7 +64,6 @@ public class PortfolioService {
                 .stream()
                 .map(portfolio -> portfolioMapper.toDto(portfolio))
                 .toList();
-
     }
 
 

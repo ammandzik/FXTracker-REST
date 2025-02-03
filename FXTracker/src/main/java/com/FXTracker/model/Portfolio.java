@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.TreeMap;
 
 @Data
@@ -27,8 +26,8 @@ public class Portfolio {
     private User user;
     @JsonDeserialize(keyUsing = StockDeserializer.class)
     private TreeMap<Stock, Long> stocks;
-    private BigDecimal balance;
-    private BigDecimal profit;
-    private BigDecimal loss;
+    private Float balance;
+    private Float profit;
+    private Float loss;
 
 }

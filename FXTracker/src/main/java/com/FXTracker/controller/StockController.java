@@ -23,6 +23,13 @@ class StockController {
 
         var stock = stockService.getSingleStockData(ticker);
 
+        if(stockService.stockExists(ticker)){
+
+            stockService.updateStock(ticker, stock);
+        }else{
+
+            stockService.addStock(stock);
+        }
         return ResponseEntity.ok(stock);
     }
 

@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.TreeMap;
 
 @Builder
@@ -22,8 +21,8 @@ public class PortfolioDto {
     private String email;
     private String password;
     private TreeMap<Stock, Long> stocks;
-    private BigDecimal balance;
-    private BigDecimal profit;
-    private BigDecimal loss;
+    private Float balance;
+    private Float profit;
+    private Float loss;
 
 }

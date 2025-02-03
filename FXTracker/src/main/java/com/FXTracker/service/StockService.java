@@ -7,6 +7,7 @@ import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.exception.StockServiceException;
 import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
+import com.FXTracker.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class StockService {
     private final WebClient webClient;
     private final StockMapper stockMapper;
     private final StockMapper.StockSearchMapper stockSearchMapper;
+    private final StockRepository stockRepository;
 
     public StockDto getSingleStockData(String ticker) {
 
@@ -77,4 +79,25 @@ public class StockService {
         }
     }
 
+    public StockDto addStock(StockDto stockDto) {
+
+        stockRepository.save(stockMapper.toStock(stockDto));
+
+        return stockDto;
+    }
+
+    public boolean stockExists(String symbol) {
+
+        return stockRepository.stockExistsInDataBase(symbol);
+    }
+
+    public StockDto updateStock(String symbol, StockDto stock) {
+
+        var updated = stockRepository.findStock(symbol).get();
+
+        stock.setId(updated.getId());
+        stockRepository.save(stockMapper.toStock(stock));
+
+        return stock;
+    }
 }
