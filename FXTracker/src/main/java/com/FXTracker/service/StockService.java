@@ -75,14 +75,18 @@ public class StockService {
             return stocks.stream()
                     .map(stockSearchMapper::toDto)
                     .toList();
-
         }
     }
 
     public StockDto addStock(StockDto stockDto) {
 
-        stockRepository.save(stockMapper.toStock(stockDto));
+        try {
+            stockRepository.save(stockMapper.toStock(stockDto));
 
+        } catch (Exception ex) {
+
+            throw new StockServiceException("Error occurred while saving a stock.");
+        }
         return stockDto;
     }
 
@@ -95,7 +99,15 @@ public class StockService {
 
         var updated = stockRepository.findStock(symbol).get();
 
-        stock.setId(updated.getId());
+        try {
+
+            stock.setId(updated.getId());
+
+        } catch (Exception ex) {
+
+            throw new StockServiceException("Error occurred while updating a stock.");
+        }
+
         stockRepository.save(stockMapper.toStock(stock));
 
         return stock;
