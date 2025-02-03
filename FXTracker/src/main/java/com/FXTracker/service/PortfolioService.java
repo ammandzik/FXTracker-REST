@@ -4,11 +4,13 @@ import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.repository.PortfolioRepository;
+import com.FXTracker.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -18,10 +20,12 @@ public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
     private final PortfolioMapper portfolioMapper;
+    private final UserRepository userRepository;
 
     public Portfolio createPortfolio(Portfolio portfolio) {
 
         portfolioRepository.save(portfolio);
+
         return portfolio;
     }
 
@@ -34,33 +38,27 @@ public class PortfolioService {
 
     }
 
-    public Portfolio updatePortfolio(PortfolioDto portfolioDto) {
+    public PortfolioDto updatePortfolio(Long id, Portfolio portfolio) {
 
-        portfolioRepository.findByUserId(portfolioDto.getId()).ifPresent(portfolio -> {
+        var p1 = portfolioRepository.findById(id).get();
 
-            portfolio.setBalance(portfolioDto.getBalance());
-            portfolio.setProfit(portfolioDto.getProfit());
-            portfolio.setLoss(portfolioDto.getLoss());
-            portfolio.setStocks(portfolioDto.getStocks());
+        var user = userRepository.findById(p1.getUser().getId()).get();
 
-            portfolioRepository.save(portfolio);
+        portfolio.setUser(user);
 
-        });
+        portfolioRepository.save(portfolio);
 
-        return portfolioMapper.toEnity(portfolioDto);
+        return portfolioMapper.toDto(portfolio);
+
     }
 
     public List<PortfolioDto> getAllPortfolios() {
 
-        return portfolioRepository.findAll()
+        return portfolioRepository.findAll().isEmpty() ? new ArrayList<>() : portfolioRepository.findAll()
                 .stream()
                 .map(portfolio -> portfolioMapper.toDto(portfolio))
                 .toList();
-    }
 
-    public Portfolio findUserPortfolio(Long userId) {
-
-        return portfolioRepository.findByUserId(userId).get();
     }
 
 

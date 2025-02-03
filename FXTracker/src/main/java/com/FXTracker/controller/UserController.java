@@ -4,10 +4,7 @@ import com.FXTracker.model.User;
 import com.FXTracker.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("api/user")
@@ -20,6 +17,15 @@ class UserController {
     public ResponseEntity<User> createNewUser(@RequestBody User user) {
 
         return ResponseEntity.ok(userService.createUser(user));
+
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<User> getUser(@PathVariable Long id){
+
+        var user = userService.getUserById(id);
+
+        return ResponseEntity.ok(user);
 
     }
 }
