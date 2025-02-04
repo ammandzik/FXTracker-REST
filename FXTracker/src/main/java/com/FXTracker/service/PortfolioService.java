@@ -61,7 +61,7 @@ public class PortfolioService {
 
         return portfolioRepository.findAll().isEmpty() ? new ArrayList<>() : portfolioRepository.findAll()
                 .stream()
-                .map(portfolio -> portfolioMapper.toDto(portfolio))
+                .map(portfolioMapper::toDto)
                 .toList();
     }
 
