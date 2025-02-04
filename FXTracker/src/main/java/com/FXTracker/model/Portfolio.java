@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.TreeMap;
+import java.util.HashMap;
 
 @Data
 @Builder
@@ -25,7 +25,7 @@ public class Portfolio {
     @JoinColumn(name = "user_id")
     private User user;
     @JsonDeserialize(keyUsing = StockDeserializer.class)
-    private TreeMap<Stock, Long> stocks;
+    private HashMap<String, Long> stocks;
     private Float balance;
     private Float profit;
     private Float loss;
