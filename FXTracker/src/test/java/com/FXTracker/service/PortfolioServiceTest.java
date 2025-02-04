@@ -1,7 +1,6 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DataTest;
-import com.FXTracker.model.Stock;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
@@ -9,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.TreeMap;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @RunWith(SpringRunner.class)
 public class PortfolioServiceTest {
 
-    private TreeMap<Stock, Long> stocks = new TreeMap();
+    private HashMap<String, Long> stocks = new HashMap<>();
 
     @Autowired
     private PortfolioService portfolioService;
@@ -26,7 +25,9 @@ public class PortfolioServiceTest {
     @BeforeAll
     void addStocksToMap() {
 
-        stocks.put(DataTest.createStock(), 100L);
+        stocks.put("AAPL", 100L);
+        stocks.put("TTWO", 20L);
+        stocks.put("HSBC", 11L);
     }
 
     @Test
@@ -41,6 +42,7 @@ public class PortfolioServiceTest {
 
     @Test
     public void shouldUpdatePortfolioCorrectly() {
+
 
     }
 

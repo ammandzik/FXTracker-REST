@@ -4,6 +4,7 @@ import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.Stock;
 import com.FXTracker.model.User;
 
+import java.util.HashMap;
 import java.util.TreeMap;
 
 public class DataTest {
@@ -28,7 +29,7 @@ public class DataTest {
                 .build();
     }
 
-    public static Portfolio testPortfolio(TreeMap<Stock, Long> stocks){
+    public static Portfolio testPortfolio(HashMap<String, Long> stocks){
 
         return Portfolio.builder()
                 .user(DataTest.createUser())
