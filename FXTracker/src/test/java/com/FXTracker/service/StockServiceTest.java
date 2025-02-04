@@ -2,6 +2,8 @@ package com.FXTracker.service;
 
 import com.FXTracker.DTO.StockDto;
 import com.FXTracker.exception.StockNotFoundException;
+import com.FXTracker.exception.StockNotFoundException;
+import com.FXTracker.model.StockDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -32,7 +36,6 @@ public class StockServiceTest {
 
         assertNotNull(stock, "Stock should not be null.");
 
-
     }
 
     @Test
@@ -48,6 +51,6 @@ public class StockServiceTest {
 
         assertThat(!stocksFound.isEmpty());
         assertNotNull(stocksFound);
-
     }
+    
 }
