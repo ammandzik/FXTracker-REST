@@ -54,7 +54,6 @@ public class PortfolioService {
         portfolio.setUser(user);
 
         portfolioRepository.save(portfolio);
-
         return portfolioMapper.toDto(portfolio);
     }
 
