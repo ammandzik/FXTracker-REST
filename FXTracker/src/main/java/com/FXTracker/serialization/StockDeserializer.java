@@ -1,4 +1,4 @@
-package com.FXTracker.deserializer;
+package com.FXTracker.serialization;
 
 import com.FXTracker.model.Stock;
 import com.fasterxml.jackson.databind.DeserializationContext;

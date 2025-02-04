@@ -26,6 +26,7 @@ class StockController {
         if(stockService.stockExists(ticker)){
 
             stockService.updateStock(ticker, stock);
+
         }else{
 
             stockService.addStock(stock);

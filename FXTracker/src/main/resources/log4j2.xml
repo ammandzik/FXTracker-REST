@@ -9,6 +9,7 @@
 
         <RollingFile name    ="RollingFile"
               fileName       ="logs/application.log"
+              filePattern    ="logs/application-%d{yyyy-MM-dd}.log"
               immediateFlush ="false"
               append         ="false">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>

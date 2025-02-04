@@ -1,0 +1,59 @@
+spring:
+
+  application:
+    name: Investment-Management
+
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+  output:
+    ansi:
+      enabled: always
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/stocks
+    username: stocks
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+
+logging:
+  level:
+    root: info
+    org:
+      hibernate:
+        SQL: INFO
+        type:
+          descriptor:
+            sql:
+              BasicBinder: INFO
+        tool:
+          schema: INFO
+      springframework: ERROR
+  file:
+    name: logs/application.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+
+server:
+  servlet:
+    session:
+      timeout: 2m
+
+alphavantage:
+  api:
+    key: 6FZME81OT4D69JJV
+    url: https://www.alphavantage.co/query

@@ -1,6 +1,6 @@
 package com.FXTracker.model;
 
-import com.FXTracker.deserializer.StockDeserializer;
+import com.FXTracker.serialization.StockDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
