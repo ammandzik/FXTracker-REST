@@ -1,11 +1,11 @@
 package com.FXTracker.mapper;
 
+import com.FXTracker.DTO.StockDto;
 import com.FXTracker.model.Stock;
-import com.FXTracker.model.StockDto;
 import org.springframework.stereotype.Component;
+
 @Component
 public class StockMapper {
-
     public StockDto toDto(Stock stock){
 
         return StockDto.builder()
@@ -27,5 +27,32 @@ public class StockMapper {
                 .latestTradingDay(stockDto.getLatestTradingDay())
                 .changePercent(stockDto.getChangePercent())
                 .build();
+    }
+
+    @Component
+    public static class StockSearchMapper {
+
+        public StockDto.StockSearchDto toDto(Stock.StockSearch stockSearch){
+
+            return StockDto.StockSearchDto.builder()
+                    .name(stockSearch.getName())
+                    .symbol(stockSearch.getSymbol())
+                    .currency(stockSearch.getCurrency())
+                    .marketOpen(stockSearch.getMarketOpen())
+                    .marketClose(stockSearch.getMarketClose())
+                    .build();
+        }
+
+        public Stock.StockSearch toEntity(StockDto.StockSearchDto stockSearchDto){
+
+            return Stock.StockSearch.builder()
+                    .name(stockSearchDto.getName())
+                    .symbol(stockSearchDto.getName())
+                    .marketOpen(stockSearchDto.getMarketOpen())
+                    .marketClose(stockSearchDto.getMarketClose())
+                    .currency(stockSearchDto.getCurrency())
+                    .build();
+        }
+
     }
 }

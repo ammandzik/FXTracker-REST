@@ -1,24 +1,27 @@
-package com.FXTracker.model;
+package com.FXTracker.DTO;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.util.HashMap;
+
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "users")
-public class User {
+public class PortfolioDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long userId;
     private String name;
     private String surname;
     private String email;
     private String password;
+    private HashMap<String, Long> stocks;
+    private Float balance;
+    private Float profit;
+    private Float loss;
+
 }

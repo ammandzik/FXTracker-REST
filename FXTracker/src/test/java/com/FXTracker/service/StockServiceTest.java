@@ -1,5 +1,7 @@
 package com.FXTracker.service;
 
+import com.FXTracker.DTO.StockDto;
+import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.model.StockDto;
 import org.junit.Test;
@@ -8,7 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
+
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -16,6 +24,7 @@ public class StockServiceTest {
 
     private final String EXISTING_STOCK = "TTWO";
     private final String NON_EXISTING_STOCK = "XJDSJSDJAKXAAAPOO";
+    private final String KEYWORD = "TWO";
 
     @Autowired
     private StockService stockService;
@@ -37,7 +46,11 @@ public class StockServiceTest {
     }
 
     @Test
-    void findAllStocksByKeywordCorrectly() {
+    public void findAllStocksByKeywordCorrectly() {
+        List<StockDto.StockSearchDto> stocksFound = stockService.findAllStocksByKeyword(KEYWORD);
 
+        assertThat(!stocksFound.isEmpty());
+        assertNotNull(stocksFound);
     }
+    
 }

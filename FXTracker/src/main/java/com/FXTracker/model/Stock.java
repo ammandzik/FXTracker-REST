@@ -2,14 +2,13 @@ package com.FXTracker.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -17,7 +16,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Stock {
+@Table(name = "stock")
+public class Stock implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,16 @@ public class Stock {
     @JsonProperty("10. change percent")
     private String changePercent;
 
+    public Stock(String symbol) {
+
+        this.symbol = symbol;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @Data
     public static class StockSearch {
 
         @JsonProperty("1. symbol")

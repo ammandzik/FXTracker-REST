@@ -3,11 +3,11 @@ package com.FXTracker.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
 import java.util.Set;
 
 @Data
 @Entity
+@Table(name = "platform")
 public class Platform {
 
     @Id
@@ -17,7 +17,7 @@ public class Platform {
     @OneToMany
     private Set<Stock> stocks;
     @OneToMany
-    private List<User> users;
+    private Set<User> users;
 
 
 }

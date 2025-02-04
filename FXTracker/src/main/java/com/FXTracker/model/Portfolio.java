@@ -1,28 +1,33 @@
 package com.FXTracker.model;
 
+import com.FXTracker.serialization.StockDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.util.List;
+import java.util.HashMap;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "portfolio")
 public class Portfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany
-    private List<Stock> stocks;
-    private BigDecimal balance;
-    private BigDecimal profit;
-    private BigDecimal loss;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    @JsonDeserialize(keyUsing = StockDeserializer.class)
+    private HashMap<String, Long> stocks;
+    private Float balance;
+    private Float profit;
+    private Float loss;
 
 }
