@@ -1,21 +1,17 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.StockDto;
+import com.FXTracker.DataTest;
 import com.FXTracker.exception.StockNotFoundException;
-import com.FXTracker.exception.StockNotFoundException;
-import com.FXTracker.model.StockDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
@@ -24,33 +20,50 @@ public class StockServiceTest {
 
     private final String EXISTING_STOCK = "TTWO";
     private final String NON_EXISTING_STOCK = "XJDSJSDJAKXAAAPOO";
-    private final String KEYWORD = "TWO";
+
+    private StockDto stock;
 
     @Autowired
     private StockService stockService;
 
     @Test
-    public void getExistingStockDataCorrectlyTest() {
+    public void getStockFromDB() {
 
-        StockDto stock = stockService.getSingleStockData(EXISTING_STOCK);
+        //given
+        stock = stockService.getStock(EXISTING_STOCK);
 
+        //then
+        assertDoesNotThrow(() -> stockService.getStock(EXISTING_STOCK), "Should not throw any exceptions");
         assertNotNull(stock, "Stock should not be null.");
 
     }
 
     @Test
-    public void nonExistingStockShouldThrowStockNotFoundException() {
+    public void getNonExistingStockFromDB() {
 
-        assertThrows(StockNotFoundException.class, () -> stockService.getSingleStockData(NON_EXISTING_STOCK));
+        //given
+        stock = stockService.getStock(NON_EXISTING_STOCK);
+
+        //then
+        assertThrows(StockNotFoundException.class,() -> stockService.getStock(EXISTING_STOCK));
+        assertNotNull(stock, "Stock should not be null.");
 
     }
 
     @Test
-    public void findAllStocksByKeywordCorrectly() {
-        List<StockDto.StockSearchDto> stocksFound = stockService.findAllStocksByKeyword(KEYWORD);
+    public void addStock(){
 
-        assertThat(!stocksFound.isEmpty());
-        assertNotNull(stocksFound);
+        stock  = stockService.addStock(DataTest.createStock());
+
+        assertDoesNotThrow(()-> stockService.addStock(stock));
+        assertNotNull(stock);
+
     }
-    
+
+    @Test
+    public void updateStock(){
+
+    }
+
+
 }

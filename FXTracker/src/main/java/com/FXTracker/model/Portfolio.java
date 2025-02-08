@@ -1,33 +1,32 @@
 package com.FXTracker.model;
 
-import com.FXTracker.serialization.StockDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "portfolio")
+@Document(collection = "portfolios")
 public class Portfolio {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-    @JsonDeserialize(keyUsing = StockDeserializer.class)
-    private HashMap<String, Long> stocks;
+    private String id;
+    @Field(name = "user_id")
+    private String userId;
+    @Field(name = "stocks")
+    private Map<String, String> stocks;
+    @Field(name = "balance")
     private Float balance;
+    @Field(name = "profit")
     private Float profit;
+    @Field(name = "loss")
     private Float loss;
-
 }

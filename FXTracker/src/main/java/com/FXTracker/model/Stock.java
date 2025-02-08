@@ -2,26 +2,20 @@ package com.FXTracker.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "stock")
-public class Stock implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Document(collection = "stocks")
+public class Stock {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @JsonProperty("01. symbol")
     private String symbol;
     @JsonProperty("02. open")
@@ -31,16 +25,13 @@ public class Stock implements Serializable {
     @JsonProperty("10. change percent")
     private String changePercent;
 
-    public Stock(String symbol) {
+    private StockSearch stockSearch;
 
-        this.symbol = symbol;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class StockSearch {
 
         @JsonProperty("1. symbol")
@@ -53,8 +44,5 @@ public class Stock implements Serializable {
         private String marketClose;
         @JsonProperty("8. currency")
         private String currency;
-
     }
-
-
 }

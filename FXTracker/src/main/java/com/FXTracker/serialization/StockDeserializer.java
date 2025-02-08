@@ -9,6 +9,6 @@ public class StockDeserializer extends KeyDeserializer {
     @Override
     public Stock deserializeKey(String key, DeserializationContext context) {
 
-        return new Stock(key);
+        return new Stock();
     }
 }

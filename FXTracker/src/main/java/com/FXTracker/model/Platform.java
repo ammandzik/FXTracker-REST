@@ -1,23 +1,28 @@
 package com.FXTracker.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
-@Entity
-@Table(name = "platform")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = "platforms")
 public class Platform {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
+    @Field(name = "platform_name")
     private String platformName;
-    @OneToMany
-    private Set<Stock> stocks;
-    @OneToMany
-    private Set<User> users;
-
-
+    @Field(name = "stocks")
+    private List<String> stocks;
+    @Field(name = "users_id")
+    private List<String> users;
 }

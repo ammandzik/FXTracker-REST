@@ -1,15 +1,16 @@
 package com.FXTracker;
 
+import com.FXTracker.DTO.PortfolioDto;
+import com.FXTracker.DTO.StockDto;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.Stock;
 import com.FXTracker.model.User;
 
 import java.util.HashMap;
-import java.util.TreeMap;
 
 public class DataTest {
 
-    public static User createUser(){
+    public static User createUser() {
 
         return User.builder()
                 .name("Ola")
@@ -19,24 +20,24 @@ public class DataTest {
                 .build();
     }
 
-    public static Stock createStock(){
+    public static StockDto createStock() {
 
-        return Stock.builder()
-                .id(1L)
+        return StockDto.builder()
+                .id("1")
                 .symbol("TTWO")
                 .price("185.60")
                 .changePercent("0.66")
                 .build();
     }
 
-    public static Portfolio testPortfolio(HashMap<String, Long> stocks){
+    public static PortfolioDto testPortfolio(HashMap<String, String> stocks) {
 
-        return Portfolio.builder()
-                .user(DataTest.createUser())
+        return PortfolioDto.builder()
+                .userId(DataTest.createUser().getId())
                 .stocks(stocks)
-                .balance(1500.00F)
-                .profit(300.00F)
-                .loss(0.F)
+                .balance(1500F)
+                .profit(300F)
+                .loss(0F)
                 .build();
     }
 }

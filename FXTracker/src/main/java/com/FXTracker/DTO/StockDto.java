@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class StockDto {
 
-    private Long id;
+    private String id;
     private String symbol;
     private String latestTradingDay;
     private String price;
