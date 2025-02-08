@@ -28,7 +28,7 @@ public class Stock {
     @JsonProperty("10. change percent")
     private String changePercent;
 
-    private StockSearch stockSearch; // Zagnieżdżony obiekt
+    private StockSearch stockSearch;
 
     @Data
     @NoArgsConstructor

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface StockRepository extends MongoRepository<Stock, String> {
 
-    @ExistsQuery("{ 'symbol' : ?0 }")
+    @ExistsQuery("{ 'stock.symbol' : ?0 }")
     boolean existsBySymbol(String symbol);
 
     @Query("{ 'symbol' : symbol }")

@@ -1,6 +1,7 @@
 package com.FXTracker;
 
 import com.FXTracker.DTO.PortfolioDto;
+import com.FXTracker.DTO.StockDto;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.Stock;
 import com.FXTracker.model.User;
@@ -19,9 +20,9 @@ public class DataTest {
                 .build();
     }
 
-    public static Stock createStock() {
+    public static StockDto createStock() {
 
-        return Stock.builder()
+        return StockDto.builder()
                 .id("1")
                 .symbol("TTWO")
                 .price("185.60")
