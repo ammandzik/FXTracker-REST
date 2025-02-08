@@ -5,7 +5,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://root:stocks1234@localhost:27017/mongodb_container?authSource=admin
+      uri: mongodb://admin:stocks1234@localhost:27017/stocks?authSource=admin
 
   application:
     name: Investment-Management

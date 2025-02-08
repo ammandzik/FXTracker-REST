@@ -33,7 +33,7 @@ public class StockService {
 
     public StockDto getStock(String symbol) {
 
-        Optional<Stock> stock = stockRepository.findStock(symbol);
+        Optional<Stock> stock = stockRepository.findStockBySymbol(symbol);
 
         if (stock.isEmpty()) {
             throw new StockNotFoundException(String.format("Stock was not found with given symbol: %s", symbol));
