@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "stocks")
 public class Stock {
 
+    private String id;
     @JsonProperty("01. symbol")
     private String symbol;
     @JsonProperty("02. open")

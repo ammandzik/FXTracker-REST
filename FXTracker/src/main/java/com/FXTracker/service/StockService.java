@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,6 +46,7 @@ public class StockService {
 
         }
     }
+
     public StockDto updateStock(String symbol, StockDto stock) {
 
         var updated = getStock(symbol);
@@ -61,7 +65,18 @@ public class StockService {
         return stock;
     }
 
+    public List<StockDto> findAllStocks() {
 
+        List<Stock> stocks = stockRepository.findAll();
+
+        if (stocks.isEmpty()) {
+            throw new StockNotFoundException("No stocks were found.");
+        }
+
+        return stocks.stream()
+                .map(stockMapper::toDto)
+                .collect(toList());
+    }
 
     public boolean stockExistsInDataBase(String symbol) {
 

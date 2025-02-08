@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertThrows;
+import java.util.List;
+
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -27,7 +29,7 @@ public class StockServiceTest {
     private StockService stockService;
 
     @Test
-    public void getStockFromDB() {
+    public void getStockFromDBTest() {
 
         //given
         stock = stockService.getStock(EXISTING_STOCK);
@@ -39,29 +41,50 @@ public class StockServiceTest {
     }
 
     @Test
-    public void getNonExistingStockFromDB() {
+    public void getNonExistingStockFromDBTest() {
 
-        //given
-        stock = stockService.getStock(NON_EXISTING_STOCK);
+        assertThrows(StockNotFoundException.class, () -> stockService.getStock(NON_EXISTING_STOCK));
 
-        //then
-        assertThrows(StockNotFoundException.class,() -> stockService.getStock(EXISTING_STOCK));
-        assertNotNull(stock, "Stock should not be null.");
 
     }
 
+    //todo IT Service - test container required
     @Test
-    public void addStock(){
+    public void addStockTest() {
 
-        stock  = stockService.addStock(DataTest.createStock());
+        stock = stockService.addStock(DataTest.createStock());
 
-        assertDoesNotThrow(()-> stockService.addStock(stock));
+        assertDoesNotThrow(() -> stockService.addStock(stock));
         assertNotNull(stock);
 
     }
 
+    //todo IT Service - test container required
     @Test
-    public void updateStock(){
+    public void updateStockTest() {
+
+        //given
+        var entityStock = stockService.getStock("TTWO");
+
+        //when
+        stock = stockService.updateStock("TTWO", DataTest.createStock());
+
+        //then
+        assertNotNull(stock, "Stock should not be null.");
+        assertEquals(entityStock.getId(), stock.getId());
+
+    }
+
+    @Test
+    public void findAllStocksTest() {
+
+        //given
+        List<StockDto> stocks = stockService.findAllStocks();
+
+        //then
+        assertDoesNotThrow(() -> stockService.findAllStocks());
+        assertNotNull(stocks);
+        assertFalse(stocks.isEmpty());
 
     }
 

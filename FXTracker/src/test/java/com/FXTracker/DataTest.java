@@ -2,8 +2,6 @@ package com.FXTracker;
 
 import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.DTO.StockDto;
-import com.FXTracker.model.Portfolio;
-import com.FXTracker.model.Stock;
 import com.FXTracker.model.User;
 
 import java.util.HashMap;
@@ -23,7 +21,7 @@ public class DataTest {
     public static StockDto createStock() {
 
         return StockDto.builder()
-                .id("1")
+                .id(null)
                 .symbol("TTWO")
                 .price("185.60")
                 .changePercent("0.66")

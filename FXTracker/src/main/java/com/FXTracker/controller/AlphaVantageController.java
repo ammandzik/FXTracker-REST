@@ -29,7 +29,6 @@ class AlphaVantageController {
 
             stockService.updateStock(ticker, stock);
         }else {
-
             stockService.addStock(stock);
         }
 
