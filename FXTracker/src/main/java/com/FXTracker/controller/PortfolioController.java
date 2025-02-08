@@ -18,14 +18,14 @@ class PortfolioController {
     private final PortfolioService portfolioService;
 
     @PostMapping("/create")
-    public ResponseEntity<PortfolioDto> createNewPortfolio(@RequestBody Portfolio portfolio) {
+    public ResponseEntity<PortfolioDto> createNewPortfolio(@RequestBody PortfolioDto portfolio) {
 
         return ResponseEntity.ok(portfolioService.createPortfolio(portfolio));
 
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updatePortfolio(@PathVariable Long id, @RequestBody Portfolio portfolio) {
+    public ResponseEntity updatePortfolio(@PathVariable String id, @RequestBody PortfolioDto portfolioDto) {
 
         return ResponseEntity.ok(HttpStatus.OK);
 

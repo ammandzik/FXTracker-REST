@@ -1,8 +1,8 @@
 package com.FXTracker.advice;
 
+import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.exception.StockServiceException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,8 +32,8 @@ public class ExceptionHandlerApp {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(EntityNotFoundException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(ResourceNotFoundException ex) {
 
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", ex.getMessage());

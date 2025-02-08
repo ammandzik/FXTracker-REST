@@ -7,7 +7,6 @@ import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.exception.StockServiceException;
 import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
-import com.FXTracker.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,19 +14,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class StockService {
+public class AlphaVantageService {
 
     private static final String API_KEY = "IZA7PDJIYSW0RL7V";
 
     private final WebClient webClient;
     private final StockMapper stockMapper;
     private final StockMapper.StockSearchMapper stockSearchMapper;
-    private final StockRepository stockRepository;
 
     public StockDto getSingleStockDataFromAPI(String ticker) {
 
@@ -77,53 +74,5 @@ public class StockService {
                     .map(stockSearchMapper::toDto)
                     .toList();
         }
-    }
-
-    public StockDto addStock(StockDto stockDto) {
-
-        try {
-            stockRepository.save(stockMapper.toStock(stockDto));
-
-        } catch (Exception ex) {
-            throw new StockServiceException("Error occurred while saving a stock.");
-        }
-        return stockDto;
-    }
-
-    public boolean stockExistsInDataBase(String symbol) {
-
-        return stockRepository.existsBySymbol(symbol);
-    }
-
-    public StockDto updateStock(String symbol, StockDto stock) {
-
-        var updated = stock;
-
-        try {
-
-            stock.setId(updated.getId());
-
-        } catch (Exception ex) {
-
-            throw new StockServiceException("Error occurred while updating a stock.");
-        }
-
-        stockRepository.save(stockMapper.toStock(stock));
-
-        return stock;
-    }
-
-    public StockDto getStock(String symbol){
-
-        Optional<Stock> stock = stockRepository.findStock(symbol);
-
-        if(stock.isEmpty()){
-            throw new StockNotFoundException(String.format("Stock was not found with given symbol: %s", symbol));
-
-        }else{
-            return stockMapper.toDto(stock.get());
-
-        }
-
     }
 }

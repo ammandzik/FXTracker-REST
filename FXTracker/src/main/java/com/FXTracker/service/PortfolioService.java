@@ -1,12 +1,12 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.PortfolioDto;
+import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.repository.PortfolioRepository;
 import com.FXTracker.repository.StockRepository;
 import com.FXTracker.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,22 +26,21 @@ public class PortfolioService {
     private final PortfolioMapper portfolioMapper;
     private final UserRepository userRepository;
 
-    public PortfolioDto createPortfolio(Portfolio portfolio) {
+    public PortfolioDto createPortfolio(PortfolioDto portfolioDto) {
 
-        HashMap<String, String> stocks = new HashMap<>();
-        portfolio.setStocks(stocks);
+        Map<String, String> stocks = new HashMap<>();
+        portfolioDto.setStocks(stocks);
 
-        portfolioRepository.save(portfolio);
+        portfolioRepository.save(portfolioMapper.toEnity(portfolioDto));
 
-        return portfolioMapper.toDto(portfolio);
+        return portfolioDto;
     }
 
     public PortfolioDto portfolioByUserId(String userId) {
 
-        return portfolioRepository
-                .findByUserId(userId)
+        return portfolioRepository.findByUserId(userId)
                 .map(portfolioMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Portfolio not found with Id: %s", userId)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found with Id: %s", userId)));
     }
 
     public void updatePortfolio(String id, Portfolio portfolio) {
@@ -54,10 +54,7 @@ public class PortfolioService {
 
     public List<PortfolioDto> getAllPortfolios() {
 
-        return portfolioRepository.findAll().isEmpty() ? new ArrayList<>() : portfolioRepository.findAll()
-                .stream()
-                .map(portfolioMapper::toDto)
-                .toList();
+        return portfolioRepository.findAll().isEmpty() ? new ArrayList<>() : portfolioRepository.findAll().stream().map(portfolioMapper::toDto).toList();
     }
 
 

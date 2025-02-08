@@ -15,10 +15,6 @@ public class PortfolioDto {
 
     private String id;
     private String userId;
-    private String name;
-    private String surname;
-    private String email;
-    private String password;
     private Map<String, String> stocks;
     private Float balance;
     private Float profit;

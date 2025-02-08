@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @RunWith(SpringRunner.class)
 public class PortfolioServiceTest {
 
-    private HashMap<String, Long> stocks = new HashMap<>();
+    private HashMap<String, String> stocks = new HashMap<>();
 
     @Autowired
     private PortfolioService portfolioService;
@@ -25,9 +25,9 @@ public class PortfolioServiceTest {
     @BeforeAll
     void addStocksToMap() {
 
-        stocks.put("AAPL", 100L);
-        stocks.put("TTWO", 20L);
-        stocks.put("HSBC", 11L);
+        stocks.put("AAPL", "100");
+        stocks.put("TTWO", "20");
+        stocks.put("HSBC", "10");
     }
 
     @Test
