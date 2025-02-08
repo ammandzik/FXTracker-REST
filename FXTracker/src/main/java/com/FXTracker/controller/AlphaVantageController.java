@@ -1,6 +1,7 @@
 package com.FXTracker.controller;
 
 import com.FXTracker.DTO.StockDto;
+import com.FXTracker.service.AlphaVantageService;
 import com.FXTracker.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,21 @@ import java.util.List;
 @RequestMapping("/api/alpha")
 class AlphaVantageController {
 
+    private final AlphaVantageService alphaVantageService;
     private final StockService stockService;
 
     @GetMapping("/{ticker}")
     public ResponseEntity<StockDto> getStockData(@PathVariable String ticker) {
 
-        var stock = stockService.getSingleStockDataFromAPI(ticker);
+        var stock = alphaVantageService.getSingleStockDataFromAPI(ticker);
+
+        if(stockService.stockExistsInDataBase(ticker)){
+
+            stockService.updateStock(ticker, stock);
+        }else {
+
+            stockService.addStock(stock);
+        }
 
         return ResponseEntity.ok(stock);
     }
@@ -29,7 +39,7 @@ class AlphaVantageController {
     @GetMapping("/search/{keyword}")
     public ResponseEntity<List<StockDto.StockSearchDto>> getStocksByKeyword(@PathVariable String keyword) {
 
-        List<StockDto.StockSearchDto> stocks = stockService.findAllStocksByKeywordInAPI(keyword);
+        List<StockDto.StockSearchDto> stocks = alphaVantageService.findAllStocksByKeywordInAPI(keyword);
 
         return ResponseEntity.ok(stocks);
 
