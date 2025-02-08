@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,10 +65,15 @@ public class PortfolioService {
 
 
     }
+
     public List<PortfolioDto> getAllPortfolios() {
 
-        return portfolioRepository.findAll()
-                .isEmpty() ? new ArrayList<>() : portfolioRepository.findAll()
+        List<Portfolio> portfolios = portfolioRepository.findAll();
+
+        if (portfolios.isEmpty()) {
+            throw new ResourceNotFoundException("Portfolios were not found");
+        }
+        return portfolios
                 .stream()
                 .map(portfolioMapper::toDto)
                 .toList();

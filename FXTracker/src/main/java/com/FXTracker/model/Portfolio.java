@@ -17,7 +17,6 @@ import java.util.Map;
 @Document(collection = "portfolios")
 public class Portfolio {
 
-
     private String id;
     @Id
     @Field(name = "user_id")

@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/portfolio")
@@ -27,6 +29,14 @@ class PortfolioController {
 
         return ResponseEntity.ok(portfolioDto);
 
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<PortfolioDto>> getAllPortfolios() {
+
+        List<PortfolioDto> portfolioList = portfolioService.getAllPortfolios();
+
+        return ResponseEntity.ok(portfolioList);
     }
 
 
