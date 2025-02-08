@@ -1,10 +1,12 @@
 package com.FXTracker.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 
@@ -13,18 +15,14 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "wallet")
+@Document(collection = "wallets")
 public class Wallet {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @ManyToOne
-    private User user;
-    @Enumerated(EnumType.STRING)
-    private Currency currency;
+    private String id;
+    @Field(name = "user_id")
+    private String userId;
+    @Field(name = "currency")
+    private String currency;
+    @Field(name = "balance")
     private BigDecimal balance;
-
-
 }

@@ -2,7 +2,6 @@ package com.FXTracker.mapper;
 
 import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.model.Portfolio;
-import com.FXTracker.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,11 +10,7 @@ public class PortfolioMapper {
 
         return PortfolioDto.builder()
                 .id(portfolio.getId())
-                .userId(portfolio.getUser().getId())
-                .name(portfolio.getUser().getName())
-                .surname(portfolio.getUser().getSurname())
-                .email(portfolio.getUser().getEmail())
-                .password(portfolio.getUser().getPassword())
+                .userId(portfolio.getUserId())
                 .stocks(portfolio.getStocks())
                 .balance(portfolio.getBalance())
                 .profit(portfolio.getProfit())
@@ -27,13 +22,7 @@ public class PortfolioMapper {
 
         return Portfolio.builder()
                 .id(portfolioDto.getId())
-                .user(User.builder()
-                        .id(portfolioDto.getUserId())
-                        .name(portfolioDto.getName())
-                        .surname(portfolioDto.getSurname())
-                        .email(portfolioDto.getEmail())
-                        .password(portfolioDto.getPassword())
-                        .build())
+                .userId(portfolioDto.getUserId())
                 .stocks(portfolioDto.getStocks())
                 .balance(portfolioDto.getBalance())
                 .profit(portfolioDto.getProfit())

@@ -5,6 +5,7 @@ import com.FXTracker.model.Portfolio;
 import com.FXTracker.service.PortfolioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +25,9 @@ class PortfolioController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PortfolioDto> updatePortfolio(@PathVariable Long id, @RequestBody Portfolio portfolio) {
+    public ResponseEntity updatePortfolio(@PathVariable Long id, @RequestBody Portfolio portfolio) {
 
-        return ResponseEntity.ok(portfolioService.updatePortfolio(id, portfolio));
+        return ResponseEntity.ok(HttpStatus.OK);
 
     }
 

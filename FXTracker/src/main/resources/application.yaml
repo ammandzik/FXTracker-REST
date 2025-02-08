@@ -1,5 +1,12 @@
 spring:
 
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+  data:
+    mongodb:
+      uri: mongodb://root:password@localhost:27017/mydatabase?authSource=admin
+
   application:
     name: Investment-Management
 
@@ -11,38 +18,12 @@ spring:
     ansi:
       enabled: always
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/stocks
-    username: stocks
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    defer-datasource-initialization: true
-    properties:
-      hibernate:
-        format_sql: true
-
-  sql:
-    init:
-      mode: always
 
 logging:
   level:
     root: info
-    org:
-      hibernate:
-        SQL: INFO
-        type:
-          descriptor:
-            sql:
-              BasicBinder: INFO
-        tool:
-          schema: INFO
-      springframework: ERROR
+
   file:
     name: logs/application.log
   pattern:
