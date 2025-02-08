@@ -43,18 +43,36 @@ public class PortfolioService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found with Id: %s", userId)));
     }
 
-    public void updatePortfolio(String id, Portfolio portfolio) {
+    public PortfolioDto updatePortfolio(String userId, PortfolioDto portfolioDto) {
 
+        var portfolio = portfolioByUserId(userId);
+
+        portfolioDto.setId(portfolio.getId());
+        portfolioRepository.save(portfolioMapper.toEnity(portfolioDto));
+
+        return portfolioDto;
     }
 
-    public void addStockToPortfolio(Long id, Portfolio portfolio, String symbol, Long quantity) {
+    public PortfolioDto addStockToPortfolio(String userId, PortfolioDto portfolioDto, String symbol, String quantity) {
+
+        var portfolio = portfolioByUserId(userId);
+
+        portfolioDto.setId(portfolio.getId());
+        portfolioDto.getStocks().put(symbol, quantity);
+
+        portfolioRepository.save(portfolioMapper.toEnity(portfolioDto));
+
+        return portfolioDto;
 
 
     }
-
     public List<PortfolioDto> getAllPortfolios() {
 
-        return portfolioRepository.findAll().isEmpty() ? new ArrayList<>() : portfolioRepository.findAll().stream().map(portfolioMapper::toDto).toList();
+        return portfolioRepository.findAll()
+                .isEmpty() ? new ArrayList<>() : portfolioRepository.findAll()
+                .stream()
+                .map(portfolioMapper::toDto)
+                .toList();
     }
 
 
