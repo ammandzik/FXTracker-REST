@@ -25,14 +25,17 @@ public class PortfolioService {
     private final PortfolioMapper portfolioMapper;
     private final UserRepository userRepository;
 
-    public PortfolioDto createPortfolio(PortfolioDto portfolioDto) {
+    public Portfolio createPortfolio(PortfolioDto portfolioDto) {
 
         Map<String, String> stocks = new HashMap<>();
-        portfolioDto.setStocks(stocks);
 
-        portfolioRepository.save(portfolioMapper.toEnity(portfolioDto));
+        var entity = portfolioMapper.toEnity(portfolioDto);
 
-        return portfolioDto;
+        entity.setStocks(stocks);
+
+        portfolioRepository.save(entity);
+
+        return entity;
     }
 
     public PortfolioDto portfolioByUserId(String userId) {
@@ -42,14 +45,19 @@ public class PortfolioService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found with Id: %s", userId)));
     }
 
-    public PortfolioDto updatePortfolio(String userId, PortfolioDto portfolioDto) {
+    public Portfolio updatePortfolio(String userId, PortfolioDto portfolioDto) {
 
-        var portfolio = portfolioByUserId(userId);
 
-        portfolioDto.setId(portfolio.getId());
-        portfolioRepository.save(portfolioMapper.toEnity(portfolioDto));
+        var portfolio = portfolioRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found for user id: %s ", userId)));
 
-        return portfolioDto;
+
+        portfolio.setStocks(portfolioDto.getStocks());
+        portfolio.setBalance(portfolioDto.getBalance());
+        portfolio.setProfit(portfolio.getProfit());
+        portfolio.setLoss(portfolioDto.getLoss());
+
+        return portfolioRepository.save(portfolio);
     }
 
     public PortfolioDto addStockToPortfolio(String userId, PortfolioDto portfolioDto, String symbol, String quantity) {

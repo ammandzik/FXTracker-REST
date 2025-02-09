@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Document(collection = "users")
 public class User {
+
     @Id
     private String id;
     @Field(name = "name")
@@ -27,5 +28,5 @@ public class User {
     @Field(name = "password")
     private String password;
     @Field(name = "roles")
-    private List<String> roles; // Role jako lista stringów (ADMIN, CLIENT). Lub użyć enum który powinien zmapować sie na String
+    private List<String> roles;
 }

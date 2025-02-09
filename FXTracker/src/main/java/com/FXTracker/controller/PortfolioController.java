@@ -1,6 +1,7 @@
 package com.FXTracker.controller;
 
 import com.FXTracker.DTO.PortfolioDto;
+import com.FXTracker.model.Portfolio;
 import com.FXTracker.service.PortfolioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,16 +19,16 @@ class PortfolioController {
     private final PortfolioService portfolioService;
 
     @PostMapping("/create")
-    public ResponseEntity<PortfolioDto> createNewPortfolio(@RequestBody PortfolioDto portfolio) {
+    public ResponseEntity<Portfolio> createNewPortfolio(@RequestBody PortfolioDto portfolio) {
 
         return ResponseEntity.ok(portfolioService.createPortfolio(portfolio));
 
     }
 
     @PutMapping("/update/{userId}")
-    public ResponseEntity<PortfolioDto> updatePortfolio(@PathVariable String userId, @RequestBody PortfolioDto portfolioDto) {
+    public ResponseEntity<Portfolio> updatePortfolio(@PathVariable String userId, @RequestBody PortfolioDto portfolioDto) {
 
-        return ResponseEntity.ok(portfolioDto);
+        return ResponseEntity.ok(portfolioService.updatePortfolio(userId, portfolioDto));
 
     }
 

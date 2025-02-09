@@ -1,13 +1,17 @@
 package com.FXTracker.service;
 
+import com.FXTracker.ContainerBase;
 import com.FXTracker.DTO.StockDto;
-import com.FXTracker.DataTest;
+import com.FXTracker.utils.DataTest;
 import com.FXTracker.exception.StockNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
@@ -16,7 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-@SpringBootTest
+@DataMongoTest
+@Testcontainers
+@ContextConfiguration(classes = {ContainerBase.class})
 @RunWith(SpringRunner.class)
 public class StockServiceTest {
 
@@ -54,8 +60,8 @@ public class StockServiceTest {
 
         stock = stockService.addStock(DataTest.createStock());
 
-        assertDoesNotThrow(() -> stockService.addStock(stock));
-        assertNotNull(stock);
+        assertDoesNotThrow(() -> stockService.addStock(stock), "Should not throw any exceptions.");
+        assertNotNull(stock, "Stock should not be null.");
 
     }
 
@@ -82,9 +88,9 @@ public class StockServiceTest {
         List<StockDto> stocks = stockService.findAllStocks();
 
         //then
-        assertDoesNotThrow(() -> stockService.findAllStocks());
-        assertNotNull(stocks);
-        assertFalse(stocks.isEmpty());
+        assertDoesNotThrow(() -> stockService.findAllStocks(), "Should not throw any exceptions.");
+        assertNotNull(stocks, "Stocks should not be null.");
+        assertFalse("Stocks should not be empty", stocks.isEmpty());
 
     }
 
