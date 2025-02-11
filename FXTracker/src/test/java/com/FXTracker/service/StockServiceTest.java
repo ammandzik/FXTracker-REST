@@ -1,14 +1,15 @@
 package com.FXTracker.service;
 
-import com.FXTracker.ContainerBase;
 import com.FXTracker.DTO.StockDto;
 import com.FXTracker.exception.StockNotFoundException;
+import com.FXTracker.test_container.MongoDBTestContainer;
 import com.FXTracker.utils.DataTest;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -18,20 +19,28 @@ import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
-@DataMongoTest
-@Testcontainers
-@ContextConfiguration(classes = {ContainerBase.class})
+@SpringBootTest
+@Slf4j
 @RunWith(SpringRunner.class)
+@Testcontainers
 public class StockServiceTest {
 
     private final String EXISTING_STOCK = "TTWO";
     private final String NON_EXISTING_STOCK = "XJDSJSDJAKXAAAPOO";
-
     private StockDto stock;
 
     @Autowired
     private StockService stockService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    @Autowired
+    private static MongoDBTestContainer mongoDBTestContainer;
+
+    @Test
+    public void testMongoDBConnection() {
+
+        assertFalse((mongoTemplate.getDb().getName()).isEmpty());
+    }
 
     @Test
     public void getStockFromDBTest() {
@@ -80,6 +89,7 @@ public class StockServiceTest {
 
     }
 
+    //todo IT Service - test container required
     @Test
     public void findAllStocksTest() {
 
