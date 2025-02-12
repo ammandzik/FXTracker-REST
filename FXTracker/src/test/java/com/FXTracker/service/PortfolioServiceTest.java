@@ -62,10 +62,7 @@ public class PortfolioServiceTest {
 
         var entityPortfolio = portfolioService.portfolioByUserId("1");
 
-        //when
 
-
-        //then
         Assertions.assertNotNull(p1, "Portfolio should not be null.");
         assertEquals("ID's should be equal.", entityPortfolio.getId(), p1.getId());
 

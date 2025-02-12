@@ -18,28 +18,28 @@ class PortfolioController {
 
     private final PortfolioService portfolioService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Portfolio> createNewPortfolio(@RequestBody PortfolioDto portfolio) {
 
         return ResponseEntity.ok(portfolioService.createPortfolio(portfolio));
 
     }
 
-    @PutMapping("/update/{userId}")
-    public ResponseEntity<Portfolio> updatePortfolio(@PathVariable String userId, @RequestBody PortfolioDto portfolioDto) {
+    //todo docelowo pobieranie id zalogowanego usera
+    @PutMapping("/")
+    public void updatePortfolio(@RequestParam String userId, @RequestParam String symbol, @RequestParam String quantity) {
 
-        return ResponseEntity.ok(portfolioService.updatePortfolio(userId, portfolioDto));
+        portfolioService.updatePortfolio(userId, symbol, quantity);
 
     }
 
-    @GetMapping("/all")
+    @GetMapping("/list")
     public ResponseEntity<List<PortfolioDto>> getAllPortfolios() {
 
         List<PortfolioDto> portfolioList = portfolioService.getAllPortfolios();
 
         return ResponseEntity.ok(portfolioList);
     }
-
 
 }
 

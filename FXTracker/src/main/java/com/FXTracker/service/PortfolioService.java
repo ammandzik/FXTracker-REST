@@ -10,6 +10,7 @@ import com.FXTracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +21,8 @@ import java.util.Map;
 @Service
 public class PortfolioService {
 
-    private final StockRepository stockRepository;
     private final PortfolioRepository portfolioRepository;
     private final PortfolioMapper portfolioMapper;
-    private final UserRepository userRepository;
 
     public Portfolio createPortfolio(PortfolioDto portfolioDto) {
 
@@ -45,33 +44,29 @@ public class PortfolioService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found with Id: %s", userId)));
     }
 
-    public Portfolio updatePortfolio(String userId, PortfolioDto portfolioDto) {
-
+    @Transactional
+    public Portfolio updatePortfolio(String userId, String symbol, String quantity) {
 
         var portfolio = portfolioRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found for user id: %s ", userId)));
 
+        Map<String, String> stocks;
 
-        portfolio.setStocks(portfolioDto.getStocks());
-        portfolio.setBalance(portfolioDto.getBalance());
-        portfolio.setProfit(portfolio.getProfit());
-        portfolio.setLoss(portfolioDto.getLoss());
+        try {
+            stocks = portfolio.getStocks();
+
+        } catch (NullPointerException ex) {
+            throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
+        }
+
+        int owned = Integer.parseInt(stocks.get(symbol));
+        int value = Integer.parseInt(quantity);
+
+        int amount = stocks.containsKey(symbol) ? owned + value : value;
+
+        portfolio.getStocks().put(symbol, String.valueOf(amount));
 
         return portfolioRepository.save(portfolio);
-    }
-
-    public PortfolioDto addStockToPortfolio(String userId, PortfolioDto portfolioDto, String symbol, String quantity) {
-
-        var portfolio = portfolioByUserId(userId);
-
-        portfolioDto.setId(portfolio.getId());
-        portfolioDto.getStocks().put(symbol, quantity);
-
-        portfolioRepository.save(portfolioMapper.toEnity(portfolioDto));
-
-        return portfolioDto;
-
-
     }
 
     public List<PortfolioDto> getAllPortfolios() {
@@ -79,7 +74,7 @@ public class PortfolioService {
         List<Portfolio> portfolios = portfolioRepository.findAll();
 
         if (portfolios.isEmpty()) {
-            throw new ResourceNotFoundException("Portfolios were not found");
+            throw new ResourceNotFoundException("No portfolios were found.");
         }
         return portfolios
                 .stream()

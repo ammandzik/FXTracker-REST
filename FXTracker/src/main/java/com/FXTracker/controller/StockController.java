@@ -18,7 +18,7 @@ class StockController {
 
     private final StockService stockService;
 
-    @GetMapping("/getStock/{symbol}")
+    @GetMapping("/{symbol}")
     public ResponseEntity<StockDto> getStockBySymbol(@PathVariable String symbol) {
 
         var stock = stockService.getStock(symbol);
@@ -27,8 +27,8 @@ class StockController {
 
     }
 
-    @GetMapping("/allStocks")
-    public ResponseEntity<List<StockDto>> getAllStocks(){
+    @GetMapping("/list")
+    public ResponseEntity<List<StockDto>> getAllStocks() {
 
         List<StockDto> stockDtos = stockService.findAllStocks();
 
