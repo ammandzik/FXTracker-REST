@@ -1,5 +1,6 @@
 package com.FXTracker.advice;
 
+import com.FXTracker.exception.InsufficientStockException;
 import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.exception.StockServiceException;
@@ -39,6 +40,15 @@ public class ExceptionHandlerApp {
         errorResponse.put("error", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(InsufficientStockException ex) {
+
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
     }
 
 

@@ -1,6 +1,7 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.PortfolioDto;
+import com.FXTracker.exception.InsufficientStockException;
 import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
@@ -45,7 +46,7 @@ public class PortfolioService {
     }
 
     @Transactional
-    public Portfolio updatePortfolio(String userId, String symbol, String quantity) {
+    public Portfolio updateStocksInPortfolio(String userId, String symbol, String quantity) {
 
         var portfolio = portfolioRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found for user id: %s ", userId)));
@@ -54,20 +55,30 @@ public class PortfolioService {
 
         try {
             stocks = portfolio.getStocks();
+            stocks.containsKey(symbol);
 
         } catch (NullPointerException ex) {
             throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
         }
 
-        int owned = Integer.parseInt(stocks.get(symbol));
-        int value = Integer.parseInt(quantity);
+        int bought = Integer.parseInt(quantity);
 
-        int amount = stocks.containsKey(symbol) ? owned + value : value;
+        if(stocks.containsKey(symbol)){
 
-        portfolio.getStocks().put(symbol, String.valueOf(amount));
+            int owned = Integer.parseInt(stocks.get(symbol));
+            int sum = owned + bought;
+
+            if(sum >= 0) {
+                portfolio.getStocks().put(symbol, String.valueOf(sum));
+            }else{
+                throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
+            }
+
+        }else portfolio.getStocks().put(symbol, quantity);
 
         return portfolioRepository.save(portfolio);
     }
+
 
     public List<PortfolioDto> getAllPortfolios() {
 
@@ -81,6 +92,7 @@ public class PortfolioService {
                 .map(portfolioMapper::toDto)
                 .toList();
     }
+
 
 
 }

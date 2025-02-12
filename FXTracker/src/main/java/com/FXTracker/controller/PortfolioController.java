@@ -25,11 +25,11 @@ class PortfolioController {
 
     }
 
-    //todo docelowo pobieranie id zalogowanego usera
+    //todo should find id of logged in user
     @PutMapping("/")
-    public void updatePortfolio(@RequestParam String userId, @RequestParam String symbol, @RequestParam String quantity) {
+    public void manageStocks(@RequestParam String userId, @RequestParam String symbol, @RequestParam String quantity) {
 
-        portfolioService.updatePortfolio(userId, symbol, quantity);
+        portfolioService.updateStocksInPortfolio(userId, symbol, quantity);
 
     }
 
