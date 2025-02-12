@@ -7,7 +7,6 @@ import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.repository.PortfolioRepository;
 import com.FXTracker.repository.StockRepository;
-import com.FXTracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,7 @@ public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
     private final PortfolioMapper portfolioMapper;
+    private final StockRepository stockRepository;
 
     public Portfolio createPortfolio(PortfolioDto portfolioDto) {
 
@@ -45,6 +45,8 @@ public class PortfolioService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found with Id: %s", userId)));
     }
 
+    // todo check what happens when map does not contain symbol
+
     @Transactional
     public Portfolio updateStocksInPortfolio(String userId, String symbol, String quantity) {
 
@@ -63,22 +65,40 @@ public class PortfolioService {
 
         int bought = Integer.parseInt(quantity);
 
-        if(stocks.containsKey(symbol)){
+        int owned = Integer.parseInt(stocks.get(symbol));
+        int sum = owned + bought;
 
-            int owned = Integer.parseInt(stocks.get(symbol));
-            int sum = owned + bought;
+        if (stocks.containsKey(symbol)) {
 
-            if(sum >= 0) {
+            if (sum >= 0) {
                 portfolio.getStocks().put(symbol, String.valueOf(sum));
-            }else{
+            } else {
                 throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
             }
 
-        }else portfolio.getStocks().put(symbol, quantity);
+        } else portfolio.getStocks().put(symbol, quantity);
 
         return portfolioRepository.save(portfolio);
     }
 
+//    public int countBalance(Portfolio portfolio) {
+//
+//        Map<String, String> stocks = portfolio.getStocks();
+//
+//        int balance = 0;
+//
+//        stocks.forEach((stock, amount) -> {
+//
+//            int price = Integer.parseInt(stockRepository.findPriceBySymbol(stock));
+//
+//            int stocksOwned = Integer.parseInt(amount);
+//
+//            balance += price * stocksOwned;
+//
+//        });
+//
+//
+//    }
 
     public List<PortfolioDto> getAllPortfolios() {
 
@@ -92,7 +112,6 @@ public class PortfolioService {
                 .map(portfolioMapper::toDto)
                 .toList();
     }
-
 
 
 }

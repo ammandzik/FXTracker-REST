@@ -9,4 +9,6 @@ public interface StockRepository extends MongoRepository<Stock, String> {
 
     boolean existsBySymbol(String symbol);
     Optional<Stock> findStockBySymbol(String symbol);
+    String findPriceBySymbol(String price);
+
 }
