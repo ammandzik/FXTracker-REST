@@ -64,19 +64,20 @@ public class PortfolioService {
         }
 
         int bought = Integer.parseInt(quantity);
-
         int owned = Integer.parseInt(stocks.get(symbol));
         int sum = owned + bought;
 
-        if (stocks.containsKey(symbol)) {
+        if (sum >= 0) {
+            if (stocks.containsKey(symbol)) {
 
-            if (sum >= 0) {
-                portfolio.getStocks().put(symbol, String.valueOf(sum));
-            } else {
-                throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
-            }
+                {
+                    portfolio.getStocks().put(symbol, String.valueOf(sum));
+                }
 
-        } else portfolio.getStocks().put(symbol, quantity);
+            } else portfolio.getStocks().put(symbol, quantity);
+        } else
+            throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
+
 
         return portfolioRepository.save(portfolio);
     }
