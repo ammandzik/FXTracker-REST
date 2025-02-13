@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 /**
  * Represents a User Wallet with details such as id, user id, currency and balance.
  */
-
 @Data
 @Builder
 @NoArgsConstructor

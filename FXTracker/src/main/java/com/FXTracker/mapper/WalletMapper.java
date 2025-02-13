@@ -4,6 +4,9 @@ import com.FXTracker.DTO.WalletDto;
 import com.FXTracker.model.Wallet;
 import org.springframework.stereotype.Component;
 
+/**
+ * Custom Mapper class for Wallet and WalletDto classes.
+ */
 @Component
 public class WalletMapper {
 

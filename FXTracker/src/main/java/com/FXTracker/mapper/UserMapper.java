@@ -4,6 +4,9 @@ import com.FXTracker.DTO.UserDto;
 import com.FXTracker.model.User;
 import org.springframework.stereotype.Component;
 
+/**
+ * Custom Mapper class for User and UserDto classes.
+ */
 @Component
 public class UserMapper {
 

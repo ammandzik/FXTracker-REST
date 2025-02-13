@@ -4,6 +4,9 @@ import com.FXTracker.DTO.StockDto;
 import com.FXTracker.model.Stock;
 import org.springframework.stereotype.Component;
 
+/**
+ * Custom Mapper class for Stock and StockDto classes.
+ */
 @Component
 public class StockMapper {
     public StockDto toDto(Stock stock){

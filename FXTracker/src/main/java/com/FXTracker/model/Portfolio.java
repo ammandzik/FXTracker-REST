@@ -28,9 +28,9 @@ public class Portfolio {
     @Field(name = "stocks")
     private Map<String, String> stocks;
     @Field(name = "balance")
-    private Float balance;
+    private Double balance;
     @Field(name = "profit")
-    private Float profit;
+    private Double profit;
     @Field(name = "loss")
-    private Float loss;
+    private Double loss;
 }

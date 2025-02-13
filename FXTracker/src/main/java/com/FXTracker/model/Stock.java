@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /**
  * Represents a Stock and nested Searched Stock class based on Alpha Vantage Stock templates.
  */
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

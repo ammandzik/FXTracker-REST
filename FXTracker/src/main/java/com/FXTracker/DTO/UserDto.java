@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Represents User DTO with details such as id, name, surname, email, password and roles.
+ */
 @Data
 @Builder
 @NoArgsConstructor

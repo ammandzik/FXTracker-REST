@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service class for handling operations on users.
+ * Handles operations like creating, getting by Id, updating, finding all of existing users.
+ */
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -17,6 +22,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    /**
+     * creates and saves new user to DB
+     * @param userDto takes object of class UserDto as a parameter
+     * @return User entity
+     */
     public User createUser(UserDto userDto) {
 
         var entity = userMapper.toEntity(userDto);
@@ -25,6 +35,11 @@ public class UserService {
         return entity;
     }
 
+    /**
+     * Handles searching for user by ID
+     * @param id represents user ID
+     * @return user mapped to UserDto class
+     */
     public UserDto getUserById(String id) {
 
         Optional<User> user = userRepository.findById(id);

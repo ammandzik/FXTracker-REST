@@ -15,6 +15,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Service class for fetching stocks from Alpha Vantage API.
+ * Handles operations like getting single stock data, finding stocks matching keyword.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -26,6 +30,10 @@ public class AlphaVantageService {
     private final StockMapper stockMapper;
     private final StockMapper.StockSearchMapper stockSearchMapper;
 
+    /**
+     * @param ticker represents Stock symbol
+     * @return object of class StockDto mapped from fetched API Stock
+     */
     public StockDto getSingleStockDataFromAPI(String ticker) {
 
         var stock = webClient.get()
@@ -48,6 +56,10 @@ public class AlphaVantageService {
         return stock;
     }
 
+    /**
+     * @param keyword represents keyword used to find partially matching stocks names
+     * @return list of objects of nested class StockSearchDto
+     */
     public List<StockDto.StockSearchDto> findAllStocksByKeywordInAPI(String keyword) {
 
         List<Stock.StockSearch> stocks = webClient.get()
