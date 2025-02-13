@@ -8,6 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+/**
+ * Represents a User Wallet with details such as id, user id, currency and balance.
+ */
 
 @Data
 @Builder

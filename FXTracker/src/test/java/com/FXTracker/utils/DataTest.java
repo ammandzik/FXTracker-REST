@@ -2,6 +2,7 @@ package com.FXTracker.utils;
 
 import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.DTO.StockDto;
+import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.User;
 
 import java.util.HashMap;

@@ -10,6 +10,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
+/**
+ * Represents a User with details such as id,name, surname, email, password, and list of roles.
+ */
+
 @Data
 @Builder
 @NoArgsConstructor

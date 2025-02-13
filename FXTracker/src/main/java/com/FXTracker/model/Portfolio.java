@@ -10,6 +10,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Map;
 
+/**
+ * Represents User Portfolio with details such as id, user id, stocks, balance, profit, and loss.
+ */
+
 @Data
 @Builder
 @NoArgsConstructor

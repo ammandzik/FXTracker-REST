@@ -16,6 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Service class for handling operations on users portfolios.
+ * Handles operations like creating, updating, adding stocks and counting balance of user portfolio.
+ */
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -25,6 +30,11 @@ public class PortfolioService {
     private final PortfolioMapper portfolioMapper;
     private final StockRepository stockRepository;
 
+    /**
+     * @param portfolioDto takes object of class PortfolioDto as a parameter
+     * saves Portfolio class entity to DB
+     * @return entity of class Portfolio
+     */
     public Portfolio createPortfolio(PortfolioDto portfolioDto) {
 
         Map<String, String> stocks = new HashMap<>();
@@ -38,6 +48,11 @@ public class PortfolioService {
         return entity;
     }
 
+    /**
+     * Finds user portfolio based on user ID
+     * @param userId represents user ID
+     * @return object of class PortfolioDto
+     */
     public PortfolioDto portfolioByUserId(String userId) {
 
         return portfolioRepository.findByUserId(userId)
@@ -45,8 +60,32 @@ public class PortfolioService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found with Id: %s", userId)));
     }
 
-    // todo check what happens when map does not contain symbol
+    /**
+     * Updates user portfolio
+     * @param userId takes user ID as a parameter to find connected portfolio
+     * @param portfolioDto takes object of class PortfolioDto as a parameter
+     */
+    public void updatePortfolio(String userId, PortfolioDto portfolioDto){
 
+        var portfolio = portfolioRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found for user id: %s ", userId)));
+
+        portfolio.setStocks(portfolioDto.getStocks());
+        portfolio.setBalance(portfolioDto.getBalance());
+        portfolio.setProfit(portfolioDto.getProfit());
+        portfolio.setProfit(portfolioDto.getLoss());
+
+        portfolioRepository.save(portfolio);
+
+    }
+
+    /**
+     * handles buy/sell operations on portfolio
+     * @param userId represents user ID
+     * @param symbol represents stock symbol
+     * @param quantity represents stock quantity
+     * @return updated portfolio
+     */
     @Transactional
     public Portfolio updateStocksInPortfolio(String userId, String symbol, String quantity) {
 
@@ -64,22 +103,49 @@ public class PortfolioService {
         }
 
         int bought = Integer.parseInt(quantity);
-        int owned = Integer.parseInt(stocks.get(symbol));
-        int sum = owned + bought;
+
+        int sum = parseIfContainsSymbol(portfolio, symbol) + bought;
+
+        addStock(portfolio, sum, quantity, symbol);
+
+        return portfolioRepository.save(portfolio);
+    }
+
+    /**
+     * handles adding stocks to stocks in portfolio
+     * @param portfolio represents user portfolio of stocks
+     * @param sum represents sum of quantity for buying/selling stock and owned stock
+     * @param quantity represents the amount of stock bought/sold
+     * @param symbol represents stock symbol
+     */
+    public void addStock(Portfolio portfolio, int sum, String quantity, String symbol){
+
+        Map<String, String> stocks = portfolio.getStocks();
 
         if (sum >= 0) {
             if (stocks.containsKey(symbol)) {
-
-                {
-                    portfolio.getStocks().put(symbol, String.valueOf(sum));
-                }
+                portfolio.getStocks().put(symbol, String.valueOf(sum));
 
             } else portfolio.getStocks().put(symbol, quantity);
-        } else
-            throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
+        } else throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
 
+    }
 
-        return portfolioRepository.save(portfolio);
+    /**
+     * handles parsing number of owned and existing stocks from String to Integer
+     * @param portfolio represents user portfolio of stocks
+     * @param symbol represents stock symbol
+     * @return int value of owned stock if symbol exists in portfolio
+     */
+    public int parseIfContainsSymbol(Portfolio portfolio, String symbol){
+
+        int owned = 0;
+        Map<String, String> stocks = portfolio.getStocks();
+
+        if(stocks.containsKey(symbol)) {
+            owned = Integer.parseInt(stocks.get(symbol));
+        }
+        return owned;
     }
 
 //    public int countBalance(Portfolio portfolio) {
@@ -98,9 +164,12 @@ public class PortfolioService {
 //
 //        });
 //
-//
 //    }
 
+    /**
+     * Finds all existing portfolios
+     * @return list of all existing portfolios
+     */
     public List<PortfolioDto> getAllPortfolios() {
 
         List<Portfolio> portfolios = portfolioRepository.findAll();

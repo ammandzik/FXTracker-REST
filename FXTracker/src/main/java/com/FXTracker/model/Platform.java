@@ -10,6 +10,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
+/**
+ * Represents Stock Trading Platform with details such as id, platform name, stocks and users.
+ */
 @Data
 @Builder
 @NoArgsConstructor

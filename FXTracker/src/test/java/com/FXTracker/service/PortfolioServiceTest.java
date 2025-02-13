@@ -1,11 +1,12 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.PortfolioDto;
+import com.FXTracker.exception.InsufficientStockException;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.utils.DataTest;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,14 +31,14 @@ public class PortfolioServiceTest {
     @Autowired
     private PortfolioMapper portfolioMapper;
 
-    @BeforeAll
+    @BeforeEach
     public void initializePortfolioDto() {
 
         p1 = DataTest.testPortfolio(stocks, 100F, 50F, 0F);
     }
 
 
-    @BeforeAll
+    @BeforeEach
     void addStocksToMap() {
 
         stocks.put("AAPL", "100");
@@ -78,6 +79,23 @@ public class PortfolioServiceTest {
         assertDoesNotThrow(() -> portfolioService.getAllPortfolios(), "Should not throw any exceptions.");
         Assertions.assertNotNull(portfolioDtos, "Portfolios should not be null.");
         assertFalse("Portfolios should not be empty.", portfolioDtos.isEmpty());
+
+    }
+
+    @Test
+    public void addStockCorrectlyTest() {
+
+        assertDoesNotThrow(() -> portfolioService.addStock(portfolioMapper.toEnity(p1), 110, "10", "AAPL"), "Should not throw any exceptions.");
+        assertEquals(p1.getStocks().get("AAPL"),"110");
+
+    }
+
+    @Test
+    public void addStockShouldThrowInsufficientStockExceptionTest() {
+
+
+        assertThrows("Should throw Insufficient Stock Exception.", InsufficientStockException.class, () -> portfolioService.addStock(portfolioMapper.toEnity(p1), 150, "-151", "AAPL"));
+
 
     }
 
