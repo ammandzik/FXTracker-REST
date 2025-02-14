@@ -70,8 +70,8 @@ public class PortfolioServiceTest {
 
         stocks.put("HSBC", "10");
 
-        assertDoesNotThrow(() -> portfolioService.addStock(portfolioMapper.toEnity(PORTFOLIO_DTO), 20, "10", "HSBC"), "Should not throw any exceptions.");
-        assertEquals("Number of stocks should be equal", PORTFOLIO_DTO.getStocks().get("HSBC"), "20");
+        assertDoesNotThrow(() -> portfolioService.addStock(portfolioMapper.toEnity(PORTFOLIO_DTO), "20", "HSBC"), "Should not throw any exceptions.");
+        assertEquals("Number of stocks should be equal", PORTFOLIO_DTO.getStocks().get("HSBC"), "30");
 
     }
 
@@ -80,9 +80,8 @@ public class PortfolioServiceTest {
 
         stocks.put("AAPL", "100");
 
-        assertThrows("Should throw Insufficient Stock Exception.", InsufficientStockException.class, () -> portfolioService.addStock(portfolioMapper.toEnity(PORTFOLIO_DTO), -1, "-101", "AAPL"));
-
-
+        assertThrows("Should throw Insufficient Stock Exception.", InsufficientStockException.class, () ->
+                portfolioService.addStock(portfolioMapper.toEnity(PORTFOLIO_DTO), "-1", "AAPL"));
     }
 
     @Test
@@ -98,7 +97,7 @@ public class PortfolioServiceTest {
         assertEquals(0, portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(PORTFOLIO_DTO), "TTWO"));
     }
 
-    //todo check why it does not throws correct exception
+    //todo check why it does not throw correct exception
     @Test
     public void parseIfContainsSymbolShouldThrowResourceNotFoundExceptionIfSymbolIsNull() {
 
@@ -108,5 +107,11 @@ public class PortfolioServiceTest {
     //todo IT test
     @Test
     public void countBalance() {
+    }
+
+    @Test
+    public void trackFundsSpentOnStocks(){
+
+
     }
 }

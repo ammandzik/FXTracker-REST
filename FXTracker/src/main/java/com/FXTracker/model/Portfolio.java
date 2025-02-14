@@ -29,6 +29,8 @@ public class Portfolio {
     private Map<String, String> stocks;
     @Field(name = "balance")
     private Double balance;
+    @Field(name = "funds_spent")
+    private Double fundsSpent;
     @Field(name = "profit")
     private Double profit;
     @Field(name = "loss")

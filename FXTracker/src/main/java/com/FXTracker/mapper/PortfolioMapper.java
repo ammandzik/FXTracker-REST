@@ -16,6 +16,7 @@ public class PortfolioMapper {
                 .userId(portfolio.getUserId())
                 .stocks(portfolio.getStocks())
                 .balance(portfolio.getBalance())
+                .fundsSpent(portfolio.getFundsSpent())
                 .profit(portfolio.getProfit())
                 .loss(portfolio.getLoss())
                 .build();
@@ -27,6 +28,7 @@ public class PortfolioMapper {
                 .id(portfolioDto.getId())
                 .userId(portfolioDto.getUserId())
                 .stocks(portfolioDto.getStocks())
+                .fundsSpent(portfolioDto.getFundsSpent())
                 .balance(portfolioDto.getBalance())
                 .profit(portfolioDto.getProfit())
                 .loss(portfolioDto.getLoss())

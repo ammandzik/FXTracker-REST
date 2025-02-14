@@ -73,12 +73,9 @@ public class PortfolioService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found for user id: %s ", userId)));
 
         portfolio.setStocks(portfolioDto.getStocks());
-        portfolio.setBalance(portfolioDto.getBalance());
-        portfolio.setProfit(portfolioDto.getProfit());
-        portfolio.setProfit(portfolioDto.getLoss());
+        portfolio.setBalance(countBalance(portfolioMapper.toEnity(portfolioDto)));
 
         portfolioRepository.save(portfolio);
-
     }
 
     /**
@@ -88,8 +85,6 @@ public class PortfolioService {
      * @param symbol   represents stock symbol
      * @param quantity represents stock quantity
      * @return updated portfolio
-     * @variable traded represents quantity of bought/sold stocks
-     * @variable sum represents owned number of stocks + traded number of stocks
      */
     @Transactional
     public Portfolio updateStocksInPortfolio(String userId, String symbol, String quantity) {
@@ -107,11 +102,7 @@ public class PortfolioService {
             throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
         }
 
-        int traded = Integer.parseInt(quantity);
-
-        int sum = parseIfContainsSymbol(portfolio, symbol) + traded;
-
-        addStock(portfolio, sum, quantity, symbol);
+        addStock(portfolio, quantity, symbol);
         portfolio.setBalance(countBalance(portfolio));
 
         return portfolioRepository.save(portfolio);
@@ -121,11 +112,14 @@ public class PortfolioService {
      * handles adding stocks to stocks in portfolio
      *
      * @param portfolio represents user portfolio of stocks
-     * @param sum       represents sum of quantity for buying/selling stock and owned stock
      * @param quantity  represents the amount of stock bought/sold
      * @param symbol    represents stock symbol
      */
-    public void addStock(Portfolio portfolio, int sum, String quantity, String symbol) {
+    public void addStock(Portfolio portfolio, String quantity, String symbol) {
+
+        int traded = Integer.parseInt(quantity);
+
+        int sum = parseIfContainsSymbol(portfolio, symbol) + traded;
 
         Map<String, String> stocks = portfolio.getStocks();
 
@@ -179,6 +173,15 @@ public class PortfolioService {
 
         }
         return balance;
+    }
+
+    public double trackFundsSpent(){
+
+        double budgetSpent = 0;
+
+
+        return 0;
+
     }
 
     /**
