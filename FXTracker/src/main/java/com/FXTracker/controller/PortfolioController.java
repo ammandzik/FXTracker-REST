@@ -26,8 +26,8 @@ class PortfolioController {
     }
 
     //todo should find id of logged in user
-    @PutMapping("/")
-    public void manageStocks(@RequestParam String userId, @RequestParam String symbol, @RequestParam String quantity) {
+    @PutMapping("/trade")
+    public void tradeStocks(@RequestParam String userId, @RequestParam String symbol, @RequestParam String quantity) {
 
         portfolioService.updateStocksInPortfolio(userId, symbol, quantity);
 

@@ -31,6 +31,7 @@ public class PortfolioService {
 
     /**
      * creates and saves Portfolio class entity to DB
+     *
      * @param portfolioDto takes object of class PortfolioDto as a parameter
      * @return entity of class Portfolio
      */
@@ -86,9 +87,9 @@ public class PortfolioService {
      * @param userId   represents user ID
      * @param symbol   represents stock symbol
      * @param quantity represents stock quantity
+     * @return updated portfolio
      * @variable traded represents quantity of bought/sold stocks
      * @variable sum represents owned number of stocks + traded number of stocks
-     * @return updated portfolio
      */
     @Transactional
     public Portfolio updateStocksInPortfolio(String userId, String symbol, String quantity) {
@@ -142,17 +143,20 @@ public class PortfolioService {
      * handles parsing number of owned and existing stocks from String to Integer
      *
      * @param portfolio represents user portfolio of stocks
-     * @param symbol represents stock symbol
+     * @param symbol    represents stock symbol
      * @return int value of owned stock if symbol exists in portfolio
      */
     public int parseIfContainsSymbol(Portfolio portfolio, String symbol) {
 
         int owned = 0;
+
         Map<String, String> stocks = portfolio.getStocks();
 
         if (stocks.containsKey(symbol)) {
             owned = Integer.parseInt(stocks.get(symbol));
+            return owned;
         }
+
         return owned;
     }
 

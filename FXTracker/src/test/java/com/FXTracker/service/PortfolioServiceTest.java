@@ -2,6 +2,7 @@ package com.FXTracker.service;
 
 import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.exception.InsufficientStockException;
+import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.utils.DataTest;
 import org.junit.Test;
@@ -84,5 +85,28 @@ public class PortfolioServiceTest {
 
     }
 
+    @Test
+    public void parseIfContainsSymbol() {
 
+        stocks.put("AAPL", "100");
+
+        assertTrue(portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(PORTFOLIO_DTO), "AAPL") > 0);
+    }
+    @Test
+    public void parseIfContainsSymbolShouldReturn0IfSymbolDoesNotExist() {
+
+        assertEquals(0, portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(PORTFOLIO_DTO), "TTWO"));
+    }
+
+    //todo check why it does not throws correct exception
+    @Test
+    public void parseIfContainsSymbolShouldThrowResourceNotFoundExceptionIfSymbolIsNull() {
+
+        assertThrows(ResourceNotFoundException.class, () -> portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(PORTFOLIO_DTO), null));
+    }
+
+    //todo IT test
+    @Test
+    public void countBalance() {
+    }
 }
