@@ -62,20 +62,15 @@ public class PortfolioService {
     }
 
     /**
-     * Updates user portfolio
+     * updates balance on portfolio
      *
-     * @param userId       takes user ID as a parameter to find connected portfolio
-     * @param portfolioDto takes object of class PortfolioDto as a parameter
+     * @param portfolio entity of class Portfolio
+     * @param symbol    represents stock symbol
+     * @param quantity  represents quantity of stocks
      */
-    public void updatePortfolio(String userId, PortfolioDto portfolioDto) {
+    public void updatePortfolio(Portfolio portfolio, String symbol, String quantity) {
 
-        var portfolio = portfolioRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found for user id: %s ", userId)));
-
-        portfolio.setStocks(portfolioDto.getStocks());
-        portfolio.setBalance(countBalance(portfolioMapper.toEnity(portfolioDto)));
-
-        portfolioRepository.save(portfolio);
+        countProfitAndLoss(portfolio, symbol, quantity);
     }
 
     /**
@@ -103,7 +98,7 @@ public class PortfolioService {
         }
 
         addStock(portfolio, quantity, symbol);
-        portfolio.setBalance(countBalance(portfolio));
+        updatePortfolio(portfolio, symbol, quantity);
 
         return portfolioRepository.save(portfolio);
     }
@@ -124,10 +119,8 @@ public class PortfolioService {
         Map<String, String> stocks = portfolio.getStocks();
 
         if (sum >= 0) {
-            if (stocks.containsKey(symbol)) {
-                portfolio.getStocks().put(symbol, String.valueOf(sum));
-
-            } else portfolio.getStocks().put(symbol, quantity);
+            if (stocks.containsKey(symbol)) portfolio.getStocks().put(symbol, String.valueOf(sum));
+            else portfolio.getStocks().put(symbol, quantity);
         } else
             throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
 
@@ -150,8 +143,31 @@ public class PortfolioService {
             owned = Integer.parseInt(stocks.get(symbol));
             return owned;
         }
-
         return owned;
+    }
+
+    /**
+     * @param portfolio represents user portfolio of stocks
+     * @param symbol    represents stock symbol
+     * @param quantity  represents quantity of stocks
+     * @return result between balance and budget spent
+     */
+    public double countProfitAndLoss(Portfolio portfolio, String symbol, String quantity) {
+
+        double budgetSpent = countBudgetSpent(portfolio, symbol, quantity);
+        double balance = countBalance(portfolio);
+
+        double result = balance - budgetSpent;
+
+        if (result == 0) {
+            portfolio.setProfit(0d);
+            portfolio.setLoss(0d);
+        }
+
+        if (result > 0) portfolio.setProfit(result);
+        else if (result < 0) portfolio.setLoss(result);
+
+        return result;
     }
 
     /**
@@ -172,16 +188,30 @@ public class PortfolioService {
             balance += Double.parseDouble(entry.getValue()) * price;
 
         }
+        portfolio.setBalance(balance);
         return balance;
     }
 
-    public double trackFundsSpent(){
+    /**
+     * Counts user budget spent on stocks
+     *
+     * @param portfolio takes portfolio as parameter
+     * @param symbol    represents stock symbol
+     * @param quantity  represents the amount of stock bought/sold
+     * @return budgetSpent spent on stocks
+     */
+    public double countBudgetSpent(Portfolio portfolio, String symbol, String quantity) {
 
         double budgetSpent = 0;
 
+        var stock = stockService.getStock(symbol);
 
-        return 0;
+        double price = Double.parseDouble(stock.getPrice());
 
+        budgetSpent += (Double.parseDouble(quantity) * price) + portfolio.getFundsSpent();
+        portfolio.setFundsSpent(budgetSpent);
+
+        return budgetSpent;
     }
 
     /**
@@ -193,9 +223,8 @@ public class PortfolioService {
 
         List<Portfolio> portfolios = portfolioRepository.findAll();
 
-        if (portfolios.isEmpty()) {
-            throw new ResourceNotFoundException("No portfolios were found.");
-        }
+        if (portfolios.isEmpty()) throw new ResourceNotFoundException("No portfolios were found.");
+
         return portfolios
                 .stream()
                 .map(portfolioMapper::toDto)
