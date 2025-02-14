@@ -4,11 +4,15 @@ import com.FXTracker.DTO.StockDto;
 import com.FXTracker.model.Stock;
 import org.springframework.stereotype.Component;
 
+/**
+ * Custom Mapper class for Stock and StockDto classes.
+ */
 @Component
 public class StockMapper {
     public StockDto toDto(Stock stock){
 
         return StockDto.builder()
+                .id(stock.getId())
                 .symbol(stock.getSymbol())
                 .price(stock.getPrice())
                 .latestTradingDay(stock.getLatestTradingDay())
@@ -20,6 +24,7 @@ public class StockMapper {
     public Stock toStock(StockDto stockDto){
 
         return Stock.builder()
+                .id(stockDto.getId())
                 .symbol(stockDto.getSymbol())
                 .price(stockDto.getPrice())
                 .latestTradingDay(stockDto.getLatestTradingDay())

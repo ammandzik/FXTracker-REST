@@ -10,8 +10,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
+
+/**
+ * Service class for handling operations on stocks.
+ * Handles operations like adding, getting, updating, finding all of existing stocks.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -20,6 +27,10 @@ public class StockService {
     private final StockMapper stockMapper;
     private final StockRepository stockRepository;
 
+    /**
+     * @param stockDto represents object of StockDto class
+     * @return object of class StockDto
+     */
     public StockDto addStock(StockDto stockDto) {
 
         try {
@@ -31,6 +42,10 @@ public class StockService {
         return stockDto;
     }
 
+    /**
+     * @param symbol represents stock symbol
+     * @return object of class StockDto
+     */
     public StockDto getStock(String symbol) {
 
         Optional<Stock> stock = stockRepository.findStockBySymbol(symbol);
@@ -43,6 +58,12 @@ public class StockService {
 
         }
     }
+
+    /**
+     * @param symbol represents stock symbol
+     * @param stock takes object of class StockDto as a parameter
+     * @return updated object of class StockDto
+     */
     public StockDto updateStock(String symbol, StockDto stock) {
 
         var updated = getStock(symbol);
@@ -61,10 +82,29 @@ public class StockService {
         return stock;
     }
 
+    /**
+     * @return list of objects of class StockDto
+     */
+    public List<StockDto> findAllStocks() {
 
+        List<Stock> stocks = stockRepository.findAll();
 
+        if (stocks.isEmpty()) {
+            throw new StockNotFoundException("No stocks were found.");
+        }
+
+        return stocks.stream()
+                .map(stockMapper::toDto)
+                .collect(toList());
+    }
+
+    /**
+     * @param symbol represents stock symbol
+     * @return true if stock exists in DB, false otherwise
+     */
     public boolean stockExistsInDataBase(String symbol) {
 
         return stockRepository.existsBySymbol(symbol);
     }
+
 }

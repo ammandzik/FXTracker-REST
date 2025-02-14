@@ -10,12 +10,16 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
+/**
+ * Represents a User with details such as id,name, surname, email, password, and list of roles.
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "users")
 public class User {
+
     @Id
     private String id;
     @Field(name = "name")
@@ -27,5 +31,5 @@ public class User {
     @Field(name = "password")
     private String password;
     @Field(name = "roles")
-    private List<String> roles; // Role jako lista stringów (ADMIN, CLIENT). Lub użyć enum który powinien zmapować sie na String
+    private List<String> roles;
 }

@@ -8,9 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.math.BigDecimal;
-
-
+/**
+ * Represents a User Wallet with details such as id, user id, currency and balance.
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -24,5 +24,5 @@ public class Wallet {
     @Field(name = "currency")
     private String currency;
     @Field(name = "balance")
-    private BigDecimal balance;
+    private Float balance;
 }

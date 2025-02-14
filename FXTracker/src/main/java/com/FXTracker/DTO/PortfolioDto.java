@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
+/**
+ * RepresentsPortfolio DTO with details such as id, user id, stocks, balance, profit, and loss.
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,8 +19,8 @@ public class PortfolioDto {
     private String id;
     private String userId;
     private Map<String, String> stocks;
-    private Float balance;
-    private Float profit;
-    private Float loss;
+    private Double balance;
+    private Double profit;
+    private Double loss;
 
 }

@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Represents a Stock and nested Searched Stock class based on Alpha Vantage Stock templates.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,6 +19,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "stocks")
 public class Stock {
 
+    private String id;
     @JsonProperty("01. symbol")
     private String symbol;
     @JsonProperty("02. open")
