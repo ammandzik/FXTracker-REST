@@ -6,7 +6,6 @@ import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.utils.DataTest;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,36 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @RunWith(SpringRunner.class)
 public class PortfolioServiceTest {
 
-
-    private static PortfolioDto p1;
-    private HashMap<String, String> stocks = new HashMap<>();
-
+    private static HashMap<String, String> stocks = new HashMap<>();
+    private static final PortfolioDto PORTFOLIO_DTO = DataTest.testPortfolio(stocks, 0d, 0d, 0d);
     @Autowired
     private PortfolioService portfolioService;
     @Autowired
     private PortfolioMapper portfolioMapper;
-
-    @BeforeEach
-    public void initializePortfolioDto() {
-
-        p1 = DataTest.testPortfolio(stocks, 100F, 50F, 0F);
-    }
-
-
-    @BeforeEach
-    void addStocksToMap() {
-
-        stocks.put("AAPL", "100");
-        stocks.put("TTWO", "20");
-        stocks.put("HSBC", "10");
-    }
 
     //todo IT Service - test container required
     @Test
     public void shouldCreatePortfolioCorrectlyIT() {
 
         //when
-        var portfolio = assertDoesNotThrow(() -> portfolioService.createPortfolio(p1), "Should not throw any exceptions.");
+        var portfolio = assertDoesNotThrow(() -> portfolioService.createPortfolio(PORTFOLIO_DTO), "Should not throw any exceptions.");
 
         //then
         assertNotNull("Portfolio should not be null", portfolio);
@@ -64,8 +46,8 @@ public class PortfolioServiceTest {
         var entityPortfolio = portfolioService.portfolioByUserId("1");
 
 
-        Assertions.assertNotNull(p1, "Portfolio should not be null.");
-        assertEquals("ID's should be equal.", entityPortfolio.getId(), p1.getId());
+        Assertions.assertNotNull(PORTFOLIO_DTO, "Portfolio should not be null.");
+        assertEquals("ID's should be equal.", entityPortfolio.getId(), PORTFOLIO_DTO.getId());
 
     }
 
@@ -85,16 +67,19 @@ public class PortfolioServiceTest {
     @Test
     public void addStockCorrectlyTest() {
 
-        assertDoesNotThrow(() -> portfolioService.addStock(portfolioMapper.toEnity(p1), 110, "10", "AAPL"), "Should not throw any exceptions.");
-        assertEquals(p1.getStocks().get("AAPL"),"110");
+        stocks.put("HSBC", "10");
+
+        assertDoesNotThrow(() -> portfolioService.addStock(portfolioMapper.toEnity(PORTFOLIO_DTO), 20, "10", "HSBC"), "Should not throw any exceptions.");
+        assertEquals("Number of stocks should be equal", PORTFOLIO_DTO.getStocks().get("HSBC"), "20");
 
     }
 
     @Test
     public void addStockShouldThrowInsufficientStockExceptionTest() {
 
+        stocks.put("AAPL", "100");
 
-        assertThrows("Should throw Insufficient Stock Exception.", InsufficientStockException.class, () -> portfolioService.addStock(portfolioMapper.toEnity(p1), 150, "-151", "AAPL"));
+        assertThrows("Should throw Insufficient Stock Exception.", InsufficientStockException.class, () -> portfolioService.addStock(portfolioMapper.toEnity(PORTFOLIO_DTO), -1, "-101", "AAPL"));
 
 
     }

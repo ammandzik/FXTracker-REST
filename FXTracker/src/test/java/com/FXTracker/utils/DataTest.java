@@ -30,7 +30,7 @@ public class DataTest {
                 .build();
     }
 
-    public static PortfolioDto testPortfolio(HashMap<String, String> stocks, Float balance, Float profit, Float loss) {
+    public static PortfolioDto testPortfolio(HashMap<String, String> stocks, Double balance, Double profit, Double loss) {
 
         return PortfolioDto.builder()
                 .userId(DataTest.createUser().getId())

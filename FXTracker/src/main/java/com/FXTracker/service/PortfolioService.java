@@ -86,6 +86,8 @@ public class PortfolioService {
      * @param userId   represents user ID
      * @param symbol   represents stock symbol
      * @param quantity represents stock quantity
+     * @variable traded represents quantity of bought/sold stocks
+     * @variable sum represents owned number of stocks + traded number of stocks
      * @return updated portfolio
      */
     @Transactional
@@ -104,9 +106,9 @@ public class PortfolioService {
             throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
         }
 
-        int bought = Integer.parseInt(quantity);
+        int traded = Integer.parseInt(quantity);
 
-        int sum = parseIfContainsSymbol(portfolio, symbol) + bought;
+        int sum = parseIfContainsSymbol(portfolio, symbol) + traded;
 
         addStock(portfolio, sum, quantity, symbol);
         portfolio.setBalance(countBalance(portfolio));
