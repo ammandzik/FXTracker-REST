@@ -5,4 +5,4 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://admin:stocks1234@localhost:27017/test?authSource=admin
+      uri: mongodb://admin:test1234@localhost:27017/stocks?authSource=admin

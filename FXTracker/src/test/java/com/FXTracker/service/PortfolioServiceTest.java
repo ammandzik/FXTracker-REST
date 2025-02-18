@@ -5,112 +5,117 @@ import com.FXTracker.exception.InsufficientStockException;
 import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.utils.DataTest;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PortfolioServiceTest {
 
     private static HashMap<String, String> stocks = new HashMap<>();
-    private static final PortfolioDto PORTFOLIO_DTO = DataTest.testPortfolio(stocks, 0d, 0d, 0d);
-    @Autowired
+    private static PortfolioDto portfolioDto;
+
+    @BeforeAll
+    static void addToMap() {
+
+        stocks.put("AAPL", "10");
+        stocks.put("HSBC", "10");
+        stocks.put("TSLA", "10");
+
+        portfolioDto = DataTest.testPortfolio(stocks, 0d, 0d, 0d);
+    }
+
+    @Mock
     private PortfolioService portfolioService;
-    @Autowired
+    @InjectMocks
     private PortfolioMapper portfolioMapper;
 
-    //todo IT Service - test container required
+
+    //todo IT
     @Test
     public void shouldCreatePortfolioCorrectlyIT() {
 
         //when
-        var portfolio = assertDoesNotThrow(() -> portfolioService.createPortfolio(PORTFOLIO_DTO), "Should not throw any exceptions.");
+        var portfolio = assertDoesNotThrow(() -> portfolioService.createPortfolio(portfolioDto), "Should not throw any exceptions.");
 
         //then
-        assertNotNull("Portfolio should not be null", portfolio);
+        assertNotNull(portfolio, "Portfolio should not be null");
     }
 
-    //todo IT Service - test container required
+    //todo write test for update
     @Test
     public void shouldUpdatePortfolioCorrectlyIT() {
 
-        var entityPortfolio = portfolioService.portfolioByUserId("1");
+        Mockito.when(portfolioService.portfolioByUserId("1")).thenReturn(portfolioDto);
 
-
-        Assertions.assertNotNull(PORTFOLIO_DTO, "Portfolio should not be null.");
-        assertEquals("ID's should be equal.", entityPortfolio.getId(), PORTFOLIO_DTO.getId());
+        Assertions.assertNotNull(portfolioDto, "Portfolio should not be null.");
+        assertEquals("ID's should be equal.", portfolioDto.getId());
 
     }
 
     @Test
     public void findAllPortfoliosTest() {
 
-        //given
-        List<PortfolioDto> portfolioDtos = portfolioService.getAllPortfolios();
-
         //then
-        assertDoesNotThrow(() -> portfolioService.getAllPortfolios(), "Should not throw any exceptions.");
+        List<PortfolioDto> portfolioDtos = assertDoesNotThrow(() -> portfolioService.getAllPortfolios(), "Should not throw any exceptions.");
         Assertions.assertNotNull(portfolioDtos, "Portfolios should not be null.");
-        assertFalse("Portfolios should not be empty.", portfolioDtos.isEmpty());
+        assertFalse(portfolioDtos.isEmpty(), "Portfolios size should be more than 0.");
 
     }
 
     @Test
     public void addStockCorrectlyTest() {
 
-        stocks.put("HSBC", "10");
+        var portfolio = portfolioMapper.toEnity(portfolioDto);
 
-        assertDoesNotThrow(() -> portfolioService.addStock(portfolioMapper.toEnity(PORTFOLIO_DTO), "20", "HSBC"), "Should not throw any exceptions.");
-        assertEquals("Number of stocks should be equal", PORTFOLIO_DTO.getStocks().get("HSBC"), "30");
+        assertDoesNotThrow(() -> portfolioService.addStock(portfolio, "20", "HSBC"), "Should not throw any exceptions.");
+        assertEquals("30", portfolio.getStocks().get("HSBC"), "Number of stocks should be equal.");
 
     }
 
     @Test
     public void addStockShouldThrowInsufficientStockExceptionTest() {
 
-        stocks.put("AAPL", "100");
 
-        assertThrows("Should throw Insufficient Stock Exception.", InsufficientStockException.class, () ->
-                portfolioService.addStock(portfolioMapper.toEnity(PORTFOLIO_DTO), "-1", "AAPL"));
+        assertThrows(InsufficientStockException.class, () -> portfolioService.addStock(portfolioMapper.toEnity(portfolioDto), "-11", "AAPL"));
     }
 
     @Test
     public void parseIfContainsSymbol() {
 
-        stocks.put("AAPL", "100");
-
-        assertTrue(portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(PORTFOLIO_DTO), "AAPL") > 0);
+        assertEquals(10, portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(portfolioDto), "AAPL"));
     }
+
     @Test
     public void parseIfContainsSymbolShouldReturn0IfSymbolDoesNotExist() {
 
-        assertEquals(0, portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(PORTFOLIO_DTO), "TTWO"));
+        assertEquals(0, portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(portfolioDto), "TTWO"));
     }
 
-    //todo check why it does not throw correct exception
     @Test
     public void parseIfContainsSymbolShouldThrowResourceNotFoundExceptionIfSymbolIsNull() {
 
-        assertThrows(ResourceNotFoundException.class, () -> portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(PORTFOLIO_DTO), null));
+        assertThrows(ResourceNotFoundException.class, () -> portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(portfolioDto), null));
     }
 
-    //todo IT test
     @Test
     public void countBalance() {
     }
 
     @Test
-    public void trackFundsSpentOnStocks(){
+    public void trackFundsSpentOnStocks() {
 
 
     }

@@ -7,5 +7,9 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: test1234
+    expose:
+      - "27017"
     ports:
-      - "27018:27017"
+      - "27017:27017"
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init-test.js:ro

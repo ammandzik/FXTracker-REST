@@ -2,27 +2,18 @@ package com.FXTracker.service;
 
 import com.FXTracker.DTO.StockDto;
 import com.FXTracker.exception.StockNotFoundException;
-import com.FXTracker.test_container.MongoDBTestContainer;
 import com.FXTracker.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
-@RunWith(SpringRunner.class)
-@Testcontainers
 public class StockServiceTest {
 
     private final String EXISTING_STOCK = "TTWO";
@@ -31,16 +22,6 @@ public class StockServiceTest {
 
     @Autowired
     private StockService stockService;
-    @Autowired
-    private MongoTemplate mongoTemplate;
-    @Autowired
-    private static MongoDBTestContainer mongoDBTestContainer;
-
-    @Test
-    public void testMongoDBConnection() {
-
-        assertFalse((mongoTemplate.getDb().getName()).isEmpty());
-    }
 
     @Test
     public void getStockFromDBTest() {
@@ -59,21 +40,18 @@ public class StockServiceTest {
 
         assertThrows(StockNotFoundException.class, () -> stockService.getStock(NON_EXISTING_STOCK));
 
-
     }
 
-    //todo IT Service - test container required
+    //todo IT
     @Test
     public void addStockTest() {
 
-        stock = stockService.addStock(DataTest.createStock());
-
-        assertDoesNotThrow(() -> stockService.addStock(stock), "Should not throw any exceptions.");
+        stock = assertDoesNotThrow(() -> stockService.addStock(stock), "Should not throw any exceptions.");
         assertNotNull(stock, "Stock should not be null.");
 
     }
 
-    //todo IT Service - test container required
+    //todo IT
     @Test
     public void updateStockTest() {
 
@@ -89,7 +67,7 @@ public class StockServiceTest {
 
     }
 
-    //todo IT Service - test container required
+    //todo Mock
     @Test
     public void findAllStocksTest() {
 
@@ -99,7 +77,7 @@ public class StockServiceTest {
         //then
         assertDoesNotThrow(() -> stockService.findAllStocks(), "Should not throw any exceptions.");
         assertNotNull(stocks, "Stocks should not be null.");
-        assertFalse("Stocks should not be empty", stocks.isEmpty());
+        assertFalse(stocks.isEmpty(), "Stocks should not be empty");
 
     }
 

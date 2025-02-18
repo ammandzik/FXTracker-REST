@@ -133,7 +133,7 @@ public class PortfolioService {
      * @param symbol    represents stock symbol
      * @return int value of owned stock if symbol exists in portfolio
      */
-    public int parseIfContainsSymbol(Portfolio portfolio, String symbol) {
+    public Integer parseIfContainsSymbol(Portfolio portfolio, String symbol) {
 
         int owned = 0;
 

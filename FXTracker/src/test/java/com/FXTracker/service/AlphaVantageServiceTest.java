@@ -2,21 +2,18 @@ package com.FXTracker.service;
 
 import com.FXTracker.DTO.StockDto;
 import com.FXTracker.exception.StockNotFoundException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.util.AssertionErrors.assertFalse;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class AlphaVantageServiceTest {
 
     private final String EXISTING_STOCK = "TTWO";
