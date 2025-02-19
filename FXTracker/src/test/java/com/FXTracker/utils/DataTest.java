@@ -37,11 +37,12 @@ public class DataTest {
                 .build();
     }
 
-    public static PortfolioDto testPortfolio(Map<String, String> stocks, Double balance, Double profit, Double loss) {
+    public static PortfolioDto createPortfolioDto(Map<String, String> stocks, String userId, Double balance, Double profit, Double loss) {
 
         return PortfolioDto.builder()
                 .userId(DataTest.createUser().getId())
                 .stocks(stocks)
+                .userId(userId)
                 .balance(balance)
                 .profit(profit)
                 .loss(loss)

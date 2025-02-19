@@ -1,1 +1,1 @@
-db = db.getSiblingDB(‘stocks’);
+db = db.getSiblingDB(‘test-db’);

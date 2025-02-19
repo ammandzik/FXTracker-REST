@@ -5,6 +5,7 @@ import com.FXTracker.exception.StockNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.util.AssertionErrors.assertFalse;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class AlphaVantageServiceTest {
 
     private final String EXISTING_STOCK = "TTWO";

@@ -6,6 +6,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://admin:stocks1234@localhost:27017/stocks?authSource=admin
+      port: 27017
 
   application:
     name: Investment-Management

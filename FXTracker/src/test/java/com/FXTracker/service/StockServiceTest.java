@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -14,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
-class StockServiceTest {
+@ActiveProfiles("test")
+ class StockServiceTest {
 
     private final String EXISTING_STOCK = "TTWO";
     private final String NON_EXISTING_STOCK = "XJDSJSDJAKXAAAPOO";
@@ -53,7 +55,7 @@ class StockServiceTest {
 
     //todo IT
     @Test
-    void updateStockTest() {
+     void updateStockTest() {
 
         //given
         var entityStock = stockService.getStock("TTWO");
@@ -69,7 +71,7 @@ class StockServiceTest {
 
     //todo Mock
     @Test
-    void findAllStocksTest() {
+     void findAllStocksTest() {
 
         //given
         List<StockDto> stocks = stockService.findAllStocks();
