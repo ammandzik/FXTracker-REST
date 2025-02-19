@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.util.AssertionErrors.assertFalse;
 
 @SpringBootTest
-public class AlphaVantageServiceTest {
+class AlphaVantageServiceTest {
 
     private final String EXISTING_STOCK = "TTWO";
     private final String NON_EXISTING_STOCK = "XJDSJSDJAKXAAAPOO";
@@ -26,7 +26,7 @@ public class AlphaVantageServiceTest {
     private AlphaVantageService alphaVantageService;
 
     @Test
-    public void getExistingStockDataCorrectlyTest() {
+    void getExistingStockDataCorrectlyTest() {
 
         //given
 
@@ -39,14 +39,14 @@ public class AlphaVantageServiceTest {
     }
 
     @Test
-    public void nonExistingStockShouldThrowStockNotFoundException() {
+    void nonExistingStockShouldThrowStockNotFoundException() {
 
         assertThrows(StockNotFoundException.class, () -> alphaVantageService.getSingleStockDataFromAPI(NON_EXISTING_STOCK));
 
     }
 
     @Test
-    public void findAllStocksByKeywordCorrectlyInAPI() {
+    void findAllStocksByKeywordCorrectlyInAPI() {
 
         List<StockDto.StockSearchDto> stocksFound = alphaVantageService.findAllStocksByKeywordInAPI(KEYWORD);
 

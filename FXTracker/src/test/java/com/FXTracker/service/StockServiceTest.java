@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
-public class StockServiceTest {
+class StockServiceTest {
 
     private final String EXISTING_STOCK = "TTWO";
     private final String NON_EXISTING_STOCK = "XJDSJSDJAKXAAAPOO";
@@ -24,7 +24,7 @@ public class StockServiceTest {
     private StockService stockService;
 
     @Test
-    public void getStockFromDBTest() {
+    void getStockFromDBTest() {
 
         //given
         stock = stockService.getStock(EXISTING_STOCK);
@@ -36,7 +36,7 @@ public class StockServiceTest {
     }
 
     @Test
-    public void getNonExistingStockFromDBTest() {
+    void getNonExistingStockFromDBTest() {
 
         assertThrows(StockNotFoundException.class, () -> stockService.getStock(NON_EXISTING_STOCK));
 
@@ -44,7 +44,7 @@ public class StockServiceTest {
 
     //todo IT
     @Test
-    public void addStockTest() {
+    void addStockTest() {
 
         stock = assertDoesNotThrow(() -> stockService.addStock(stock), "Should not throw any exceptions.");
         assertNotNull(stock, "Stock should not be null.");
@@ -53,7 +53,7 @@ public class StockServiceTest {
 
     //todo IT
     @Test
-    public void updateStockTest() {
+    void updateStockTest() {
 
         //given
         var entityStock = stockService.getStock("TTWO");
@@ -69,7 +69,7 @@ public class StockServiceTest {
 
     //todo Mock
     @Test
-    public void findAllStocksTest() {
+    void findAllStocksTest() {
 
         //given
         List<StockDto> stocks = stockService.findAllStocks();

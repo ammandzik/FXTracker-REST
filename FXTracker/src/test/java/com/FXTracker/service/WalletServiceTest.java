@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-public class WalletServiceTest {
+class WalletServiceTest {
 
     private static WalletDto w1;
 
@@ -18,7 +18,7 @@ public class WalletServiceTest {
 
 
     @Test
-    public void shouldCreateWalletCorrectlyIT() {
+    void shouldCreateWalletCorrectlyIT() {
 
 
         var wallet = assertDoesNotThrow(() -> walletService.createWallet(w1), "Creating wallet should not throw any exceptions.");
