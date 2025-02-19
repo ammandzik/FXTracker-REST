@@ -135,6 +135,10 @@ public class PortfolioService {
 
         int owned = 0;
 
+        if(symbol == null){
+            throw new ResourceNotFoundException(String.format("Given symbol was null: %s", symbol));
+        }
+
         if (stocks.containsKey(symbol)) {
             owned = Integer.parseInt(stocks.get(symbol));
             return owned;
