@@ -2,8 +2,10 @@ package com.FXTracker.utils;
 
 import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.DTO.StockDto;
+import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.User;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class DataTest {
@@ -29,7 +31,12 @@ public class DataTest {
                 .build();
     }
 
-    public static PortfolioDto testPortfolio(Map<String, String> stocks, Double balance, Double profit, Double loss) {
+    public static PortfolioDto testPortfolio(Double balance, Double profit, Double loss) {
+
+        HashMap<String, String> stocks = new HashMap<>();
+        stocks.put("AAPL", "10");
+        stocks.put("HSBC", "10");
+        stocks.put("TSLA", "10");
 
         return PortfolioDto.builder()
                 .userId(DataTest.createUser().getId())
@@ -39,5 +46,7 @@ public class DataTest {
                 .loss(loss)
                 .build();
     }
+
+
 
 }

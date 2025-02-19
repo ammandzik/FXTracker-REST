@@ -3,19 +3,16 @@ package com.FXTracker.service;
 import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.exception.InsufficientStockException;
 import com.FXTracker.exception.ResourceNotFoundException;
-import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.utils.DataTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,24 +20,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class PortfolioServiceTest {
-
-    private static HashMap<String, String> stocks = new HashMap<>();
     private static PortfolioDto portfolioDto;
 
     @BeforeAll
-    static void addToMap() {
+    static void setUp() {
 
-        stocks.put("AAPL", "10");
-        stocks.put("HSBC", "10");
-        stocks.put("TSLA", "10");
-
-        portfolioDto = DataTest.testPortfolio(stocks, 0d, 0d, 0d);
+        portfolioDto = DataTest.testPortfolio(0d, 0d, 0d);
     }
 
     @Mock
     private PortfolioService portfolioService;
-    @InjectMocks
-    private PortfolioMapper portfolioMapper;
 
 
     //todo IT
@@ -78,10 +67,8 @@ public class PortfolioServiceTest {
     @Test
     public void addStockCorrectlyTest() {
 
-        var portfolio = portfolioMapper.toEnity(portfolioDto);
-
-        assertDoesNotThrow(() -> portfolioService.addStock(portfolio, "20", "HSBC"), "Should not throw any exceptions.");
-        assertEquals("30", portfolio.getStocks().get("HSBC"), "Number of stocks should be equal.");
+        assertDoesNotThrow(() -> portfolioService.addStock(portfolioDto.getStocks(), "20", "HSBC"), "Should not throw any exceptions.");
+        assertEquals("30", portfolioDto.getStocks().get("HSBC"), "Number of stocks should be equal.");
 
     }
 
@@ -89,25 +76,25 @@ public class PortfolioServiceTest {
     public void addStockShouldThrowInsufficientStockExceptionTest() {
 
 
-        assertThrows(InsufficientStockException.class, () -> portfolioService.addStock(portfolioMapper.toEnity(portfolioDto), "-11", "AAPL"));
+        assertThrows(InsufficientStockException.class, () -> portfolioService.addStock(portfolioDto.getStocks(), "-11", "AAPL"));
     }
 
     @Test
     public void parseIfContainsSymbol() {
 
-        assertEquals(10, portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(portfolioDto), "AAPL"));
+        assertEquals(10, portfolioService.parseIfContainsSymbol(portfolioDto.getStocks(), "AAPL"));
     }
 
     @Test
     public void parseIfContainsSymbolShouldReturn0IfSymbolDoesNotExist() {
 
-        assertEquals(0, portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(portfolioDto), "TTWO"));
+        assertEquals(0, portfolioService.parseIfContainsSymbol(portfolioDto.getStocks(), "TTWO"));
     }
 
     @Test
     public void parseIfContainsSymbolShouldThrowResourceNotFoundExceptionIfSymbolIsNull() {
 
-        assertThrows(ResourceNotFoundException.class, () -> portfolioService.parseIfContainsSymbol(portfolioMapper.toEnity(portfolioDto), null));
+        assertThrows(ResourceNotFoundException.class, () -> portfolioService.parseIfContainsSymbol(portfolioDto.getStocks(), null));
     }
 
     @Test

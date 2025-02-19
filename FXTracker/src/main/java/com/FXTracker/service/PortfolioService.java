@@ -97,7 +97,7 @@ public class PortfolioService {
             throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
         }
 
-        addStock(portfolio, quantity, symbol);
+        addStock(portfolio.getStocks(), quantity, symbol);
         updatePortfolio(portfolio, symbol, quantity);
 
         return portfolioRepository.save(portfolio);
@@ -106,21 +106,19 @@ public class PortfolioService {
     /**
      * handles adding stocks to stocks in portfolio
      *
-     * @param portfolio represents user portfolio of stocks
+     * @param stocks represents user portfolio of stocks
      * @param quantity  represents the amount of stock bought/sold
      * @param symbol    represents stock symbol
      */
-    public void addStock(Portfolio portfolio, String quantity, String symbol) {
+    public void addStock(Map<String, String> stocks, String quantity, String symbol) {
 
         int traded = Integer.parseInt(quantity);
 
-        int sum = parseIfContainsSymbol(portfolio, symbol) + traded;
-
-        Map<String, String> stocks = portfolio.getStocks();
+        int sum = parseIfContainsSymbol(stocks, symbol) + traded;
 
         if (sum >= 0) {
-            if (stocks.containsKey(symbol)) portfolio.getStocks().put(symbol, String.valueOf(sum));
-            else portfolio.getStocks().put(symbol, quantity);
+            if (stocks.containsKey(symbol)) stocks.put(symbol, String.valueOf(sum));
+            else stocks.put(symbol, quantity);
         } else
             throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
 
@@ -129,15 +127,13 @@ public class PortfolioService {
     /**
      * handles parsing number of owned and existing stocks from String to Integer
      *
-     * @param portfolio represents user portfolio of stocks
+     * @param stocks represents user portfolio of stocks
      * @param symbol    represents stock symbol
      * @return int value of owned stock if symbol exists in portfolio
      */
-    public Integer parseIfContainsSymbol(Portfolio portfolio, String symbol) {
+    public Integer parseIfContainsSymbol(Map<String, String> stocks, String symbol) {
 
         int owned = 0;
-
-        Map<String, String> stocks = portfolio.getStocks();
 
         if (stocks.containsKey(symbol)) {
             owned = Integer.parseInt(stocks.get(symbol));
