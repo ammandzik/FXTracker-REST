@@ -30,7 +30,6 @@ class PortfolioServiceTest {
     @Autowired
     private PortfolioMapper portfolioMapper;
 
-
     @BeforeAll
     static void setUp() {
 
