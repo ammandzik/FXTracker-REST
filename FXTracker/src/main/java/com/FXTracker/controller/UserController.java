@@ -5,8 +5,11 @@ import com.FXTracker.model.User;
 import com.FXTracker.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,7 +22,7 @@ class UserController {
     @PostMapping
     public ResponseEntity<User> createNewUser(@RequestBody UserDto userDto) {
 
-        return ResponseEntity.ok(userService.createUser(userDto));
+        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
 
     }
 

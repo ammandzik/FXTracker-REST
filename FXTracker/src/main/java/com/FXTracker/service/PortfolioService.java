@@ -39,13 +39,16 @@ public class PortfolioService {
 
         Map<String, String> stocks = new HashMap<>();
 
-        var entity = portfolioMapper.toEnity(portfolioDto);
+        try {
+            var entity = portfolioMapper.toEnity(portfolioDto);
+            entity.setStocks(stocks);
+            portfolioRepository.save(entity);
 
-        entity.setStocks(stocks);
+            return entity;
 
-        portfolioRepository.save(entity);
-
-        return entity;
+        } catch (NullPointerException exception) {
+            throw new ResourceNotFoundException("No portfolio was found.");
+        }
     }
 
     /**
@@ -62,23 +65,15 @@ public class PortfolioService {
     }
 
     /**
-     * Updates user portfolio
+     * updates balance on portfolio
      *
-     * @param userId       takes user ID as a parameter to find connected portfolio
-     * @param portfolioDto takes object of class PortfolioDto as a parameter
+     * @param portfolio entity of class Portfolio
+     * @param symbol    represents stock symbol
+     * @param quantity  represents quantity of stocks
      */
-    public void updatePortfolio(String userId, PortfolioDto portfolioDto) {
+    public void updatePortfolio(Portfolio portfolio, String symbol, String quantity) {
 
-        var portfolio = portfolioRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found for user id: %s ", userId)));
-
-        portfolio.setStocks(portfolioDto.getStocks());
-        portfolio.setBalance(portfolioDto.getBalance());
-        portfolio.setProfit(portfolioDto.getProfit());
-        portfolio.setProfit(portfolioDto.getLoss());
-
-        portfolioRepository.save(portfolio);
-
+        countProfitAndLoss(portfolio, symbol, quantity);
     }
 
     /**
@@ -88,8 +83,6 @@ public class PortfolioService {
      * @param symbol   represents stock symbol
      * @param quantity represents stock quantity
      * @return updated portfolio
-     * @variable traded represents quantity of bought/sold stocks
-     * @variable sum represents owned number of stocks + traded number of stocks
      */
     @Transactional
     public Portfolio updateStocksInPortfolio(String userId, String symbol, String quantity) {
@@ -107,12 +100,8 @@ public class PortfolioService {
             throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
         }
 
-        int traded = Integer.parseInt(quantity);
-
-        int sum = parseIfContainsSymbol(portfolio, symbol) + traded;
-
-        addStock(portfolio, sum, quantity, symbol);
-        portfolio.setBalance(countBalance(portfolio));
+        addStock(portfolio.getStocks(), quantity, symbol);
+        updatePortfolio(portfolio, symbol, quantity);
 
         return portfolioRepository.save(portfolio);
     }
@@ -120,20 +109,19 @@ public class PortfolioService {
     /**
      * handles adding stocks to stocks in portfolio
      *
-     * @param portfolio represents user portfolio of stocks
-     * @param sum       represents sum of quantity for buying/selling stock and owned stock
-     * @param quantity  represents the amount of stock bought/sold
-     * @param symbol    represents stock symbol
+     * @param stocks   represents user portfolio of stocks
+     * @param quantity represents the amount of stock bought/sold
+     * @param symbol   represents stock symbol
      */
-    public void addStock(Portfolio portfolio, int sum, String quantity, String symbol) {
+    public void addStock(Map<String, String> stocks, String quantity, String symbol) {
 
-        Map<String, String> stocks = portfolio.getStocks();
+        int traded = Integer.parseInt(quantity);
+
+        int sum = parseIfContainsSymbol(stocks, symbol) + traded;
 
         if (sum >= 0) {
-            if (stocks.containsKey(symbol)) {
-                portfolio.getStocks().put(symbol, String.valueOf(sum));
-
-            } else portfolio.getStocks().put(symbol, quantity);
+            if (stocks.containsKey(symbol)) stocks.put(symbol, String.valueOf(sum));
+            else stocks.put(symbol, quantity);
         } else
             throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
 
@@ -142,22 +130,47 @@ public class PortfolioService {
     /**
      * handles parsing number of owned and existing stocks from String to Integer
      *
-     * @param portfolio represents user portfolio of stocks
-     * @param symbol    represents stock symbol
+     * @param stocks represents user portfolio of stocks
+     * @param symbol represents stock symbol
      * @return int value of owned stock if symbol exists in portfolio
      */
-    public int parseIfContainsSymbol(Portfolio portfolio, String symbol) {
+    public Integer parseIfContainsSymbol(Map<String, String> stocks, String symbol) {
 
         int owned = 0;
 
-        Map<String, String> stocks = portfolio.getStocks();
+        if (symbol == null) {
+            throw new ResourceNotFoundException(String.format("Given symbol was null: %s", symbol));
+        }
 
         if (stocks.containsKey(symbol)) {
             owned = Integer.parseInt(stocks.get(symbol));
             return owned;
         }
-
         return owned;
+    }
+
+    /**
+     * @param portfolio represents user portfolio of stocks
+     * @param symbol    represents stock symbol
+     * @param quantity  represents quantity of stocks
+     * @return result between balance and budget spent
+     */
+    public double countProfitAndLoss(Portfolio portfolio, String symbol, String quantity) {
+
+        double budgetSpent = countBudgetSpent(portfolio, symbol, quantity);
+        double balance = countBalance(portfolio);
+
+        double result = balance - budgetSpent;
+
+        if (result == 0) {
+            portfolio.setProfit(0d);
+            portfolio.setLoss(0d);
+        }
+
+        if (result > 0) portfolio.setProfit(result);
+        else if (result < 0) portfolio.setLoss(result);
+
+        return result;
     }
 
     /**
@@ -178,7 +191,30 @@ public class PortfolioService {
             balance += Double.parseDouble(entry.getValue()) * price;
 
         }
+        portfolio.setBalance(balance);
         return balance;
+    }
+
+    /**
+     * Counts user budget spent on stocks
+     *
+     * @param portfolio takes portfolio as parameter
+     * @param symbol    represents stock symbol
+     * @param quantity  represents the amount of stock bought/sold
+     * @return budgetSpent spent on stocks
+     */
+    public double countBudgetSpent(Portfolio portfolio, String symbol, String quantity) {
+
+        double budgetSpent = 0;
+
+        var stock = stockService.getStock(symbol);
+
+        double price = Double.parseDouble(stock.getPrice());
+
+        budgetSpent += (Double.parseDouble(quantity) * price) + portfolio.getFundsSpent();
+        portfolio.setFundsSpent(budgetSpent);
+
+        return budgetSpent;
     }
 
     /**
@@ -190,9 +226,8 @@ public class PortfolioService {
 
         List<Portfolio> portfolios = portfolioRepository.findAll();
 
-        if (portfolios.isEmpty()) {
-            throw new ResourceNotFoundException("No portfolios were found.");
-        }
+        if (portfolios.isEmpty()) throw new ResourceNotFoundException("No portfolios were found.");
+
         return portfolios
                 .stream()
                 .map(portfolioMapper::toDto)

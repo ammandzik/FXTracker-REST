@@ -20,6 +20,7 @@ public class PortfolioDto {
     private String userId;
     private Map<String, String> stocks;
     private Double balance;
+    private Double fundsSpent;
     private Double profit;
     private Double loss;
 
