@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-public class MongoIT {
+class MongoIT {
     @DisplayName("given object to save"
             + " when save object using MongoDB template"
             + " then object is saved")
     @Test
-    public void test(@Autowired MongoTemplate mongoTemplate) {
+    void test(@Autowired MongoTemplate mongoTemplate) {
         // given
         DBObject objectToSave = BasicDBObjectBuilder.start()
                 .add("key", "value")

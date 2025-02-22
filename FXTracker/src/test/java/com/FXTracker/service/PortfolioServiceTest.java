@@ -44,10 +44,10 @@ class PortfolioServiceTest {
     @BeforeEach
     public void setUpMongoDB() {
 
-        mongoTemplate.save(new Stock("1", "HSBC", "56.08", "56.08", "0,20", null), "stocks");
-        mongoTemplate.save(new Stock("2", "TTWO", "211.65", "211.65", "-1.67", null), "stocks");
-        mongoTemplate.save(new Stock("3", "TSLA", "337.80", "337.80", "-4.68", null), "stocks");
-        mongoTemplate.save(new Stock("4", "AAPL", "245.55", "245.55", "-0.28", null), "stocks");
+        mongoTemplate.save(new Stock("1", "HSBC", "50.00", "50.00", "0,20", null), "stocks");
+        mongoTemplate.save(new Stock("2", "TTWO", "200.00", "200.000", "-1.67", null), "stocks");
+        mongoTemplate.save(new Stock("3", "TSLA", "330.00", "330.00", "-4.68", null), "stocks");
+        mongoTemplate.save(new Stock("4", "AAPL", "250.00", "250.00", "-0.28", null), "stocks");
 
         mongoTemplate.save(portfolioDto, "portfolios");
         mongoTemplate.save(DataTest.createPortfolioDto(stocks, "2", 20444d, 15023d, 0d, 1000d), "portfolios");
@@ -141,12 +141,26 @@ class PortfolioServiceTest {
     @Test
     void countBalance() {
 
-        // to be written
+        //given
+        var portfolio =  portfolioMapper.toEnity(portfolioDto);
+
+        //then
+        assertEquals(6300.0, portfolioService.countBalance(portfolio), "Balance should be equal for portfolio.");
+
+
     }
 
+    //refactor
     @Test
-    void trackFundsSpentOnStocks() {
+    void countBudgetSpentTest() {
 
-        //to be written
+        //given
+        var portfolio = portfolioMapper.toEnity(portfolioDto);
+
+        //when
+        portfolioService.countBudgetSpent(portfolio, "AAPL", "15");
+
+        //then
+        assertEquals(3750, portfolioService.countBudgetSpent(portfolio, "AAPL", "15"));
     }
 }
