@@ -2,17 +2,13 @@ package com.FXTracker.utils;
 
 import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.DTO.StockDto;
-import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
+import com.FXTracker.model.Stock;
 import com.FXTracker.model.User;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 public class DataTest {
 
@@ -31,13 +27,13 @@ public class DataTest {
 
         return StockDto.builder()
                 .id(null)
-                .symbol("TTWO")
+                .symbol("Test Stock")
                 .price("185.60")
                 .changePercent("0.66")
                 .build();
     }
 
-    public static PortfolioDto createPortfolioDto(Map<String, String> stocks, String userId, Double balance, Double profit, Double loss) {
+    public static PortfolioDto createPortfolioDto(Map<String, String> stocks, String userId, Double balance, Double profit, Double loss, Double fundsSpent) {
 
         return PortfolioDto.builder()
                 .userId(DataTest.createUser().getId())
@@ -46,18 +42,28 @@ public class DataTest {
                 .balance(balance)
                 .profit(profit)
                 .loss(loss)
+                .fundsSpent(fundsSpent)
                 .build();
     }
 
-    public static List<Portfolio> createPortfolioList(){
+    public static List<Portfolio> createPortfolioList() {
 
-        List<Portfolio> portfolios = List.of(
-                new Portfolio("1", "1", new HashMap<>(), 100d, 100d, 100d,100d),
-                new Portfolio("2", "2", new HashMap<>(), 100d, 100d, 100d,100d)
+        return List.of(
+                new Portfolio("1", "1", new HashMap<>(), 100d, 100d, 100d, 100d),
+                new Portfolio("2", "2", new HashMap<>(), 100d, 100d, 100d, 100d)
 
         );
 
-        return portfolios;
+    }
+
+    public static List<Stock> createTestStocksList() {
+
+        return List.of(
+                new Stock("1", "HSBC","56.08","56.08","0,20",null),
+                new Stock("2", "TTWO","211.65","211.65","-1.67",null),
+                new Stock("3", "TSLA","337.80","337.80","-4.68",null)
+
+        );
 
     }
 

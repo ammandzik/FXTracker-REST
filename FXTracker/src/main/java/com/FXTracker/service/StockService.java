@@ -69,7 +69,6 @@ public class StockService {
         var updated = getStock(symbol);
 
         try {
-
             stock.setId(updated.getId());
 
         } catch (Exception ex) {

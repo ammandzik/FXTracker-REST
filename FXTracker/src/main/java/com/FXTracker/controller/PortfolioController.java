@@ -5,6 +5,7 @@ import com.FXTracker.model.Portfolio;
 import com.FXTracker.service.PortfolioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +22,11 @@ class PortfolioController {
     @PostMapping
     public ResponseEntity<Portfolio> createNewPortfolio(@RequestBody PortfolioDto portfolio) {
 
-        return ResponseEntity.ok(portfolioService.createPortfolio(portfolio));
+        return new ResponseEntity<>(portfolioService.createPortfolio(portfolio), HttpStatus.CREATED);
 
     }
 
-    //todo should find id of logged in user
+    //todo when security applied, should find id of logged in user
     @PutMapping("/trade")
     public void tradeStocks(@RequestParam String userId, @RequestParam String symbol, @RequestParam String quantity) {
 

@@ -39,13 +39,16 @@ public class PortfolioService {
 
         Map<String, String> stocks = new HashMap<>();
 
-        var entity = portfolioMapper.toEnity(portfolioDto);
+        try {
+            var entity = portfolioMapper.toEnity(portfolioDto);
+            entity.setStocks(stocks);
+            portfolioRepository.save(entity);
 
-        entity.setStocks(stocks);
+            return entity;
 
-        portfolioRepository.save(entity);
-
-        return entity;
+        } catch (NullPointerException exception) {
+            throw new ResourceNotFoundException("No portfolio was found.");
+        }
     }
 
     /**
@@ -106,9 +109,9 @@ public class PortfolioService {
     /**
      * handles adding stocks to stocks in portfolio
      *
-     * @param stocks represents user portfolio of stocks
-     * @param quantity  represents the amount of stock bought/sold
-     * @param symbol    represents stock symbol
+     * @param stocks   represents user portfolio of stocks
+     * @param quantity represents the amount of stock bought/sold
+     * @param symbol   represents stock symbol
      */
     public void addStock(Map<String, String> stocks, String quantity, String symbol) {
 
@@ -128,14 +131,14 @@ public class PortfolioService {
      * handles parsing number of owned and existing stocks from String to Integer
      *
      * @param stocks represents user portfolio of stocks
-     * @param symbol    represents stock symbol
+     * @param symbol represents stock symbol
      * @return int value of owned stock if symbol exists in portfolio
      */
     public Integer parseIfContainsSymbol(Map<String, String> stocks, String symbol) {
 
         int owned = 0;
 
-        if(symbol == null){
+        if (symbol == null) {
             throw new ResourceNotFoundException(String.format("Given symbol was null: %s", symbol));
         }
 

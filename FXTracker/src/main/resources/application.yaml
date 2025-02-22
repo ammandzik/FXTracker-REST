@@ -19,10 +19,6 @@ spring:
     ansi:
       enabled: always
 
-logging:
-  level:
-    root: info
-
   file:
     name: logs/application.log
   pattern:
