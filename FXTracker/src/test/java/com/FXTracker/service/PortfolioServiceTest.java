@@ -44,7 +44,6 @@ class PortfolioServiceTest {
     @BeforeEach
     public void setUpMongoDB() {
 
-
         mongoTemplate.save(new Stock("1", "HSBC", "56.08", "56.08", "0,20", null), "stocks");
         mongoTemplate.save(new Stock("2", "TTWO", "211.65", "211.65", "-1.67", null), "stocks");
         mongoTemplate.save(new Stock("3", "TSLA", "337.80", "337.80", "-4.68", null), "stocks");
@@ -77,9 +76,6 @@ class PortfolioServiceTest {
 
         //given
         var portfolio = portfolioMapper.toEnity(portfolioDto);
-
-        //given
-        var map = portfolioDto.getStocks();
 
         portfolioService.updatePortfolio(portfolio, "HSBC", "20");
 
