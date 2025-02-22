@@ -37,7 +37,7 @@ public class StockService {
             stockRepository.save(stockMapper.toStock(stockDto));
 
         } catch (Exception ex) {
-            throw new StockServiceException("Error occurred while saving a stock.");
+            throw new StockServiceException("Error occurred while saving a stock.", ex);
         }
         return stockDto;
     }

@@ -9,6 +9,7 @@ import org.testcontainers.containers.MongoDBContainer;
 
 @TestConfiguration
 public class TestConfig {
+
     @Bean
     public MongoDBContainer mongoDBContainer() {
         MongoDBContainer container = MongoDBTestContainer.getInstance();
@@ -17,8 +18,10 @@ public class TestConfig {
     }
 
     @Bean
-    public MongoTemplate mongoTemplate(MongoDBContainer mongoDBContainer) {
-        return new MongoTemplate(new SimpleMongoClientDatabaseFactory(mongoDBContainer.getReplicaSetUrl()));
+    public MongoTemplate mongoTemplate() {
+        String uri = MongoDBTestContainer.getInstance().getReplicaSetUrl();
+        System.out.println("Using MongoDB URI in TestConfig: " + uri);
+        return new MongoTemplate(new SimpleMongoClientDatabaseFactory(uri));
     }
 
 }
