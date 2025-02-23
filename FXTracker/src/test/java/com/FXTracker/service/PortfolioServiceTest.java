@@ -139,9 +139,16 @@ class PortfolioServiceTest {
     }
 
     @Test
-    void countBalance() {
+    void countBalanceTest() {
 
-        // to be written
+        // given
+        var portfolio = portfolioMapper.toEnity(portfolioDto);
+
+        //when
+        double balance = portfolioService.countBalance(portfolio);
+
+        //then
+        assertEquals(6394.30, balance);
     }
 
     @Test
