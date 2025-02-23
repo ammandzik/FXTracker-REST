@@ -157,6 +157,7 @@ class PortfolioServiceTest {
         Double balance = portfolioService.countBalance(portfolio);
 
         //then
+        assertNotNull(balance, "Balance should not be null");
         assertEquals(6300.0, balance, "Balance should be equal for portfolio.");
         assertTrue(balance > 0, "Balance should be more than 0.");
 
@@ -170,11 +171,12 @@ class PortfolioServiceTest {
         var portfolio = portfolioMapper.toEnity(portfolioDto);
 
         //when
-        double budget = portfolioService.countBudgetSpent(portfolio, "AAPL", "-5");
+        Double budget = portfolioService.countBudgetSpent(portfolio, "AAPL", "-5");
 
         //then - actual budget spent on owned stocks + budget spent on  recently bought stocks
-        assertEquals(1750, budget, "Budget should be equal to 1750.");
+        assertNotNull(budget, "Budget should not be null");
         assertTrue(budget > 0, "Budget should be more than 0.");
+        assertEquals(1750, budget, "Budget should be equal to 1750.");
 
     }
 

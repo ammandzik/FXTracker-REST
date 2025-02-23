@@ -177,7 +177,7 @@ public class PortfolioService {
      * @param portfolio takes portfolio as parameter
      * @return balance counted based on the amount and price of the stock
      */
-    public double countBalance(Portfolio portfolio) {
+    public Double countBalance(Portfolio portfolio) {
 
         Map<String, String> stocks = portfolio.getStocks();
 
@@ -203,7 +203,7 @@ public class PortfolioService {
      * @param quantity  represents the amount of stock bought/sold
      * @return budgetSpent spent on stocks
      */
-    public double countBudgetSpent(Portfolio portfolio, String symbol, String quantity) {
+    public Double countBudgetSpent(Portfolio portfolio, String symbol, String quantity) {
 
         double budgetSpent = 0;
 
@@ -233,6 +233,5 @@ public class PortfolioService {
                 .map(portfolioMapper::toDto)
                 .toList();
     }
-
 
 }
