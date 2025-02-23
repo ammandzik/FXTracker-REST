@@ -179,5 +179,4 @@ class PortfolioServiceTest {
         assertEquals(1750, budget, "Budget should be equal to 1750.");
 
     }
-
 }

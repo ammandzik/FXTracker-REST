@@ -113,6 +113,8 @@ public class PortfolioService {
      * @param quantity represents the amount of stock bought/sold
      * @param symbol   represents stock symbol
      */
+
+    //todo handle exceptions - null or empty values
     public void addStock(Map<String, String> stocks, String quantity, String symbol) {
 
         int traded = Integer.parseInt(quantity);
@@ -155,6 +157,8 @@ public class PortfolioService {
      * @param quantity  represents quantity of stocks
      * @return result between balance and budget spent
      */
+
+    //todo handle exceptions - null or empty values
     public double countProfitAndLoss(Portfolio portfolio, String symbol, String quantity) {
 
         double budgetSpent = countBudgetSpent(portfolio, symbol, quantity);
@@ -177,6 +181,8 @@ public class PortfolioService {
      * @param portfolio takes portfolio as parameter
      * @return balance counted based on the amount and price of the stock
      */
+
+    //todo handle exceptions - null or empty values
     public Double countBalance(Portfolio portfolio) {
 
         Map<String, String> stocks = portfolio.getStocks();
@@ -203,6 +209,8 @@ public class PortfolioService {
      * @param quantity  represents the amount of stock bought/sold
      * @return budgetSpent spent on stocks
      */
+
+    //todo handle exceptions - null or empty values
     public Double countBudgetSpent(Portfolio portfolio, String symbol, String quantity) {
 
         double budgetSpent = 0;
