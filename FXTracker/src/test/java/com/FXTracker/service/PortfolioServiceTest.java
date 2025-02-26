@@ -4,9 +4,8 @@ import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.exception.InsufficientStockException;
 import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.mapper.PortfolioMapper;
-import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Portfolio;
-import com.FXTracker.repository.StockRepository;
+import com.FXTracker.model.Stock;
 import com.FXTracker.utils.DataTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +48,10 @@ class PortfolioServiceTest {
     @BeforeEach
     public void setUpMongoDB() {
 
+        mongoTemplate.save(new Stock("1", "HSBC", "56.08", "56.08", "0,20", null), "stocks");
+        mongoTemplate.save(new Stock("2", "TTWO", "211.65", "211.65", "-1.67", null), "stocks");
+        mongoTemplate.save(new Stock("3", "TSLA", "337.80", "337.80", "-4.68", null), "stocks");
+        mongoTemplate.save(new Stock("4", "AAPL", "245.55", "245.55", "-0.28", null), "stocks");
         mongoTemplate.save((portfolio), "portfolios");
     }
 
