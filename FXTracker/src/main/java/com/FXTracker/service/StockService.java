@@ -52,16 +52,14 @@ public class StockService {
 
         if (stock.isEmpty()) {
             throw new StockNotFoundException(String.format("Stock was not found with given symbol: %s", symbol));
-
         } else {
             return stockMapper.toDto(stock.get());
-
         }
     }
 
     /**
      * @param symbol represents stock symbol
-     * @param stock takes object of class StockDto as a parameter
+     * @param stock  takes object of class StockDto as a parameter
      * @return updated object of class StockDto
      */
     public StockDto updateStock(String symbol, StockDto stock) {
