@@ -2,7 +2,9 @@ package com.FXTracker.service;
 
 import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.exception.InsufficientStockException;
+import com.FXTracker.exception.PortfolioServiceException;
 import com.FXTracker.exception.ResourceNotFoundException;
+import com.FXTracker.exception.StockServiceException;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.repository.PortfolioRepository;
@@ -25,6 +27,7 @@ import java.util.Map;
 @Service
 public class PortfolioService {
 
+    private static final String OPERATION_NOT_ALLOWED = "Operation could not be finished due to non existing values.";
     private final PortfolioRepository portfolioRepository;
     private final PortfolioMapper portfolioMapper;
     private final StockService stockService;
@@ -73,7 +76,12 @@ public class PortfolioService {
      */
     public void updatePortfolio(Portfolio portfolio, String symbol, String quantity) {
 
-        countProfitAndLoss(portfolio, symbol, quantity);
+        try {
+            countProfitAndLoss(portfolio, symbol, quantity);
+
+        } catch (Exception e) {
+            throw new PortfolioServiceException("Error occurred while updating portfolio.");
+        }
     }
 
     /**
@@ -113,20 +121,21 @@ public class PortfolioService {
      * @param quantity represents the amount of stock bought/sold
      * @param symbol   represents stock symbol
      */
-
-    //todo handle exceptions - null or empty values
     public void addStock(Map<String, String> stocks, String quantity, String symbol) {
 
-        int traded = Integer.parseInt(quantity);
+        try {
+            int traded = Integer.parseInt(quantity);
+            int sum = parseIfContainsSymbol(stocks, symbol) + traded;
 
-        int sum = parseIfContainsSymbol(stocks, symbol) + traded;
+            if (sum >= 0) {
+                if (stocks.containsKey(symbol)) stocks.put(symbol, String.valueOf(sum));
+                else stocks.put(symbol, quantity);
+            } else
+                throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
 
-        if (sum >= 0) {
-            if (stocks.containsKey(symbol)) stocks.put(symbol, String.valueOf(sum));
-            else stocks.put(symbol, quantity);
-        } else
-            throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
-
+        } catch (NullPointerException npe) {
+            throw new StockServiceException(OPERATION_NOT_ALLOWED);
+        }
     }
 
     /**
@@ -143,7 +152,6 @@ public class PortfolioService {
         if (symbol == null) {
             throw new ResourceNotFoundException(String.format("Given symbol was null: %s", symbol));
         }
-
         if (stocks.containsKey(symbol)) {
             owned = Integer.parseInt(stocks.get(symbol));
             return owned;
@@ -158,47 +166,50 @@ public class PortfolioService {
      * @return result between balance and budget spent
      */
 
-    //todo handle exceptions - null or empty values
     public double countProfitAndLoss(Portfolio portfolio, String symbol, String quantity) {
 
-        double budgetSpent = countBudgetSpent(portfolio, symbol, quantity);
-        double balance = countBalance(portfolio);
+        try {
+            double budgetSpent = countBudgetSpent(portfolio, symbol, quantity);
+            double balance = countBalance(portfolio);
+            double result = balance - budgetSpent;
 
-        double result = balance - budgetSpent;
+            if (result == 0) {
+                portfolio.setProfit(0d);
+                portfolio.setLoss(0d);
+            }
+            if (result > 0) portfolio.setProfit(result);
+            else if (result < 0) portfolio.setLoss(result);
 
-        if (result == 0) {
-            portfolio.setProfit(0d);
-            portfolio.setLoss(0d);
+            return result;
+
+        } catch (NullPointerException npe) {
+            throw new StockServiceException(OPERATION_NOT_ALLOWED);
         }
-
-        if (result > 0) portfolio.setProfit(result);
-        else if (result < 0) portfolio.setLoss(result);
-
-        return result;
     }
 
     /**
      * @param portfolio takes portfolio as parameter
      * @return balance counted based on the amount and price of the stock
      */
-
-    //todo handle exceptions - null or empty values
     public Double countBalance(Portfolio portfolio) {
 
-        Map<String, String> stocks = portfolio.getStocks();
+        try {
+            Map<String, String> stocks = portfolio.getStocks();
 
-        double balance = 0;
+            double balance = 0;
 
-        for (Map.Entry<String, String> entry : stocks.entrySet()) {
+            for (Map.Entry<String, String> entry : stocks.entrySet()) {
 
-            var stock = stockService.getStock(entry.getKey());
+                var stock = stockService.getStock(entry.getKey());
+                double price = Double.parseDouble(stock.getPrice());
+                balance += Double.parseDouble(entry.getValue()) * price;
+            }
+            portfolio.setBalance(balance);
+            return balance;
 
-            double price = Double.parseDouble(stock.getPrice());
-            balance += Double.parseDouble(entry.getValue()) * price;
-
+        } catch (NullPointerException npe) {
+            throw new StockServiceException(OPERATION_NOT_ALLOWED);
         }
-        portfolio.setBalance(balance);
-        return balance;
     }
 
     /**
@@ -209,20 +220,20 @@ public class PortfolioService {
      * @param quantity  represents the amount of stock bought/sold
      * @return budgetSpent spent on stocks
      */
-
-    //todo handle exceptions - null or empty values
     public Double countBudgetSpent(Portfolio portfolio, String symbol, String quantity) {
 
-        double budgetSpent = 0;
+        try {
+            double budgetSpent = 0;
+            var stock = stockService.getStock(symbol);
+            double price = Double.parseDouble(stock.getPrice());
+            budgetSpent += (Double.parseDouble(quantity) * price) + portfolio.getFundsSpent();
+            portfolio.setFundsSpent(budgetSpent);
 
-        var stock = stockService.getStock(symbol);
+            return budgetSpent;
 
-        double price = Double.parseDouble(stock.getPrice());
-
-        budgetSpent += (Double.parseDouble(quantity) * price) + portfolio.getFundsSpent();
-        portfolio.setFundsSpent(budgetSpent);
-
-        return budgetSpent;
+        } catch (NullPointerException npe) {
+            throw new StockServiceException(OPERATION_NOT_ALLOWED);
+        }
     }
 
     /**
