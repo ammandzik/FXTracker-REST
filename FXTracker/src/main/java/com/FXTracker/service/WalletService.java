@@ -1,6 +1,7 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.WalletDto;
+import com.FXTracker.exception.WalletServiceException;
 import com.FXTracker.mapper.WalletMapper;
 import com.FXTracker.model.Wallet;
 import com.FXTracker.repository.WalletRepository;
@@ -20,15 +21,20 @@ public class WalletService {
 
     /**
      * handles creating new wallet
+     *
      * @param walletDto takes object of class WalletDto as a parameter
      * @return Wallet entity
      */
     public Wallet createWallet(WalletDto walletDto) {
 
-        var entity = walletMapper.toEntity(walletDto);
+        try {
+            var entity = walletMapper.toEntity(walletDto);
+            walletRepository.save(entity);
+            return entity;
 
-        walletRepository.save(entity);
+        } catch (NullPointerException npe) {
+            throw new WalletServiceException("Error while creating a wallet occurred.");
 
-        return entity;
+        }
     }
 }

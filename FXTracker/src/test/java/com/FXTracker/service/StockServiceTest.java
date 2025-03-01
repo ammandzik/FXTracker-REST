@@ -82,7 +82,7 @@ class StockServiceTest {
         var entityStock = stockService.getStock("TTWO");
 
         //when
-        stock = stockService.updateStock("TTWO", entityStock);
+        stock = stockService.fetchUpdatedStock("TTWO");
 
         //then
         assertNotNull(stock, "Stock should not be null.");

@@ -47,7 +47,7 @@ public class PortfolioService {
             return entity;
 
         } catch (NullPointerException exception) {
-            throw new ResourceNotFoundException("No portfolio was found.");
+            throw new ResourceNotFoundException("No portfolio is existing.");
         }
     }
 
