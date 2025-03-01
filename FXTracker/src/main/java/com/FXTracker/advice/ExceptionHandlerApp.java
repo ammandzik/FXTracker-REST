@@ -66,5 +66,13 @@ public class ExceptionHandlerApp {
 
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
     }
+    @ExceptionHandler(PortfolioServiceException.class)
+    public ResponseEntity<Map<String, String>> handleStockServiceServiceError(PortfolioServiceException ex) {
+
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
 
 }
