@@ -7,9 +7,7 @@ import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.Stock;
 import com.FXTracker.utils.DataTest;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -146,7 +144,6 @@ class PortfolioServiceTest {
 
 
     }
-
     @Test
     void countBudgetSpentTest() {
 
