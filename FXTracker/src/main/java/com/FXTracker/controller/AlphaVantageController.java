@@ -25,10 +25,10 @@ class AlphaVantageController {
 
         var stock = alphaVantageService.getSingleStockDataFromAPI(ticker);
 
-        if(stockService.stockExistsInDataBase(ticker)){
+        if (stockService.stockExistsInDataBase(ticker)) {
 
             stockService.updateStock(ticker, stock);
-        }else {
+        } else {
             stockService.addStock(stock);
         }
 

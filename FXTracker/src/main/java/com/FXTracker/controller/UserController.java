@@ -9,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("api/user")
@@ -22,7 +20,7 @@ class UserController {
     @PostMapping
     public ResponseEntity<User> createNewUser(@RequestBody UserDto userDto) {
 
-        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDto));
 
     }
 
@@ -40,7 +38,7 @@ class UserController {
 
         var user = userService.getUserById(id);
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
     }
 
 }
