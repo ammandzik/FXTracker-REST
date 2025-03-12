@@ -7,7 +7,9 @@ import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.Stock;
 import com.FXTracker.utils.DataTest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -40,8 +42,9 @@ class PortfolioServiceTest {
         stocks.put("AAPL", "10");
         stocks.put("HSBC", "10");
         stocks.put("TSLA", "10");
-
         portfolio = DataTest.createPortfolioDto(stocks, "1", 0d, 0d, 0d, 0d);
+
+
     }
 
     @BeforeEach

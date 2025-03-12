@@ -53,10 +53,8 @@ public class StockService {
 
         if (stock.isEmpty()) {
             throw new StockNotFoundException(String.format("Stock was not found with given symbol: %s", symbol));
-
         } else {
             return stockMapper.toDto(stock.get());
-
         }
     }
 
