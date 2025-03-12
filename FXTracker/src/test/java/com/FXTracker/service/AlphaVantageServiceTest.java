@@ -57,10 +57,9 @@ class AlphaVantageServiceTest {
     }
 
     @Test
-    public void stocksWereNotFoundWithGivenKeyword() {
+    void stocksWereNotFoundWithGivenKeyword() {
 
         assertThrows(StockNotFoundException.class, () -> alphaVantageService.findAllStocksByKeywordInAPI(NON_EXISTING_STOCK), "Should throw StockNotFoundException while none of the stocks contains provided phrase.");
-
 
     }
 

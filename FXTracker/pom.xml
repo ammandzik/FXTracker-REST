@@ -132,8 +132,8 @@
         <!-- Flapdoodle -->
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>4.18.1</version>
+            <artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
+            <version>4.5.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -154,6 +154,7 @@
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.1.0</version>
         </dependency>
+
 
 
 

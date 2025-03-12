@@ -1,6 +1,5 @@
 package com.FXTracker.utils;
 
-import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.DTO.StockDto;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.Stock;
@@ -33,9 +32,9 @@ public class DataTest {
                 .build();
     }
 
-    public static PortfolioDto createPortfolioDto(Map<String, String> stocks, String userId, Double balance, Double profit, Double loss, Double fundsSpent) {
+    public static Portfolio createPortfolioDto(Map<String, String> stocks, String userId, Double balance, Double profit, Double loss, Double fundsSpent) {
 
-        return PortfolioDto.builder()
+        return Portfolio.builder()
                 .userId(DataTest.createUser().getId())
                 .stocks(stocks)
                 .userId(userId)
@@ -59,9 +58,9 @@ public class DataTest {
     public static List<Stock> createTestStocksList() {
 
         return List.of(
-                new Stock("1", "HSBC","56.08","56.08","0,20",null),
-                new Stock("2", "TTWO","211.65","211.65","-1.67",null),
-                new Stock("3", "TSLA","337.80","337.80","-4.68",null)
+                new Stock("1", "HSBC", "56.08", "56.08", "0,20", null),
+                new Stock("2", "TTWO", "211.65", "211.65", "-1.67", null),
+                new Stock("3", "TSLA", "337.80", "337.80", "-4.68", null)
 
         );
 
