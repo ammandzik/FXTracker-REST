@@ -1,9 +1,6 @@
 package com.FXTracker.utils;
 
-import com.FXTracker.DTO.PortfolioDto;
 import com.FXTracker.DTO.StockDto;
-import com.FXTracker.DTO.WalletDto;
-import com.FXTracker.model.Currency;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.Stock;
 import com.FXTracker.model.User;
@@ -35,9 +32,9 @@ public class DataTest {
                 .build();
     }
 
-    public static PortfolioDto createPortfolioDto(Map<String, String> stocks, String userId, Double balance, Double profit, Double loss, Double fundsSpent) {
+    public static Portfolio createPortfolioDto(Map<String, String> stocks, String userId, Double balance, Double profit, Double loss, Double fundsSpent) {
 
-        return PortfolioDto.builder()
+        return Portfolio.builder()
                 .userId(DataTest.createUser().getId())
                 .stocks(stocks)
                 .userId(userId)
@@ -53,7 +50,9 @@ public class DataTest {
         return List.of(
                 new Portfolio("1", "1", new HashMap<>(), 100d, 100d, 100d, 100d),
                 new Portfolio("2", "2", new HashMap<>(), 100d, 100d, 100d, 100d)
+
         );
+
     }
 
     public static List<Stock> createTestStocksList() {
@@ -62,16 +61,10 @@ public class DataTest {
                 new Stock("1", "HSBC", "56.08", "56.08", "0,20", null),
                 new Stock("2", "TTWO", "211.65", "211.65", "-1.67", null),
                 new Stock("3", "TSLA", "337.80", "337.80", "-4.68", null)
+
         );
+
     }
 
-    public static WalletDto createWalletDto(){
 
-        return WalletDto.builder()
-                .id("1")
-                .currency(Currency.USD.name())
-                .userId("1")
-                .balance(0F)
-                .build();
-    }
 }

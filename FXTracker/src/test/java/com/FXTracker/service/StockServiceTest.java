@@ -4,7 +4,6 @@ import com.FXTracker.DTO.StockDto;
 import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.model.Stock;
 import com.FXTracker.utils.DataTest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +34,6 @@ class StockServiceTest {
         mongoTemplate.save(new Stock("2", "TTWO", "211.65", "211.65", "-1.67", null), "stocks");
         mongoTemplate.save(new Stock("3", "TSLA", "337.80", "337.80", "-4.68", null), "stocks");
 
-    }
-
-    @AfterEach
-    public void cleanUpMongoDB() {
-
-        mongoTemplate.dropCollection(Stock.class);
     }
 
     @Test
@@ -82,7 +75,7 @@ class StockServiceTest {
         var entityStock = stockService.getStock("TTWO");
 
         //when
-        stock = stockService.fetchUpdatedStock("TTWO");
+        stock = stockService.updateStock("TTWO", entityStock);
 
         //then
         assertNotNull(stock, "Stock should not be null.");

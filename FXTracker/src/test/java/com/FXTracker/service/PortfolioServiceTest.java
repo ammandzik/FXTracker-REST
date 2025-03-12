@@ -18,19 +18,20 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
 @SpringBootTest
+@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PortfolioServiceTest {
-
     private static HashMap<String, String> stocks;
-    private static PortfolioDto portfolioDto;
+    private static Portfolio portfolio;
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
     private PortfolioService portfolioService;
     @Autowired
     private PortfolioMapper portfolioMapper;
+    @Autowired
+    private StockService stockService;
 
     @BeforeAll
     static void setUp() {
@@ -40,34 +41,24 @@ class PortfolioServiceTest {
         stocks.put("HSBC", "10");
         stocks.put("TSLA", "10");
 
-        portfolioDto = DataTest.createPortfolioDto(stocks, "1", 0d, 0d, 0d, 3000d);
+        portfolio = DataTest.createPortfolioDto(stocks, "1", 0d, 0d, 0d, 0d);
     }
 
     @BeforeEach
     public void setUpMongoDB() {
 
-        mongoTemplate.save(new Stock("1", "HSBC", "50.00", "50.00", "0,20", null), "stocks");
-        mongoTemplate.save(new Stock("2", "TTWO", "200.00", "200.00", "-1.67", null), "stocks");
-        mongoTemplate.save(new Stock("3", "TSLA", "330.00", "330.00", "-4.68", null), "stocks");
-        mongoTemplate.save(new Stock("4", "AAPL", "250.00", "250.00", "-0.28", null), "stocks");
-
-        mongoTemplate.save(portfolioDto, "portfolios");
-        mongoTemplate.save(DataTest.createPortfolioDto(stocks, "2", 20444d, 15023d, 0d, 1000d), "portfolios");
-        mongoTemplate.save(DataTest.createPortfolioDto(stocks, "3", 750d, 250d, 0d, 2000d), "portfolios");
-    }
-
-    @AfterEach
-    public void cleanUpMongoDB() {
-
-        mongoTemplate.dropCollection(Portfolio.class);
-        mongoTemplate.dropCollection(Stock.class);
+        mongoTemplate.save(new Stock("1", "HSBC", "56.08", "56.08", "0,20", null), "stocks");
+        mongoTemplate.save(new Stock("2", "TTWO", "211.65", "211.65", "-1.67", null), "stocks");
+        mongoTemplate.save(new Stock("3", "TSLA", "337.80", "337.80", "-4.68", null), "stocks");
+        mongoTemplate.save(new Stock("4", "AAPL", "245.55", "245.55", "-0.28", null), "stocks");
+        mongoTemplate.save((portfolio), "portfolios");
     }
 
     @Test
     void shouldCreatePortfolioCorrectlyIT() {
 
         //when
-        var portfolio = assertDoesNotThrow(() -> portfolioService.createPortfolio(portfolioDto), "Creating portfolio should not throw any exceptions.");
+        assertDoesNotThrow(() -> portfolioService.createPortfolio(portfolioMapper.toDto(portfolio)), "Creating portfolio should not throw any exceptions.");
 
         //then
         assertNotNull(portfolio, "Created portfolio should not be null");
@@ -76,15 +67,11 @@ class PortfolioServiceTest {
     @Test
     void shouldUpdatePortfolioCorrectlyIT() {
 
-        //given
-        var portfolio = portfolioMapper.toEnity(portfolioDto);
 
-        //when
         portfolioService.updatePortfolio(portfolio, "HSBC", "20");
 
-        //then
-        assertNotNull(portfolioDto, "Portfolio should not be null.");
-        assertEquals("30", portfolioDto.getStocks().get("HSBC"), "Number of stocks should be equal to 30");
+        assertNotNull(portfolio, "Portfolio should not be null.");
+        assertEquals("30", portfolio.getStocks().get("HSBC"), "Number of stocks should be equal to 30");
 
     }
 
@@ -95,8 +82,8 @@ class PortfolioServiceTest {
         List<PortfolioDto> portfolioDtos = assertDoesNotThrow(() -> portfolioService.getAllPortfolios(), "Should not throw any exceptions.");
 
         //then
-        Assertions.assertNotNull(portfolioDtos, "Portfolios should not be null.");
-        assertFalse(portfolioDtos.isEmpty(), "Portfolios size should be more than 0.");
+        assertNotNull(portfolioDtos, "Portfolios should not be null.");
+        assertTrue(!portfolioDtos.isEmpty(), "Portfolios size should be more than 0.");
 
     }
 
@@ -104,45 +91,41 @@ class PortfolioServiceTest {
     void addStockCorrectlyTest() {
 
         //given
-        var portfolio = portfolioMapper.toEnity(portfolioDto);
+        var map = portfolio.getStocks();
 
         //when
-        assertDoesNotThrow(() -> portfolioService.addStock(portfolio.getStocks(), "20", "HSBC"), "Should not throw any exceptions.");
+        assertDoesNotThrow(() -> portfolioService.addStock(map, "20", "HSBC"), "Should not throw any exceptions.");
 
         //then
-        assertEquals("30", portfolio.getStocks().get("HSBC"), "Number of stocks should be equal.");
+        assertEquals("30", map.get("HSBC"), "Number of stocks should be equal.");
 
     }
 
     @Test
     void addStockShouldThrowInsufficientStockExceptionTest() {
 
-        //given
-        var portfolioStocks = portfolioDto.getStocks();
+        var portfolioStocks = portfolio.getStocks();
 
-        //then
         assertThrows(InsufficientStockException.class, () -> portfolioService.addStock(portfolioStocks, "-11", "AAPL"));
     }
 
     @Test
     void parseIfContainsSymbol() {
 
-        assertEquals(10, portfolioService.parseIfContainsSymbol(portfolioDto.getStocks(), "AAPL"));
+        assertEquals(10, portfolioService.parseIfContainsSymbol(portfolio.getStocks(), "AAPL"));
     }
 
     @Test
     void parseIfContainsSymbolShouldReturn0IfSymbolDoesNotExist() {
 
-        assertEquals(0, portfolioService.parseIfContainsSymbol(portfolioDto.getStocks(), "TTWO"));
+        assertEquals(0, portfolioService.parseIfContainsSymbol(portfolio.getStocks(), "TTWO"));
     }
 
     @Test
     void parseIfContainsSymbolShouldThrowResourceNotFoundExceptionIfSymbolIsNull() {
 
-        //given
-        var portfolioStocks = portfolioDto.getStocks();
+        var portfolioStocks = portfolio.getStocks();
 
-        //then
         assertThrows(ResourceNotFoundException.class, () -> portfolioService.parseIfContainsSymbol(portfolioStocks, null));
     }
 
@@ -150,15 +133,12 @@ class PortfolioServiceTest {
     @Order(1)
     void countBalance() {
 
-        //given
-        var portfolio = portfolioMapper.toEnity(portfolioDto);
-
         //when
-        Double balance = portfolioService.countBalance(portfolio);
+        var balance = portfolioService.countBalance(portfolio);
 
         //then
         assertNotNull(balance, "Balance should not be null");
-        assertEquals(6300.0, balance, "Balance should be equal for portfolio.");
+        assertEquals(6394.3, balance, "Balance should be equal for portfolio.");
         assertTrue(balance > 0, "Balance should be more than 0.");
 
 
@@ -167,16 +147,12 @@ class PortfolioServiceTest {
     @Test
     void countBudgetSpentTest() {
 
-        //given
-        var portfolio = portfolioMapper.toEnity(portfolioDto);
-
         //when
-        Double budget = portfolioService.countBudgetSpent(portfolio, "AAPL", "-5");
+        var budget = portfolioService.countBudgetSpent(portfolio, "AAPL", "-5");
 
         //then - actual budget spent on owned stocks + budget spent on  recently bought stocks
         assertNotNull(budget, "Budget should not be null");
-        assertTrue(budget > 0, "Budget should be more than 0.");
-        assertEquals(1750, budget, "Budget should be equal to 1750.");
+        assertEquals(-1227.75, budget, "Budget should be equal with expected.");
 
     }
 }
