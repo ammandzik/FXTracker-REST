@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PortfolioServiceTest {
     private static HashMap<String, String> stocks;
     private static Portfolio portfolio;
@@ -41,8 +42,9 @@ class PortfolioServiceTest {
         stocks.put("AAPL", "10");
         stocks.put("HSBC", "10");
         stocks.put("TSLA", "10");
+        portfolio = DataTest.createPortfolioDto(stocks, "1", 0d, 0d, 0d, 0d);
 
-        portfolio = DataTest.createPortfolioDto(stocks, "1", 0d, 0d, 0d, 3000d);
+
     }
 
     @BeforeEach
@@ -131,14 +133,29 @@ class PortfolioServiceTest {
     }
 
     @Test
+    @Order(1)
     void countBalance() {
 
-        // to be written
+        //when
+        var balance = portfolioService.countBalance(portfolio);
+
+        //then
+        assertNotNull(balance, "Balance should not be null");
+        assertEquals(6394.3, balance, "Balance should be equal for portfolio.");
+        assertTrue(balance > 0, "Balance should be more than 0.");
+
+
     }
 
     @Test
-    void trackFundsSpentOnStocks() {
+    void countBudgetSpentTest() {
 
-        //to be written
+        //when
+        var budget = portfolioService.countBudgetSpent(portfolio, "AAPL", "-5");
+
+        //then - actual budget spent on owned stocks + budget spent on  recently bought stocks
+        assertNotNull(budget, "Budget should not be null");
+        assertEquals(-1227.75, budget, "Budget should be equal with expected.");
+
     }
 }

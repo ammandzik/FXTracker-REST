@@ -1,9 +1,7 @@
 package com.FXTracker.advice;
 
-import com.FXTracker.exception.InsufficientStockException;
-import com.FXTracker.exception.ResourceNotFoundException;
-import com.FXTracker.exception.StockNotFoundException;
-import com.FXTracker.exception.StockServiceException;
+import com.FXTracker.exception.*;
+import com.FXTracker.service.WalletService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,6 +49,30 @@ public class ExceptionHandlerApp {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
     }
 
+    @ExceptionHandler(WalletServiceException.class)
+    public ResponseEntity<Map<String, String>> handleStockServiceServiceError(WalletServiceException ex) {
 
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(InsufficientFundsException.class)
+    public ResponseEntity<Map<String, String>> handleStockServiceServiceError(InsufficientFundsException ex) {
+
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
+    }
+    @ExceptionHandler(PortfolioServiceException.class)
+    public ResponseEntity<Map<String, String>> handleStockServiceServiceError(PortfolioServiceException ex) {
+
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
 
 }

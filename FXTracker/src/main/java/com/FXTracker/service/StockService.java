@@ -26,6 +26,7 @@ public class StockService {
 
     private final StockMapper stockMapper;
     private final StockRepository stockRepository;
+    private final AlphaVantageService alphaVantageService;
 
     /**
      * @param stockDto represents object of StockDto class
@@ -70,13 +71,28 @@ public class StockService {
             stock.setId(updated.getId());
 
         } catch (Exception ex) {
-
             throw new StockServiceException("Error occurred while updating a stock.");
         }
 
         stockRepository.save(stockMapper.toStock(stock));
 
         return stock;
+    }
+
+    public StockDto fetchUpdatedStock(String symbol) {
+
+        try {
+            var fetchedStock = alphaVantageService.getSingleStockDataFromAPI(symbol);
+            var existing = getStock(symbol);
+            fetchedStock.setId(existing.getId());
+            var updated = stockMapper.toStock(fetchedStock);
+
+            stockRepository.save(updated);
+            return fetchedStock;
+
+        } catch (Exception ex) {
+            throw new StockServiceException("Error occurred while updating a stock.");
+        }
     }
 
     /**
@@ -93,6 +109,18 @@ public class StockService {
         return stocks.stream()
                 .map(stockMapper::toDto)
                 .collect(toList());
+    }
+
+    /**
+     * updates all stocks in db
+     */
+    //todo
+    public void updateAllStocks() {
+
+        for (Stock stock : stockRepository.findAll()) {
+            fetchUpdatedStock(stock.getSymbol());
+        }
+
     }
 
     /**

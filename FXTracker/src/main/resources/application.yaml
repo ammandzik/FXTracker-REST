@@ -33,8 +33,7 @@ alphavantage:
   api:
     key: 6FZME81OT4D69JJV
     url: https://www.alphavantage.co/query
-
-
+    
 de:
   flapdoodle:
     mongodb:
