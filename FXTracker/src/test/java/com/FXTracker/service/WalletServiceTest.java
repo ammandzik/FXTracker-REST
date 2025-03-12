@@ -14,10 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class WalletServiceTest {
 
     private static WalletDto w1;
-
     @Autowired
     private WalletService walletService;
-
 
     @Test
     void shouldCreateWalletCorrectlyIT() {

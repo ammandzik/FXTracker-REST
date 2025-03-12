@@ -33,9 +33,9 @@ public class DataTest {
                 .build();
     }
 
-    public static PortfolioDto createPortfolioDto(Map<String, String> stocks, String userId, Double balance, Double profit, Double loss, Double fundsSpent) {
+    public static Portfolio createPortfolioDto(Map<String, String> stocks, String userId, Double balance, Double profit, Double loss, Double fundsSpent) {
 
-        return PortfolioDto.builder()
+        return Portfolio.builder()
                 .userId(DataTest.createUser().getId())
                 .stocks(stocks)
                 .userId(userId)
