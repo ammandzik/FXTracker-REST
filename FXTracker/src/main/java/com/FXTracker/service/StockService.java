@@ -8,6 +8,8 @@ import com.FXTracker.model.Stock;
 import com.FXTracker.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public class StockService {
 
     private final StockMapper stockMapper;
     private final StockRepository stockRepository;
-    private final AlphaVantageService alphaVantageService;
+    private final Logger logger = LoggerFactory.getLogger(StockService.class);
 
     /**
      * @param stockDto represents object of StockDto class
@@ -35,7 +37,7 @@ public class StockService {
     public StockDto addStock(StockDto stockDto) {
 
         try {
-            log.info("Saving {} stock to DB", stockDto);
+            logger.info("Saving {} stock to DB", stockDto);
             stockRepository.save(stockMapper.toStock(stockDto));
 
         } catch (Exception ex) {
@@ -50,14 +52,14 @@ public class StockService {
      */
     public StockDto getStock(String symbol) {
 
-        log.info("Invoked findByStockSymbol method for symbol {}", symbol);
+        logger.info("Invoked findByStockSymbol method for symbol {}", symbol);
         Optional<Stock> stock = stockRepository.findStockBySymbol(symbol);
 
         if (stock.isEmpty()) {
-            log.warn("No stock was found for symbol {}", symbol);
+            logger.warn("No stock was found for symbol {}", symbol);
             throw new StockNotFoundException(String.format("Stock was not found with given symbol: %s", symbol));
         } else {
-            log.info("Returned stockDto for symbol {}", symbol);
+            logger.info("Returned stockDto for symbol {}", symbol);
             return stockMapper.toDto(stock.get());
         }
     }
@@ -69,20 +71,20 @@ public class StockService {
      */
     public StockDto updateStock(String symbol, StockDto stock) {
 
-        log.info("Invoked updateStock method");
+        logger.info("Invoked updateStock method");
 
-        log.info("Invoked getStock method for symbol {}", symbol);
+        logger.info("Invoked getStock method for symbol {}", symbol);
         var updated = getStock(symbol);
 
         try {
-            log.info("Setting id for updated stock with symbol {}", symbol);
+            logger.info("Setting id for updated stock with symbol {}", symbol);
             stock.setId(updated.getId());
 
         } catch (Exception ex) {
             throw new StockServiceException("Error occurred while updating a stock.");
         }
 
-        log.info("Saving updated stock for symbol {} to DB", symbol);
+        logger.info("Saving updated stock for symbol {} to DB", symbol);
         stockRepository.save(stockMapper.toStock(stock));
 
         return stock;
@@ -93,15 +95,15 @@ public class StockService {
      */
     public List<StockDto> findAllStocks() {
 
-        log.info("Invoked findAllStocks method");
+        logger.info("Invoked findAllStocks method");
 
         List<Stock> stocks = stockRepository.findAll();
 
         if (stocks.isEmpty()) {
-            log.warn("No stocks were found in DB");
+            logger.warn("No stocks were found in DB");
             throw new StockNotFoundException("No stocks were found.");
         }else {
-            log.info("Fetching stocks {} list from DB ", stocks);
+            logger.info("Fetching stocks {} list from DB ", stocks);
             return stocks.stream()
                     .map(stockMapper::toDto)
                     .collect(toList());
@@ -114,7 +116,7 @@ public class StockService {
      */
     public boolean stockExistsInDatabase(String symbol) {
 
-        log.info("Invoked stockExistsInDatabase method");
+        logger.info("Invoked stockExistsInDatabase method");
         return stockRepository.existsBySymbol(symbol);
     }
 

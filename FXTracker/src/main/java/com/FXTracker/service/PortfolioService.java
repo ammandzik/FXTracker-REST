@@ -10,6 +10,8 @@ import com.FXTracker.model.Portfolio;
 import com.FXTracker.repository.PortfolioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,7 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final PortfolioMapper portfolioMapper;
     private final StockService stockService;
+    private final Logger logger = LoggerFactory.getLogger(PortfolioService.class);
 
     /**
      * creates and saves Portfolio class entity to DB
@@ -40,7 +43,7 @@ public class PortfolioService {
      */
     public Portfolio createPortfolio(PortfolioDto portfolioDto) {
 
-        log.info("Invoked createPortfolio method");
+        logger.info("Invoked createPortfolio method");
         Map<String, String> stocks = new HashMap<>();
 
         try {
@@ -48,11 +51,11 @@ public class PortfolioService {
             entity.setStocks(stocks);
             portfolioRepository.save(entity);
 
-            log.info("Saving Portfolio to DB {}",portfolioDto);
+            logger.info("Saving Portfolio to DB {}",portfolioDto);
             return entity;
 
         } catch (NullPointerException exception) {
-            log.warn("Error saving portfolio to DB {}",portfolioDto);
+            logger.warn("Error saving portfolio to DB {}",portfolioDto);
             throw new PortfolioServiceException("Error occurred while saving Portfolio");
         }
     }
@@ -64,9 +67,9 @@ public class PortfolioService {
      * @return object of class PortfolioDto
      */
     public PortfolioDto portfolioByUserId(String userId) {
-        log.info("Invoked portfolioByUserId method");
+        logger.info("Invoked portfolioByUserId method");
 
-        log.info("Fetching portfolio for user with id {}", userId);
+        logger.info("Fetching portfolio for user with id {}", userId);
         return portfolioRepository.findByUserId(userId)
                 .map(portfolioMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found with Id: %s", userId)));
@@ -81,12 +84,12 @@ public class PortfolioService {
      */
     public void updatePortfolio(Portfolio portfolio, String symbol, String quantity) {
 
-        log.info("Invoked updatePortfolio method");
+        logger.info("Invoked updatePortfolio method");
         try {
             countProfitAndLoss(portfolio, symbol, quantity);
 
         } catch (Exception e) {
-            log.warn("Error while updating portfolio with ID {}", portfolio.getId());
+            logger.warn("Error while updating portfolio with ID {}", portfolio.getId());
             throw new PortfolioServiceException("Error occurred while updating portfolio.");
         }
     }
@@ -102,7 +105,7 @@ public class PortfolioService {
     @Transactional
     public Portfolio updateStocksInPortfolio(String userId, String symbol, String quantity) {
 
-        log.info("Invoked updateStocksInPortfolio method");
+        logger.info("Invoked updateStocksInPortfolio method");
 
         var portfolio = portfolioRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found for user id: %s ", userId)));
@@ -114,14 +117,14 @@ public class PortfolioService {
             stocks.containsKey(symbol);
 
         } catch (NullPointerException ex) {
-            log.warn("Error while updating stocks in portfolio with user ID {}", userId);
+            logger.warn("Error while updating stocks in portfolio with user ID {}", userId);
             throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
         }
 
         addStock(portfolio.getStocks(), quantity, symbol);
         updatePortfolio(portfolio, symbol, quantity);
 
-        log.info("Saving updated portfolio for user with ID {}", userId);
+        logger.info("Saving updated portfolio for user with ID {}", userId);
         return portfolioRepository.save(portfolio);
     }
 
@@ -134,7 +137,7 @@ public class PortfolioService {
      */
     public void addStock(Map<String, String> stocks, String quantity, String symbol) {
 
-        log.info("Invoked addStock method");
+        logger.info("Invoked addStock method");
 
         try {
             int traded = Integer.parseInt(quantity);
@@ -147,7 +150,7 @@ public class PortfolioService {
                 throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
 
         } catch (NullPointerException npe) {
-            log.warn("addStock method could not be finished");
+            logger.warn("addStock method could not be finished");
             throw new StockServiceException(OPERATION_NOT_ALLOWED);
         }
     }
@@ -161,12 +164,12 @@ public class PortfolioService {
      */
     public Integer parseIfContainsSymbol(Map<String, String> stocks, String symbol) {
 
-        log.info("Invoked parseIfContainsSymbol method");
+        logger.info("Invoked parseIfContainsSymbol method");
 
         int owned = 0;
 
         if (symbol == null) {
-            log.info("No stock was found with symbol {}", symbol);
+            logger.info("No stock was found with symbol {}", symbol);
             throw new ResourceNotFoundException(String.format("Given symbol was null: %s", symbol));
         }
         if (stocks.containsKey(symbol)) {
@@ -185,7 +188,7 @@ public class PortfolioService {
 
     public double countProfitAndLoss(Portfolio portfolio, String symbol, String quantity) {
 
-        log.info("Invoked countProfitAndLoss method");
+        logger.info("Invoked countProfitAndLoss method");
 
         try {
             double budgetSpent = countBudgetSpent(portfolio, symbol, quantity);
@@ -202,7 +205,7 @@ public class PortfolioService {
             return result;
 
         } catch (NullPointerException npe) {
-            log.warn("countProfitAndLoss method could not be finished");
+            logger.warn("countProfitAndLoss method could not be finished");
             throw new StockServiceException(OPERATION_NOT_ALLOWED);
         }
     }
@@ -213,7 +216,7 @@ public class PortfolioService {
      */
     public Double countBalance(Portfolio portfolio) {
 
-        log.info("Invoked countBalance method");
+        logger.info("Invoked countBalance method");
 
         try {
             Map<String, String> stocks = portfolio.getStocks();
@@ -230,7 +233,7 @@ public class PortfolioService {
             return balance;
 
         } catch (NullPointerException npe) {
-            log.warn("countBalance method could not be executed");
+            logger.warn("countBalance method could not be executed");
             throw new StockServiceException(OPERATION_NOT_ALLOWED);
         }
     }
@@ -245,7 +248,7 @@ public class PortfolioService {
      */
     public Double countBudgetSpent(Portfolio portfolio, String symbol, String quantity) {
 
-        log.info("Invoked countBudgetSpent method");
+        logger.info("Invoked countBudgetSpent method");
 
         try {
             double budgetSpent = 0;
@@ -257,7 +260,7 @@ public class PortfolioService {
             return budgetSpent;
 
         } catch (NullPointerException npe) {
-            log.warn("countBalance method could not be executed");
+            logger.warn("countBalance method could not be executed");
             throw new StockServiceException(OPERATION_NOT_ALLOWED);
         }
     }
@@ -269,7 +272,7 @@ public class PortfolioService {
      */
     public List<PortfolioDto> getAllPortfolios() {
 
-        log.info("Fetching list of portfolios from DB");
+        logger.info("Fetching list of portfolios from DB");
 
         List<Portfolio> portfolios = portfolioRepository.findAll();
 
