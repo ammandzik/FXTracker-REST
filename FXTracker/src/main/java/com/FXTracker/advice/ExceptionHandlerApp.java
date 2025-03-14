@@ -19,10 +19,7 @@ public class ExceptionHandlerApp {
 
         logger.error("Handling StockNotFoundException: {}", exception.getMessage());
 
-        ErrorResponse response = ErrorResponse.builder()
-                .status(HttpStatus.NOT_FOUND.value())
-                .message(exception.getMessage())
-                .build();
+        var response = createResponse(HttpStatus.NOT_FOUND, exception);
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -32,10 +29,7 @@ public class ExceptionHandlerApp {
 
         logger.error("Handling StockServiceException: {}", exception.getMessage());
 
-        ErrorResponse response = ErrorResponse.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message(exception.getMessage())
-                .build();
+        var response = createResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception);
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -45,10 +39,7 @@ public class ExceptionHandlerApp {
 
         logger.error("Handling ResourceNotFoundException: {}", exception.getMessage());
 
-        ErrorResponse response = ErrorResponse.builder()
-                .status(HttpStatus.NOT_FOUND.value())
-                .message(exception.getMessage())
-                .build();
+        var response = createResponse(HttpStatus.NOT_FOUND, exception);
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -58,10 +49,7 @@ public class ExceptionHandlerApp {
 
         logger.error("Handling InsufficientStockException: {}", exception.getMessage());
 
-        ErrorResponse response = ErrorResponse.builder()
-                .status(HttpStatus.NOT_ACCEPTABLE.value())
-                .message(exception.getMessage())
-                .build();
+        var response = createResponse(HttpStatus.NOT_ACCEPTABLE, exception);
 
         return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
     }
@@ -71,10 +59,7 @@ public class ExceptionHandlerApp {
 
         logger.error("Handling WalletServiceException: {}", exception.getMessage());
 
-        ErrorResponse response = ErrorResponse.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message(exception.getMessage())
-                .build();
+        var response = createResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception);
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -84,10 +69,7 @@ public class ExceptionHandlerApp {
 
         logger.error("Handling InsufficientFundsException: {}", exception.getMessage());
 
-        ErrorResponse response = ErrorResponse.builder()
-                .status(HttpStatus.NOT_ACCEPTABLE.value())
-                .message(exception.getMessage())
-                .build();
+        var response = createResponse(HttpStatus.NOT_ACCEPTABLE, exception);
 
         return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
     }
@@ -97,12 +79,17 @@ public class ExceptionHandlerApp {
 
         logger.error("Handling PortfolioServiceException: {}", exception.getMessage());
 
-        ErrorResponse response = ErrorResponse.builder()
+        var response = createResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception);
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ErrorResponse createResponse(HttpStatus status, Exception exception) {
+
+        return ErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message(exception.getMessage())
                 .build();
-
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
