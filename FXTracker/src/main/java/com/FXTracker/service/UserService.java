@@ -37,7 +37,7 @@ public class UserService {
         var entity = userMapper.toEntity(userDto);
         userRepository.save(entity);
 
-        log.info("Saving created user {} to DB", userDto);
+        log.info("Saving created user with ID {} to DB", entity.getId());
         return entity;
     }
 

@@ -47,11 +47,11 @@ public class PortfolioService {
             entity.setStocks(stocks);
             portfolioRepository.save(entity);
 
-            log.info("Saving Portfolio to DB {}",portfolioDto);
+            log.info("Saving Portfolio to DB {}", portfolioDto);
             return entity;
 
         } catch (NullPointerException exception) {
-            log.warn("Error saving portfolio to DB {}",portfolioDto);
+            log.warn("Error saving portfolio to DB {}", portfolioDto);
             throw new PortfolioServiceException("Error occurred while saving Portfolio");
         }
     }

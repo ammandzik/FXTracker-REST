@@ -1,5 +1,4 @@
 spring:
-
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
@@ -39,3 +38,16 @@ de:
     mongodb:
       embedded:
         version: 4.0.2
+
+logging:
+  file:
+    path: logs
+    name: logs/application.log
+  level:
+    root: WARN
+    com.FXTracker: INFO
+    org.springframework: WARN
+    org.mongodb.driver: WARN
+    org.springframework.data.mongodb: DEBUG
+
+
