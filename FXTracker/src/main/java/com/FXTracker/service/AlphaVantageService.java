@@ -50,7 +50,7 @@ public class AlphaVantageService {
                         .build())
                 .retrieve()
                 .bodyToMono(AlphaVantageResponse.class)
-                .map(AlphaVantageResponse::getStock)
+                .map(AlphaVantageResponse::stock)
                 .map(stockMapper::toDto)
                 .block();
 
@@ -76,7 +76,7 @@ public class AlphaVantageService {
                         .build())
                 .retrieve()
                 .bodyToMono(AlphaVantageResponse.class)
-                .map(response -> response.getStocks())
+                .map(response -> response.stocks())
                 .defaultIfEmpty(Collections.emptyList())
                 .block();
 
