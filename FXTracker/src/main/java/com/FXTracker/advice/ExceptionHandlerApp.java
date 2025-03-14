@@ -5,6 +5,7 @@ import com.FXTracker.response.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -84,10 +85,10 @@ public class ExceptionHandlerApp {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ErrorResponse createResponse(HttpStatus status, Exception exception) {
+    private ErrorResponse createResponse(HttpStatusCode status, Exception exception) {
 
         return ErrorResponse.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .status(status.value())
                 .message(exception.getMessage())
                 .build();
     }
