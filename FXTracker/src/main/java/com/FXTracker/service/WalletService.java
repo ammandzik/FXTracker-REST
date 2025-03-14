@@ -7,6 +7,9 @@ import com.FXTracker.mapper.WalletMapper;
 import com.FXTracker.model.Wallet;
 import com.FXTracker.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,10 +18,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WalletService {
 
     private final WalletRepository walletRepository;
     private final WalletMapper walletMapper;
+    private final Logger logger = LoggerFactory.getLogger(WalletService.class);
 
     /**
      * handles creating new wallet
@@ -28,12 +33,16 @@ public class WalletService {
      */
     public Wallet createWallet(WalletDto walletDto) {
 
+        logger.info("Invoked createWallet method");
+
         try {
             var entity = walletMapper.toEntity(walletDto);
+            logger.info("Saving created wallet for user with ID {} to DB", walletDto.getUserId());
             walletRepository.save(entity);
             return entity;
 
         } catch (NullPointerException npe) {
+            logger.warn("Error while saving wallet for user with ID {}", walletDto.getUserId());
             throw new WalletServiceException("Error while creating a wallet occurred.");
         }
     }
@@ -45,6 +54,8 @@ public class WalletService {
      */
     public float manageFundsBalance(WalletDto walletDto, float amount) {
 
+        logger.info("Invoked manageFundsBalance method");
+
         try {
             float initBalance = walletDto.getBalance();
             float sum = initBalance + amount;
@@ -53,6 +64,7 @@ public class WalletService {
             }
             walletDto.setBalance(initBalance + amount);
 
+            logger.info("Returning wallet balance sum");
             return sum;
 
         } catch (NullPointerException npe) {

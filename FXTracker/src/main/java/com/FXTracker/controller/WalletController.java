@@ -4,6 +4,7 @@ import com.FXTracker.DTO.WalletDto;
 import com.FXTracker.model.Wallet;
 import com.FXTracker.repository.WalletRepository;
 import com.FXTracker.service.WalletService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,10 +22,8 @@ class WalletController {
     private final WalletRepository walletRepository;
     private final WalletService walletService;
 
-    public ResponseEntity<Wallet> createWallet(@RequestBody WalletDto walletDto) {
+    public ResponseEntity<Wallet> createWallet(@Valid @RequestBody WalletDto walletDto) {
 
-        return new ResponseEntity<>( walletService.createWallet(walletDto), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(walletService.createWallet(walletDto));
     }
-
-
 }

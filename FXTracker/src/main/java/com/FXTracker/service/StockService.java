@@ -8,6 +8,8 @@ import com.FXTracker.model.Stock;
 import com.FXTracker.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public class StockService {
 
     private final StockMapper stockMapper;
     private final StockRepository stockRepository;
-    private final AlphaVantageService alphaVantageService;
+    private final Logger logger = LoggerFactory.getLogger(StockService.class);
 
     /**
      * @param stockDto represents object of StockDto class
@@ -35,6 +37,7 @@ public class StockService {
     public StockDto addStock(StockDto stockDto) {
 
         try {
+            logger.info("Saving {} stock to DB", stockDto);
             stockRepository.save(stockMapper.toStock(stockDto));
 
         } catch (Exception ex) {
@@ -49,11 +52,14 @@ public class StockService {
      */
     public StockDto getStock(String symbol) {
 
+        logger.info("Invoked findByStockSymbol method for symbol {}", symbol);
         Optional<Stock> stock = stockRepository.findStockBySymbol(symbol);
 
         if (stock.isEmpty()) {
+            logger.warn("No stock was found for symbol {}", symbol);
             throw new StockNotFoundException(String.format("Stock was not found with given symbol: %s", symbol));
         } else {
+            logger.info("Returned stockDto for symbol {}", symbol);
             return stockMapper.toDto(stock.get());
         }
     }
@@ -65,34 +71,23 @@ public class StockService {
      */
     public StockDto updateStock(String symbol, StockDto stock) {
 
+        logger.info("Invoked updateStock method");
+
+        logger.info("Invoked getStock method for symbol {}", symbol);
         var updated = getStock(symbol);
 
         try {
+            logger.info("Setting id for updated stock with symbol {}", symbol);
             stock.setId(updated.getId());
 
         } catch (Exception ex) {
             throw new StockServiceException("Error occurred while updating a stock.");
         }
 
+        logger.info("Saving updated stock for symbol {} to DB", symbol);
         stockRepository.save(stockMapper.toStock(stock));
 
         return stock;
-    }
-
-    public StockDto fetchUpdatedStock(String symbol) {
-
-        try {
-            var fetchedStock = alphaVantageService.getSingleStockDataFromAPI(symbol);
-            var existing = getStock(symbol);
-            fetchedStock.setId(existing.getId());
-            var updated = stockMapper.toStock(fetchedStock);
-
-            stockRepository.save(updated);
-            return fetchedStock;
-
-        } catch (Exception ex) {
-            throw new StockServiceException("Error occurred while updating a stock.");
-        }
     }
 
     /**
@@ -100,35 +95,28 @@ public class StockService {
      */
     public List<StockDto> findAllStocks() {
 
+        logger.info("Invoked findAllStocks method");
+
         List<Stock> stocks = stockRepository.findAll();
 
         if (stocks.isEmpty()) {
+            logger.warn("No stocks were found in DB");
             throw new StockNotFoundException("No stocks were found.");
+        }else {
+            logger.info("Fetching stocks {} list from DB ", stocks);
+            return stocks.stream()
+                    .map(stockMapper::toDto)
+                    .collect(toList());
         }
-
-        return stocks.stream()
-                .map(stockMapper::toDto)
-                .collect(toList());
-    }
-
-    /**
-     * updates all stocks in db
-     */
-    //todo
-    public void updateAllStocks() {
-
-        for (Stock stock : stockRepository.findAll()) {
-            fetchUpdatedStock(stock.getSymbol());
-        }
-
     }
 
     /**
      * @param symbol represents stock symbol
      * @return true if stock exists in DB, false otherwise
      */
-    public boolean stockExistsInDataBase(String symbol) {
+    public boolean stockExistsInDatabase(String symbol) {
 
+        logger.info("Invoked stockExistsInDatabase method");
         return stockRepository.existsBySymbol(symbol);
     }
 

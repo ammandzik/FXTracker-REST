@@ -4,6 +4,7 @@ import com.FXTracker.DTO.StockDto;
 import com.FXTracker.service.AlphaVantageService;
 import com.FXTracker.service.StockService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/alpha")
+@Slf4j
 class AlphaVantageController {
 
     private final AlphaVantageService alphaVantageService;
@@ -25,10 +27,10 @@ class AlphaVantageController {
 
         var stock = alphaVantageService.getSingleStockDataFromAPI(ticker);
 
-        if(stockService.stockExistsInDataBase(ticker)){
+        if (stockService.stockExistsInDatabase(ticker)) {
 
             stockService.updateStock(ticker, stock);
-        }else {
+        } else {
             stockService.addStock(stock);
         }
 
