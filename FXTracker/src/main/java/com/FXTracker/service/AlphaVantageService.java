@@ -7,9 +7,7 @@ import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
 import com.FXTracker.response.AlphaVantageResponse;
 import com.FXTracker.response.Function;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -21,15 +19,14 @@ import java.util.List;
  * Service class for fetching stocks from Alpha Vantage API.
  * Handles operations like getting single stock data, finding stocks matching keyword.
  */
-@Slf4j
 @Service
+@Log4j2
 public class AlphaVantageService {
 
     private final String API_KEY;
     private final WebClient webClient;
     private final StockMapper stockMapper;
     private final StockMapper.StockSearchMapper stockSearchMapper;
-    private final Logger logger = LoggerFactory.getLogger(AlphaVantageService.class);
 
     public AlphaVantageService(@Value("${alphavantage.api.key}") String apiKey, WebClient webClient, StockMapper stockMapper, StockMapper.StockSearchMapper stockSearchMapper) {
         this.API_KEY = apiKey;
@@ -44,7 +41,7 @@ public class AlphaVantageService {
      */
     public StockDto getSingleStockDataFromAPI(String ticker) {
 
-        logger.info("Received request to get stock for ticker: {}", ticker);
+        log.info("Received request to get stock for ticker: {}", ticker);
 
         try {
             var stock = webClient.get()
@@ -61,10 +58,10 @@ public class AlphaVantageService {
                     .block();
 
             if (stock.getSymbol() == null) {
-                logger.warn("No stock was found with ticker: {}", ticker);
+                log.warn("No stock was found with ticker: {}", ticker);
                 throw new StockNotFoundException(String.format("Stock not found for ticker: %s ", ticker));
             } else {
-                logger.info("Returning {} stock for ticker: {}", stock, ticker);
+                log.info("Returning {} stock for ticker: {}", stock, ticker);
                 return stock;
             }
 
@@ -79,7 +76,7 @@ public class AlphaVantageService {
      */
     public List<StockDto.StockSearchDto> findAllStocksByKeywordInAPI(String keyword) {
 
-        logger.info("Received request to search stocks with keyword: {}", keyword);
+        log.info("Received request to search stocks with keyword: {}", keyword);
 
         try {
             List<Stock.StockSearch> stocks = webClient.get()
@@ -96,11 +93,11 @@ public class AlphaVantageService {
                     .block();
 
             if (stocks.isEmpty()) {
-                logger.warn("No stocks were found with keyword: {}", keyword);
+                log.warn("No stocks were found with keyword: {}", keyword);
                 throw new StockNotFoundException(String.format("No stocks were found for keyword: %s", keyword));
 
             } else {
-                logger.info("Returning {} stocks for keyword: {}", stocks, keyword);
+                log.info("Returning {} stocks for keyword: {}", stocks, keyword);
                 return stocks.stream()
                         .map(stockSearchMapper::toDto)
                         .toList();
