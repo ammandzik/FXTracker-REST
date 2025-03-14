@@ -1,4 +1,4 @@
-package com.FXTracker.alpha_vantage;
+package com.FXTracker.response;
 
 public enum Function {
 

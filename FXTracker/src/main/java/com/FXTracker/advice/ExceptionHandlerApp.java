@@ -1,78 +1,108 @@
 package com.FXTracker.advice;
 
 import com.FXTracker.exception.*;
-import com.FXTracker.service.WalletService;
+import com.FXTracker.response.ErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestControllerAdvice
 public class ExceptionHandlerApp {
 
+    private final Logger logger = LoggerFactory.getLogger(ExceptionHandlerApp.class);
+
     @ExceptionHandler(StockNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleStockNotFound(StockNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleStockNotFound(StockNotFoundException exception) {
 
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
+        logger.error("Handling StockNotFoundException: {}", exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(exception.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(StockServiceException.class)
-    public ResponseEntity<Map<String, String>> handleStockServiceServiceError(StockServiceException ex) {
+    public ResponseEntity<ErrorResponse> handleStockServiceServiceError(StockServiceException exception) {
 
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
+        logger.error("Handling StockServiceException: {}", exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(exception.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(ResourceNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception) {
 
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
+        logger.error("Handling ResourceNotFoundException: {}", exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(exception.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InsufficientStockException.class)
-    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(InsufficientStockException ex) {
+    public ResponseEntity<ErrorResponse> handleInsufficientStockException(InsufficientStockException exception) {
 
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
+        logger.error("Handling InsufficientStockException: {}", exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.NOT_ACCEPTABLE.value())
+                .message(exception.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(WalletServiceException.class)
-    public ResponseEntity<Map<String, String>> handleStockServiceServiceError(WalletServiceException ex) {
+    public ResponseEntity<ErrorResponse> handleWalletServiceException(WalletServiceException exception) {
 
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
+        logger.error("Handling WalletServiceException: {}", exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(exception.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(InsufficientFundsException.class)
-    public ResponseEntity<Map<String, String>> handleStockServiceServiceError(InsufficientFundsException ex) {
+    public ResponseEntity<ErrorResponse> handleInsufficientFundsException(InsufficientFundsException exception) {
 
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
+        logger.error("Handling InsufficientFundsException: {}", exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.NOT_ACCEPTABLE.value())
+                .message(exception.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
     }
+
     @ExceptionHandler(PortfolioServiceException.class)
-    public ResponseEntity<Map<String, String>> handleStockServiceServiceError(PortfolioServiceException ex) {
+    public ResponseEntity<ErrorResponse> handlePortfolioServiceException(PortfolioServiceException exception) {
 
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
+        logger.error("Handling PortfolioServiceException: {}", exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(exception.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
