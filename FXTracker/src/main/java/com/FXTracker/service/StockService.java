@@ -35,6 +35,7 @@ public class StockService {
     public StockDto addStock(StockDto stockDto) {
 
         try {
+            log.info("Saving {} stock to DB", stockDto);
             stockRepository.save(stockMapper.toStock(stockDto));
 
         } catch (Exception ex) {
@@ -49,11 +50,14 @@ public class StockService {
      */
     public StockDto getStock(String symbol) {
 
+        log.info("Invoked findByStockSymbol method for symbol {}", symbol);
         Optional<Stock> stock = stockRepository.findStockBySymbol(symbol);
 
         if (stock.isEmpty()) {
+            log.warn("No stock was found for symbol {}", symbol);
             throw new StockNotFoundException(String.format("Stock was not found with given symbol: %s", symbol));
         } else {
+            log.info("Returned stockDto for symbol {}", symbol);
             return stockMapper.toDto(stock.get());
         }
     }
@@ -65,34 +69,23 @@ public class StockService {
      */
     public StockDto updateStock(String symbol, StockDto stock) {
 
+        log.info("Invoked updateStock method");
+
+        log.info("Invoked getStock method for symbol {}", symbol);
         var updated = getStock(symbol);
 
         try {
+            log.info("Setting id for updated stock with symbol {}", symbol);
             stock.setId(updated.getId());
 
         } catch (Exception ex) {
             throw new StockServiceException("Error occurred while updating a stock.");
         }
 
+        log.info("Saving updated stock for symbol {} to DB", symbol);
         stockRepository.save(stockMapper.toStock(stock));
 
         return stock;
-    }
-
-    public StockDto fetchUpdatedStock(String symbol) {
-
-        try {
-            var fetchedStock = alphaVantageService.getSingleStockDataFromAPI(symbol);
-            var existing = getStock(symbol);
-            fetchedStock.setId(existing.getId());
-            var updated = stockMapper.toStock(fetchedStock);
-
-            stockRepository.save(updated);
-            return fetchedStock;
-
-        } catch (Exception ex) {
-            throw new StockServiceException("Error occurred while updating a stock.");
-        }
     }
 
     /**
@@ -100,35 +93,28 @@ public class StockService {
      */
     public List<StockDto> findAllStocks() {
 
+        log.info("Invoked findAllStocks method");
+
         List<Stock> stocks = stockRepository.findAll();
 
         if (stocks.isEmpty()) {
+            log.warn("No stocks were found in DB");
             throw new StockNotFoundException("No stocks were found.");
+        }else {
+            log.info("Fetching stocks {} list from DB ", stocks);
+            return stocks.stream()
+                    .map(stockMapper::toDto)
+                    .collect(toList());
         }
-
-        return stocks.stream()
-                .map(stockMapper::toDto)
-                .collect(toList());
-    }
-
-    /**
-     * updates all stocks in db
-     */
-    //todo
-    public void updateAllStocks() {
-
-        for (Stock stock : stockRepository.findAll()) {
-            fetchUpdatedStock(stock.getSymbol());
-        }
-
     }
 
     /**
      * @param symbol represents stock symbol
      * @return true if stock exists in DB, false otherwise
      */
-    public boolean stockExistsInDataBase(String symbol) {
+    public boolean stockExistsInDatabase(String symbol) {
 
+        log.info("Invoked stockExistsInDatabase method");
         return stockRepository.existsBySymbol(symbol);
     }
 

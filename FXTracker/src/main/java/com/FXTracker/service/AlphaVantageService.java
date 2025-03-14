@@ -1,12 +1,12 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.StockDto;
-import com.FXTracker.response.AlphaVantageResponse;
-import com.FXTracker.response.Function;
 import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.exception.StockServiceException;
 import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
+import com.FXTracker.response.AlphaVantageResponse;
+import com.FXTracker.response.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,6 +41,8 @@ public class AlphaVantageService {
      */
     public StockDto getSingleStockDataFromAPI(String ticker) {
 
+        log.info("Received request to get stock for ticker: {}", ticker);
+
         try {
             var stock = webClient.get()
                     .uri(uriBuilder -> uriBuilder
@@ -55,9 +57,13 @@ public class AlphaVantageService {
                     .map(stockMapper::toDto)
                     .block();
 
-            if (stock.getSymbol() == null)
+            if (stock.getSymbol() == null) {
+                log.warn("No stock was found with ticker: {}", ticker);
                 throw new StockNotFoundException(String.format("Stock not found for ticker: %s ", ticker));
-            return stock;
+            } else {
+                log.info("Returning {} stock for ticker: {}", stock, ticker);
+                return stock;
+            }
 
         } catch (NullPointerException exception) {
             throw new StockServiceException("Error while fetching stocks.");
@@ -69,6 +75,8 @@ public class AlphaVantageService {
      * @return list of objects of nested class StockSearchDto
      */
     public List<StockDto.StockSearchDto> findAllStocksByKeywordInAPI(String keyword) {
+
+        log.info("Received request to search stocks with keyword: {}", keyword);
 
         try {
             List<Stock.StockSearch> stocks = webClient.get()
@@ -84,11 +92,16 @@ public class AlphaVantageService {
                     .defaultIfEmpty(Collections.emptyList())
                     .block();
 
-            if (stocks.isEmpty())
+            if (stocks.isEmpty()) {
+                log.warn("No stocks were found with keyword: {}", keyword);
                 throw new StockNotFoundException(String.format("No stocks were found for keyword: %s", keyword));
-            else return stocks.stream()
-                    .map(stockSearchMapper::toDto)
-                    .toList();
+
+            } else {
+                log.info("Returning {} stocks for keyword: {}", stocks, keyword);
+                return stocks.stream()
+                        .map(stockSearchMapper::toDto)
+                        .toList();
+            }
 
         } catch (NullPointerException exception) {
             throw new StockServiceException("Error while fetching stocks.");
