@@ -7,8 +7,8 @@ import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.exception.StockServiceException;
 import com.FXTracker.mapper.StockMapper;
 import com.FXTracker.model.Stock;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -20,15 +20,20 @@ import java.util.List;
  * Handles operations like getting single stock data, finding stocks matching keyword.
  */
 @Slf4j
-@RequiredArgsConstructor
 @Service
 public class AlphaVantageService {
 
-    private static final String API_KEY = "IZA7PDJIYSW0RL7V";
-
+    private final String API_KEY;
     private final WebClient webClient;
     private final StockMapper stockMapper;
     private final StockMapper.StockSearchMapper stockSearchMapper;
+
+    public AlphaVantageService(@Value("${alphavantage.api.key}") String apiKey, WebClient webClient, StockMapper stockMapper, StockMapper.StockSearchMapper stockSearchMapper) {
+        this.API_KEY = apiKey;
+        this.webClient = webClient;
+        this.stockMapper = stockMapper;
+        this.stockSearchMapper = stockSearchMapper;
+    }
 
     /**
      * @param ticker represents Stock symbol

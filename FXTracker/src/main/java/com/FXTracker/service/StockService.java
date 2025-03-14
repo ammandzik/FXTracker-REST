@@ -112,18 +112,6 @@ public class StockService {
     }
 
     /**
-     * updates all stocks in db
-     */
-    //todo
-    public void updateAllStocks() {
-
-        for (Stock stock : stockRepository.findAll()) {
-            fetchUpdatedStock(stock.getSymbol());
-        }
-
-    }
-
-    /**
      * @param symbol represents stock symbol
      * @return true if stock exists in DB, false otherwise
      */
