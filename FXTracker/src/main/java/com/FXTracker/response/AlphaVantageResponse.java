@@ -1,4 +1,4 @@
-package com.FXTracker.alpha_vantage;
+package com.FXTracker.response;
 
 import com.FXTracker.model.Stock;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
