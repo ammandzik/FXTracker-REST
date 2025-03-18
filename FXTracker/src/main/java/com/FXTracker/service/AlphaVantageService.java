@@ -11,9 +11,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.FXTracker.advice.ExceptionMessages.OPERATION_NOT_ALLOWED;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Service class for fetching stocks from Alpha Vantage API.
@@ -39,7 +44,7 @@ public class AlphaVantageService {
      * @param ticker represents Stock symbol
      * @return object of class StockDto mapped from fetched API Stock
      */
-    public StockDto getSingleStockDataFromAPI(String ticker) {
+    public Mono<StockDto> getSingleStockDataFromAPI(String ticker) {
 
         log.info("Received request to get stock for ticker: {}", ticker);
 
@@ -54,10 +59,9 @@ public class AlphaVantageService {
                     .retrieve()
                     .bodyToMono(AlphaVantageResponse.class)
                     .map(AlphaVantageResponse::stock)
-                    .map(stockMapper::toDto)
-                    .block();
+                    .map(stockMapper::toDto);
 
-            if (stock.getSymbol() == null) {
+            if (stock == null) {
                 log.warn("No stock was found with ticker: {}", ticker);
                 throw new StockNotFoundException(String.format("Stock not found for ticker: %s ", ticker));
             } else {
@@ -74,11 +78,11 @@ public class AlphaVantageService {
      * @param keyword represents keyword used to find partially matching stocks names
      * @return list of objects of nested class StockSearchDto
      */
-    public List<StockDto.StockSearchDto> findAllStocksByKeywordInAPI(String keyword) {
+    public Flux<List<StockDto.StockSearchDto>> findAllStocksByKeywordInAPI(String keyword) {
 
         log.info("Received request to search stocks with keyword: {}", keyword);
 
-        List<Stock.StockSearch> stocks = webClient.get()
+       return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/query")
                         .queryParam("function", Function.SYMBOL_SEARCH)
@@ -86,24 +90,20 @@ public class AlphaVantageService {
                         .queryParam("apikey", API_KEY)
                         .build())
                 .retrieve()
-                .bodyToMono(AlphaVantageResponse.class)
+                .bodyToFlux(AlphaVantageResponse.class)
                 .map(AlphaVantageResponse::stocks)
+                .switchIfEmpty(Flux.error(new StockNotFoundException(
+                        String.format("No stocks were found for keyword: %s", keyword))))
                 .defaultIfEmpty(Collections.emptyList())
-                .block();
+                .map(stockList -> stockList.stream()
+                        .map(stockSearchMapper::toDto)
+                        .collect(toList()))
+                .doOnNext(s -> log.info("Returning {} stocks for keyword: {}", s.size(), keyword))
+                .onErrorResume(e -> {
+                    log.warn("Error occurred while fetching stocks: {}", e.getMessage());
+                    return Flux.error(new StockServiceException(OPERATION_NOT_ALLOWED.name()));
+                });
 
-        if (stocks.isEmpty()) {
-            log.warn("No stocks were found with keyword: {}", keyword);
-            throw new StockNotFoundException(String.format("No stocks were found for keyword: %s", keyword));
-
-        } else if (stocks == null) {
-            log.warn("Stocks are null");
-            throw new StockServiceException("Error while fetching stocks.");
-        } else {
-            log.info("Returning {} stocks for keyword: {}", stocks, keyword);
-            return stocks.stream()
-                    .map(stockSearchMapper::toDto)
-                    .toList();
-        }
 
     }
 }

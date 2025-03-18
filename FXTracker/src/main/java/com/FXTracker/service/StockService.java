@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.FXTracker.advice.ExceptionMessages.OPERATION_NOT_ALLOWED;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -33,6 +34,12 @@ public class StockService {
      */
     public StockDto addStock(StockDto stockDto) {
 
+        log.info("Invoked addStock method.");
+
+        if (stockDto == null) {
+            log.warn("Provided values are null");
+            throw new StockServiceException(OPERATION_NOT_ALLOWED.name());
+        }
         try {
             log.info("Saving {} stock to DB", stockDto);
             stockRepository.save(stockMapper.toStock(stockDto));
@@ -49,6 +56,12 @@ public class StockService {
      */
     public StockDto getStock(String symbol) {
 
+        log.info("Invoked getStock method.");
+
+        if (symbol == null) {
+            log.warn("Provided values are null");
+            throw new StockServiceException(OPERATION_NOT_ALLOWED.name());
+        }
         log.info("Invoked findByStockSymbol method for symbol {}", symbol);
         Optional<Stock> stock = stockRepository.findStockBySymbol(symbol);
 
@@ -70,6 +83,10 @@ public class StockService {
 
         log.info("Invoked updateStock method");
 
+        if (stock == null || symbol == null) {
+            log.warn("Provided values are null");
+            throw new StockServiceException(OPERATION_NOT_ALLOWED.name());
+        }
         log.info("Invoked getStock method for symbol {}", symbol);
         var updated = getStock(symbol);
 

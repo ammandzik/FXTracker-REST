@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import static com.FXTracker.advice.ExceptionMessages.OPERATION_NOT_ALLOWED;
+
 /**
  * Service class for handling operations on wallets.
  * Handles operations like creating, getting by user ID, updating, adding funds, finding all of existing wallets.
@@ -34,7 +36,7 @@ public class WalletService {
 
         if(walletDto == null) {
             log.warn("Error while saving wallet - wallet is null");
-            throw new WalletServiceException("Error while creating a wallet occurred.");
+            throw new WalletServiceException(OPERATION_NOT_ALLOWED.name());
         }
             var entity = walletMapper.toEntity(walletDto);
             log.info("Saving created wallet for user with ID {} to DB", walletDto.getUserId());
@@ -53,7 +55,7 @@ public class WalletService {
         log.info("Invoked manageFundsBalance method");
         if(walletDto == null){
             log.warn("Wallet is null value.");
-            throw new WalletServiceException("Wallet is null.");
+            throw new WalletServiceException(OPERATION_NOT_ALLOWED.name());
 
         }
             float initBalance = walletDto.getBalance();

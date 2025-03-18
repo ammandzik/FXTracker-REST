@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ class AlphaVantageServiceTest {
     void getExistingStockDataCorrectlyTest() {
 
         //when
-        StockDto stock = alphaVantageService.getSingleStockDataFromAPI(EXISTING_STOCK);
+        Mono<StockDto> stock = alphaVantageService.getSingleStockDataFromAPI(EXISTING_STOCK);
 
         //then
         assertNotNull(stock, "Stock should not be null.");
