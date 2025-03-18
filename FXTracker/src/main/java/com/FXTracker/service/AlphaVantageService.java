@@ -78,34 +78,33 @@ public class AlphaVantageService {
 
         log.info("Received request to search stocks with keyword: {}", keyword);
 
-        try {
-            List<Stock.StockSearch> stocks = webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/query")
-                            .queryParam("function", Function.SYMBOL_SEARCH)
-                            .queryParam("keywords", keyword)
-                            .queryParam("apikey", API_KEY)
-                            .build())
-                    .retrieve()
-                    .bodyToMono(AlphaVantageResponse.class)
-                    .map(AlphaVantageResponse::stocks)
-                    .defaultIfEmpty(Collections.emptyList())
-                    .block();
+        List<Stock.StockSearch> stocks = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/query")
+                        .queryParam("function", Function.SYMBOL_SEARCH)
+                        .queryParam("keywords", keyword)
+                        .queryParam("apikey", API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(AlphaVantageResponse.class)
+                .map(AlphaVantageResponse::stocks)
+                .defaultIfEmpty(Collections.emptyList())
+                .block();
 
-            if (stocks.isEmpty()) {
-                log.warn("No stocks were found with keyword: {}", keyword);
-                throw new StockNotFoundException(String.format("No stocks were found for keyword: %s", keyword));
+        if (stocks.isEmpty()) {
+            log.warn("No stocks were found with keyword: {}", keyword);
+            throw new StockNotFoundException(String.format("No stocks were found for keyword: %s", keyword));
 
-            } else {
-                log.info("Returning {} stocks for keyword: {}", stocks, keyword);
-                return stocks.stream()
-                        .map(stockSearchMapper::toDto)
-                        .toList();
-            }
-
-        } catch (NullPointerException exception) {
+        } else if (stocks == null) {
+            log.warn("Stocks are null");
             throw new StockServiceException("Error while fetching stocks.");
+        } else {
+            log.info("Returning {} stocks for keyword: {}", stocks, keyword);
+            return stocks.stream()
+                    .map(stockSearchMapper::toDto)
+                    .toList();
         }
+
     }
 }
 

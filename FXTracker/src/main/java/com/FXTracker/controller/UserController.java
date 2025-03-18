@@ -3,6 +3,7 @@ package com.FXTracker.controller;
 import com.FXTracker.DTO.UserDto;
 import com.FXTracker.model.User;
 import com.FXTracker.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> createNewUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<User> createNewUser(@Valid @RequestBody UserDto userDto) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDto));
 

@@ -32,16 +32,15 @@ public class WalletService {
 
         log.info("Invoked createWallet method");
 
-        try {
+        if(walletDto == null) {
+            log.warn("Error while saving wallet - wallet is null");
+            throw new WalletServiceException("Error while creating a wallet occurred.");
+        }
             var entity = walletMapper.toEntity(walletDto);
             log.info("Saving created wallet for user with ID {} to DB", walletDto.getUserId());
             walletRepository.save(entity);
             return entity;
 
-        } catch (NullPointerException npe) {
-            log.warn("Error while saving wallet for user with ID {}", walletDto.getUserId());
-            throw new WalletServiceException("Error while creating a wallet occurred.");
-        }
     }
 
     /**
@@ -52,8 +51,11 @@ public class WalletService {
     public float manageFundsBalance(WalletDto walletDto, float amount) {
 
         log.info("Invoked manageFundsBalance method");
+        if(walletDto == null){
+            log.warn("Wallet is null value.");
+            throw new WalletServiceException("Wallet is null.");
 
-        try {
+        }
             float initBalance = walletDto.getBalance();
             float sum = initBalance + amount;
             if (sum < 0) {
@@ -63,9 +65,5 @@ public class WalletService {
 
             log.info("Returning wallet balance sum");
             return sum;
-
-        } catch (NullPointerException npe) {
-            throw new WalletServiceException("Error while managing funds in the wallet.");
-        }
     }
 }

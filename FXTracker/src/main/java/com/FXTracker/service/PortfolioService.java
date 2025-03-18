@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.FXTracker.advice.ExceptionMessages.OPERATION_NOT_ALLOWED;
+
 /**
  * Service class for handling operations on users portfolios.
  * Handles operations like creating, updating, adding stocks and counting balance of user portfolio.
@@ -26,10 +28,11 @@ import java.util.Map;
 @Service
 @Log4j2
 public class PortfolioService {
-    private static final String OPERATION_NOT_ALLOWED = "Operation could not be finished due to non existing values.";
+
     private final PortfolioRepository portfolioRepository;
     private final PortfolioMapper portfolioMapper;
     private final StockService stockService;
+    private static final String LOG_NULL = "Null values occurred while updating portfolio";
 
     /**
      * creates and saves Portfolio class entity to DB
@@ -42,18 +45,17 @@ public class PortfolioService {
         log.info("Invoked createPortfolio method");
         Map<String, String> stocks = new HashMap<>();
 
-        try {
-            var entity = portfolioMapper.toEnity(portfolioDto);
-            entity.setStocks(stocks);
-            portfolioRepository.save(entity);
-
-            log.info("Saving Portfolio to DB {}", portfolioDto);
-            return entity;
-
-        } catch (NullPointerException exception) {
+        if (portfolioDto == null) {
             log.warn("Error saving portfolio to DB {}", portfolioDto);
             throw new PortfolioServiceException("Error occurred while saving Portfolio");
         }
+
+        var entity = portfolioMapper.toEnity(portfolioDto);
+        entity.setStocks(stocks);
+        portfolioRepository.save(entity);
+
+        log.info("Saving Portfolio to DB {}", portfolioDto);
+        return entity;
     }
 
     /**
@@ -65,6 +67,10 @@ public class PortfolioService {
     public PortfolioDto portfolioByUserId(String userId) {
         log.info("Invoked portfolioByUserId method");
 
+        if (userId == null) {
+            log.warn("User id is null.");
+            throw new PortfolioServiceException("User id is null.");
+        }
         log.info("Fetching portfolio for user with id {}", userId);
         return portfolioRepository.findByUserId(userId)
                 .map(portfolioMapper::toDto)
@@ -79,6 +85,12 @@ public class PortfolioService {
      * @param quantity  represents quantity of stocks
      */
     public void updatePortfolio(Portfolio portfolio, String symbol, String quantity) {
+
+        if (portfolio == null || symbol == null || quantity == null) {
+
+            log.warn(LOG_NULL);
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
+        }
 
         log.info("Invoked updatePortfolio method");
         try {
@@ -103,16 +115,20 @@ public class PortfolioService {
 
         log.info("Invoked updateStocksInPortfolio method");
 
+        if (userId == null || symbol == null || quantity == null) {
+            log.warn(LOG_NULL);
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
+        }
+
         var portfolio = portfolioRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Portfolio not found for user id: %s ", userId)));
 
         Map<String, String> stocks;
-
         try {
             stocks = portfolio.getStocks();
             stocks.containsKey(symbol);
 
-        } catch (NullPointerException ex) {
+        } catch (Exception ex) {
             log.warn("Error while updating stocks in portfolio with user ID {}", userId);
             throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
         }
@@ -134,21 +150,20 @@ public class PortfolioService {
     public void addStock(Map<String, String> stocks, String quantity, String symbol) {
 
         log.info("Invoked addStock method");
-
-        try {
-            int traded = Integer.parseInt(quantity);
-            int sum = parseIfContainsSymbol(stocks, symbol) + traded;
-
-            if (sum >= 0) {
-                if (stocks.containsKey(symbol)) stocks.put(symbol, String.valueOf(sum));
-                else stocks.put(symbol, quantity);
-            } else
-                throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
-
-        } catch (NullPointerException npe) {
-            log.warn("addStock method could not be finished");
-            throw new StockServiceException(OPERATION_NOT_ALLOWED);
+        if (stocks == null || quantity == null || symbol == null) {
+            log.warn(LOG_NULL);
+            throw new StockServiceException(OPERATION_NOT_ALLOWED.name());
         }
+
+        int traded = Integer.parseInt(quantity);
+        int sum = parseIfContainsSymbol(stocks, symbol) + traded;
+
+        if (sum >= 0) {
+            if (stocks.containsKey(symbol)) stocks.put(symbol, String.valueOf(sum));
+            else stocks.put(symbol, quantity);
+        } else
+            throw new InsufficientStockException(String.format("Operation not allowed. Not enough stocks with Symbol: %s in portfolio", symbol));
+
     }
 
     /**
@@ -161,12 +176,16 @@ public class PortfolioService {
     public Integer parseIfContainsSymbol(Map<String, String> stocks, String symbol) {
 
         log.info("Invoked parseIfContainsSymbol method");
+        if (stocks == null || symbol == null) {
+            log.warn(LOG_NULL);
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
+        }
 
         int owned = 0;
 
         if (symbol == null) {
-            log.info("No stock was found with symbol {}", symbol);
-            throw new ResourceNotFoundException(String.format("Given symbol was null: %s", symbol));
+            log.info(LOG_NULL);
+            throw new ResourceNotFoundException(OPERATION_NOT_ALLOWED.name());
         }
         if (stocks.containsKey(symbol)) {
             owned = Integer.parseInt(stocks.get(symbol));
@@ -185,25 +204,22 @@ public class PortfolioService {
     public double countProfitAndLoss(Portfolio portfolio, String symbol, String quantity) {
 
         log.info("Invoked countProfitAndLoss method");
-
-        try {
-            double budgetSpent = countBudgetSpent(portfolio, symbol, quantity);
-            double balance = countBalance(portfolio);
-            double result = balance - budgetSpent;
-
-            if (result == 0) {
-                portfolio.setProfit(0d);
-                portfolio.setLoss(0d);
-            }
-            if (result > 0) portfolio.setProfit(result);
-            else if (result < 0) portfolio.setLoss(result);
-
-            return result;
-
-        } catch (NullPointerException npe) {
-            log.warn("countProfitAndLoss method could not be finished");
-            throw new StockServiceException(OPERATION_NOT_ALLOWED);
+        if (portfolio == null || symbol == null || quantity == null) {
+            log.warn(LOG_NULL);
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
         }
+        double budgetSpent = countBudgetSpent(portfolio, symbol, quantity);
+        double balance = countBalance(portfolio);
+        double result = balance - budgetSpent;
+
+        if (result == 0) {
+            portfolio.setProfit(0d);
+            portfolio.setLoss(0d);
+        }
+        if (result > 0) portfolio.setProfit(result);
+        else if (result < 0) portfolio.setLoss(result);
+
+        return result;
     }
 
     /**
@@ -213,25 +229,23 @@ public class PortfolioService {
     public Double countBalance(Portfolio portfolio) {
 
         log.info("Invoked countBalance method");
+        if (portfolio == null) {
+            log.warn(LOG_NULL);
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
 
-        try {
-            Map<String, String> stocks = portfolio.getStocks();
-
-            double balance = 0;
-
-            for (Map.Entry<String, String> entry : stocks.entrySet()) {
-
-                var stock = stockService.getStock(entry.getKey());
-                double price = Double.parseDouble(stock.getPrice());
-                balance += Double.parseDouble(entry.getValue()) * price;
-            }
-            portfolio.setBalance(balance);
-            return balance;
-
-        } catch (NullPointerException npe) {
-            log.warn("countBalance method could not be executed");
-            throw new StockServiceException(OPERATION_NOT_ALLOWED);
         }
+        Map<String, String> stocks = portfolio.getStocks();
+
+        double balance = 0;
+
+        for (Map.Entry<String, String> entry : stocks.entrySet()) {
+
+            var stock = stockService.getStock(entry.getKey());
+            double price = Double.parseDouble(stock.getPrice());
+            balance += Double.parseDouble(entry.getValue()) * price;
+        }
+        portfolio.setBalance(balance);
+        return balance;
     }
 
     /**
@@ -245,20 +259,17 @@ public class PortfolioService {
     public Double countBudgetSpent(Portfolio portfolio, String symbol, String quantity) {
 
         log.info("Invoked countBudgetSpent method");
-
-        try {
-            double budgetSpent = 0;
-            var stock = stockService.getStock(symbol);
-            double price = Double.parseDouble(stock.getPrice());
-            budgetSpent += (Double.parseDouble(quantity) * price) + portfolio.getFundsSpent();
-            portfolio.setFundsSpent(budgetSpent);
-
-            return budgetSpent;
-
-        } catch (NullPointerException npe) {
-            log.warn("countBalance method could not be executed");
-            throw new StockServiceException(OPERATION_NOT_ALLOWED);
+        if (portfolio == null || symbol == null || quantity == null) {
+            log.warn(LOG_NULL);
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
         }
+        double budgetSpent = 0;
+        var stock = stockService.getStock(symbol);
+        double price = Double.parseDouble(stock.getPrice());
+        budgetSpent += (Double.parseDouble(quantity) * price) + portfolio.getFundsSpent();
+        portfolio.setFundsSpent(budgetSpent);
+
+        return budgetSpent;
     }
 
     /**
