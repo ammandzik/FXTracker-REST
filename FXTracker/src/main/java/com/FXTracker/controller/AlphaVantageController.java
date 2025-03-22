@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -36,9 +37,9 @@ class AlphaVantageController {
     }
 
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<Flux<List<StockDto.StockSearchDto>>> getStocksByKeyword(@PathVariable String keyword) {
+    public ResponseEntity<Mono<List<StockDto.StockSearchDto>>> getStocksByKeyword(@PathVariable String keyword) {
 
-        Flux<List<StockDto.StockSearchDto>> stocks = alphaVantageService.findAllStocksByKeywordInAPI(keyword);
+        Mono<List<StockDto.StockSearchDto>> stocks = alphaVantageService.findAllStocksByKeywordInAPI(keyword);
 
         return ResponseEntity.ok(stocks);
 

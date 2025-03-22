@@ -4,17 +4,14 @@ import com.FXTracker.DTO.StockDto;
 import com.FXTracker.exception.StockNotFoundException;
 import com.FXTracker.exception.StockServiceException;
 import com.FXTracker.mapper.StockMapper;
-import com.FXTracker.model.Stock;
 import com.FXTracker.response.AlphaVantageResponse;
 import com.FXTracker.response.Function;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
 import java.util.List;
 
 import static com.FXTracker.advice.ExceptionMessages.OPERATION_NOT_ALLOWED;
@@ -48,7 +45,6 @@ public class AlphaVantageService {
 
         log.info("Received request to get stock for ticker: {}", ticker);
 
-        try {
             var stock = webClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/query")
@@ -69,20 +65,17 @@ public class AlphaVantageService {
                 return stock;
             }
 
-        } catch (NullPointerException exception) {
-            throw new StockServiceException("Error while fetching stocks.");
-        }
     }
 
     /**
      * @param keyword represents keyword used to find partially matching stocks names
      * @return list of objects of nested class StockSearchDto
      */
-    public Flux<List<StockDto.StockSearchDto>> findAllStocksByKeywordInAPI(String keyword) {
+    public Mono<List<StockDto.StockSearchDto>> findAllStocksByKeywordInAPI(String keyword) {
 
         log.info("Received request to search stocks with keyword: {}", keyword);
 
-       return webClient.get()
+        return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/query")
                         .queryParam("function", Function.SYMBOL_SEARCH)
@@ -90,21 +83,22 @@ public class AlphaVantageService {
                         .queryParam("apikey", API_KEY)
                         .build())
                 .retrieve()
-                .bodyToFlux(AlphaVantageResponse.class)
+                .bodyToMono(AlphaVantageResponse.class)
                 .map(AlphaVantageResponse::stocks)
-                .switchIfEmpty(Flux.error(new StockNotFoundException(
-                        String.format("No stocks were found for keyword: %s", keyword))))
-                .defaultIfEmpty(Collections.emptyList())
-                .map(stockList -> stockList.stream()
-                        .map(stockSearchMapper::toDto)
-                        .collect(toList()))
-                .doOnNext(s -> log.info("Returning {} stocks for keyword: {}", s.size(), keyword))
+                .flatMap(stockList -> {
+                    if (stockList == null || stockList.isEmpty()) {
+                        return Mono.error(new StockNotFoundException(
+                                String.format("No stocks were found for keyword: %s", keyword)));
+                    }
+                    return Mono.just(stockList.stream()
+                            .map(stockSearchMapper::toDto)
+                            .collect(toList()));
+                })
+                .doOnSuccess(s -> log.info("Returning {} stocks for keyword: {}", s.size(), keyword))
                 .onErrorResume(e -> {
                     log.warn("Error occurred while fetching stocks: {}", e.getMessage());
-                    return Flux.error(new StockServiceException(OPERATION_NOT_ALLOWED.name()));
+                    return Mono.error(new StockServiceException(OPERATION_NOT_ALLOWED.name()));
                 });
-
-
     }
 }
 

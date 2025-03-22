@@ -50,7 +50,7 @@ public class PortfolioService {
             throw new PortfolioServiceException("Error occurred while saving Portfolio");
         }
 
-        var entity = portfolioMapper.toEnity(portfolioDto);
+        var entity = portfolioMapper.toEntity(portfolioDto);
         entity.setStocks(stocks);
         portfolioRepository.save(entity);
 

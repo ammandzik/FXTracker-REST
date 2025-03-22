@@ -19,9 +19,9 @@ import static org.springframework.test.util.AssertionErrors.assertFalse;
 @SpringBootTest
 class AlphaVantageServiceTest {
 
-    private final String EXISTING_STOCK = "TTWO";
-    private final String NON_EXISTING_STOCK = "XJDSJSDJAKXAAAPOO";
-    private final String KEYWORD = "TS";
+    private static final String EXISTING_STOCK = "TTWO";
+    private static final String NON_EXISTING_STOCK = "XJDSJSDJAKXAAAPOO";
+    private static final String KEYWORD = "TS";
     @Autowired
     private AlphaVantageService alphaVantageService;
     @Autowired
@@ -50,10 +50,10 @@ class AlphaVantageServiceTest {
     void findAllStocksByKeywordCorrectlyInAPI() {
 
         //when
-        List<StockDto.StockSearchDto> stocksFound = alphaVantageService.findAllStocksByKeywordInAPI(KEYWORD);
+        Mono<List<StockDto.StockSearchDto>> stocksFound = alphaVantageService.findAllStocksByKeywordInAPI(KEYWORD);
 
         //then
-        assertFalse("Stocks should not be empty.", stocksFound.isEmpty());
+        assertFalse("Stocks should not be empty.", stocksFound.block().isEmpty());
         assertNotNull(stocksFound, "Stocks should not be null.");
     }
 

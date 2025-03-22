@@ -22,7 +22,7 @@ public class PortfolioMapper {
                 .build();
     }
 
-    public Portfolio toEnity(PortfolioDto portfolioDto) {
+    public Portfolio toEntity(PortfolioDto portfolioDto) {
 
         return Portfolio.builder()
                 .id(portfolioDto.getId())
