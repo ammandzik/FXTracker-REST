@@ -38,7 +38,7 @@ public class StockService {
 
         if (stockDto == null) {
             log.warn("Provided values are null");
-            throw new StockServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         try {
             log.info("Saving {} stock to DB", stockDto);
@@ -60,7 +60,7 @@ public class StockService {
 
         if (symbol == null) {
             log.warn("Provided values are null");
-            throw new StockServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         log.info("Invoked findByStockSymbol method for symbol {}", symbol);
         Optional<Stock> stock = stockRepository.findStockBySymbol(symbol);
@@ -85,7 +85,7 @@ public class StockService {
 
         if (stock == null || symbol == null) {
             log.warn("Provided values are null");
-            throw new StockServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         log.info("Invoked getStock method for symbol {}", symbol);
         var updated = getStock(symbol);

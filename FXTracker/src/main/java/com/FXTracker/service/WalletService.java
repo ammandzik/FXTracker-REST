@@ -34,14 +34,14 @@ public class WalletService {
 
         log.info("Invoked createWallet method");
 
-        if(walletDto == null) {
+        if (walletDto == null) {
             log.warn("Error while saving wallet - wallet is null");
-            throw new WalletServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new WalletServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
-            var entity = walletMapper.toEntity(walletDto);
-            log.info("Saving created wallet for user with ID {} to DB", walletDto.getUserId());
-            walletRepository.save(entity);
-            return entity;
+        var entity = walletMapper.toEntity(walletDto);
+        log.info("Saving created wallet for user with ID {} to DB", walletDto.getUserId());
+        walletRepository.save(entity);
+        return entity;
 
     }
 
@@ -53,19 +53,19 @@ public class WalletService {
     public float manageFundsBalance(WalletDto walletDto, float amount) {
 
         log.info("Invoked manageFundsBalance method");
-        if(walletDto == null){
+        if (walletDto == null) {
             log.warn("Wallet is null value.");
-            throw new WalletServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new WalletServiceException(OPERATION_NOT_ALLOWED.getDescription());
 
         }
-            float initBalance = walletDto.getBalance();
-            float sum = initBalance + amount;
-            if (sum < 0) {
-                throw new InsufficientFundsException("Operation not allowed - insufficient funds.");
-            }
-            walletDto.setBalance(initBalance + amount);
+        float initBalance = walletDto.getBalance();
+        float sum = initBalance + amount;
+        if (sum < 0) {
+            throw new InsufficientFundsException("Operation not allowed - insufficient funds.");
+        }
+        walletDto.setBalance(initBalance + amount);
 
-            log.info("Returning wallet balance sum");
-            return sum;
+        log.info("Returning wallet balance sum");
+        return sum;
     }
 }

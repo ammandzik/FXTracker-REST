@@ -89,7 +89,7 @@ public class PortfolioService {
         if (portfolio == null || symbol == null || quantity == null) {
 
             log.warn(LOG_NULL);
-            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
 
         log.info("Invoked updatePortfolio method");
@@ -117,7 +117,7 @@ public class PortfolioService {
 
         if (userId == null || symbol == null || quantity == null) {
             log.warn(LOG_NULL);
-            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
 
         var portfolio = portfolioRepository.findByUserId(userId)
@@ -152,7 +152,7 @@ public class PortfolioService {
         log.info("Invoked addStock method");
         if (stocks == null || quantity == null || symbol == null) {
             log.warn(LOG_NULL);
-            throw new StockServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
 
         int traded = Integer.parseInt(quantity);
@@ -178,14 +178,14 @@ public class PortfolioService {
         log.info("Invoked parseIfContainsSymbol method");
         if (stocks == null || symbol == null) {
             log.warn(LOG_NULL);
-            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
 
         int owned = 0;
 
         if (symbol == null) {
             log.info(LOG_NULL);
-            throw new ResourceNotFoundException(OPERATION_NOT_ALLOWED.name());
+            throw new ResourceNotFoundException(OPERATION_NOT_ALLOWED.getDescription());
         }
         if (stocks.containsKey(symbol)) {
             owned = Integer.parseInt(stocks.get(symbol));
@@ -206,7 +206,7 @@ public class PortfolioService {
         log.info("Invoked countProfitAndLoss method");
         if (portfolio == null || symbol == null || quantity == null) {
             log.warn(LOG_NULL);
-            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         double budgetSpent = countBudgetSpent(portfolio, symbol, quantity);
         double balance = countBalance(portfolio);
@@ -231,7 +231,7 @@ public class PortfolioService {
         log.info("Invoked countBalance method");
         if (portfolio == null) {
             log.warn(LOG_NULL);
-            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.getDescription());
 
         }
         Map<String, String> stocks = portfolio.getStocks();
@@ -261,7 +261,7 @@ public class PortfolioService {
         log.info("Invoked countBudgetSpent method");
         if (portfolio == null || symbol == null || quantity == null) {
             log.warn(LOG_NULL);
-            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.name());
+            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         double budgetSpent = 0;
         var stock = stockService.getStock(symbol);
