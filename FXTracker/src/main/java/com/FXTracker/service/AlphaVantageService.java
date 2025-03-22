@@ -14,7 +14,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static com.FXTracker.advice.ExceptionMessages.OPERATION_NOT_ALLOWED;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -45,25 +44,25 @@ public class AlphaVantageService {
 
         log.info("Received request to get stock for ticker: {}", ticker);
 
-            var stock = webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/query")
-                            .queryParam("function", Function.GLOBAL_QUOTE)
-                            .queryParam("symbol", ticker)
-                            .queryParam("apikey", API_KEY)
-                            .build())
-                    .retrieve()
-                    .bodyToMono(AlphaVantageResponse.class)
-                    .map(AlphaVantageResponse::stock)
-                    .map(stockMapper::toDto);
+        var stock = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/query")
+                        .queryParam("function", Function.GLOBAL_QUOTE)
+                        .queryParam("symbol", ticker)
+                        .queryParam("apikey", API_KEY)
+                        .build())
+                .retrieve()
+                .bodyToMono(AlphaVantageResponse.class)
+                .map(AlphaVantageResponse::stock)
+                .map(stockMapper::toDto);
 
-            if (stock == null) {
-                log.warn("No stock was found with ticker: {}", ticker);
-                throw new StockNotFoundException(String.format("Stock not found for ticker: %s ", ticker));
-            } else {
-                log.info("Returning {} stock for ticker: {}", stock, ticker);
-                return stock;
-            }
+        if (stock.block().getSymbol() == null) {
+            log.warn("No stock was found with ticker: {}", ticker);
+            throw new StockNotFoundException(String.format("Stock not found for ticker: %s ", ticker));
+        } else {
+            log.info("Returning {} stock for ticker: {}", stock, ticker);
+            return stock;
+        }
 
     }
 
@@ -85,6 +84,7 @@ public class AlphaVantageService {
                 .retrieve()
                 .bodyToMono(AlphaVantageResponse.class)
                 .map(AlphaVantageResponse::stocks)
+                .doOnNext(stockList -> log.info("Stock list received: {}", stockList))
                 .flatMap(stockList -> {
                     if (stockList == null || stockList.isEmpty()) {
                         return Mono.error(new StockNotFoundException(
@@ -95,10 +95,12 @@ public class AlphaVantageService {
                             .collect(toList()));
                 })
                 .doOnSuccess(s -> log.info("Returning {} stocks for keyword: {}", s.size(), keyword))
-                .onErrorResume(e -> {
-                    log.warn("Error occurred while fetching stocks: {}", e.getMessage());
-                    return Mono.error(new StockServiceException(OPERATION_NOT_ALLOWED.name()));
+                .onErrorResume(NullPointerException.class, npe -> {
+                    log.error(String.format("Unexpected error occurred. %s", npe.getMessage()));
+                    return Mono.error(new StockServiceException(
+                            String.format("Unexpected error: No response received for keyword: %s", keyword)));
                 });
+
     }
 }
 
