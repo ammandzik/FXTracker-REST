@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.FXTracker.advice.ExceptionMessages.OPERATION_NOT_ALLOWED;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Service class for handling operations on stocks.
@@ -27,6 +26,7 @@ public class StockService {
 
     private final StockMapper stockMapper;
     private final StockRepository stockRepository;
+    private static final String NULL_MESSAGE = "Provided values are null";
 
     /**
      * @param stockDto represents object of StockDto class
@@ -37,7 +37,7 @@ public class StockService {
         log.info("Invoked addStock method.");
 
         if (stockDto == null) {
-            log.warn("Provided values are null");
+            log.warn(NULL_MESSAGE);
             throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         try {
@@ -59,7 +59,7 @@ public class StockService {
         log.info("Invoked getStock method.");
 
         if (symbol == null) {
-            log.warn("Provided values are null");
+            log.warn(NULL_MESSAGE);
             throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         log.info("Invoked findByStockSymbol method for symbol {}", symbol);
@@ -84,7 +84,7 @@ public class StockService {
         log.info("Invoked updateStock method");
 
         if (stock == null || symbol == null) {
-            log.warn("Provided values are null");
+            log.warn(NULL_MESSAGE);
             throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         log.info("Invoked getStock method for symbol {}", symbol);
@@ -120,7 +120,7 @@ public class StockService {
             log.info("Fetching stocks {} list from DB ", stocks);
             return stocks.stream()
                     .map(stockMapper::toDto)
-                    .collect(toList());
+                    .toList();
         }
     }
 
