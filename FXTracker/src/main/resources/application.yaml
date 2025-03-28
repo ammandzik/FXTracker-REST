@@ -4,8 +4,11 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://admin:stocks1234@localhost:27017/stocks?authSource=admin
-      port: 27017
+    host: localhost
+    port: 27017
+    username: admin
+    password: stocks1234
+    authentication-database: admin
 
   application:
     name: Investment-Management
@@ -32,7 +35,7 @@ alphavantage:
   api:
     key: 6FZME81OT4D69JJV
     url: https://www.alphavantage.co/query
-    
+
 de:
   flapdoodle:
     mongodb:

@@ -13,8 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import java.util.Map;
 
 /**
  * Service class for fetching stocks from Alpha Vantage API.
@@ -24,13 +23,13 @@ import static java.util.stream.Collectors.toList;
 @Log4j2
 public class AlphaVantageService {
 
-    private final String API_KEY;
+    private final String apiKey;
     private final WebClient webClient;
     private final StockMapper stockMapper;
     private final StockMapper.StockSearchMapper stockSearchMapper;
 
     public AlphaVantageService(@Value("${alphavantage.api.key}") String apiKey, WebClient webClient, StockMapper stockMapper, StockMapper.StockSearchMapper stockSearchMapper) {
-        this.API_KEY = apiKey;
+        this.apiKey = apiKey;
         this.webClient = webClient;
         this.stockMapper = stockMapper;
         this.stockSearchMapper = stockSearchMapper;
@@ -44,14 +43,7 @@ public class AlphaVantageService {
 
         log.info("Received request to get stock for ticker: {}", ticker);
 
-        var stock = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/query")
-                        .queryParam("function", Function.GLOBAL_QUOTE)
-                        .queryParam("symbol", ticker)
-                        .queryParam("apikey", API_KEY)
-                        .build())
-                .retrieve()
+        var stock = retrieveData(Function.GLOBAL_QUOTE, Map.of("symbol", ticker))
                 .bodyToMono(AlphaVantageResponse.class)
                 .map(AlphaVantageResponse::stock)
                 .map(stockMapper::toDto);
@@ -74,14 +66,7 @@ public class AlphaVantageService {
 
         log.info("Received request to search stocks with keyword: {}", keyword);
 
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/query")
-                        .queryParam("function", Function.SYMBOL_SEARCH)
-                        .queryParam("keywords", keyword)
-                        .queryParam("apikey", API_KEY)
-                        .build())
-                .retrieve()
+        return retrieveData(Function.SYMBOL_SEARCH, Map.of("keywords", keyword))
                 .bodyToMono(AlphaVantageResponse.class)
                 .map(AlphaVantageResponse::stocks)
                 .doOnNext(stockList -> log.info("Stock list received: {}", stockList))
@@ -92,7 +77,7 @@ public class AlphaVantageService {
                     }
                     return Mono.just(stockList.stream()
                             .map(stockSearchMapper::toDto)
-                            .collect(toList()));
+                            .toList());
                 })
                 .doOnSuccess(s -> log.info("Returning {} stocks for keyword: {}", s.size(), keyword))
                 .onErrorResume(NullPointerException.class, npe -> {
@@ -102,5 +87,21 @@ public class AlphaVantageService {
                 });
 
     }
+
+    private WebClient.ResponseSpec retrieveData(Function function, Map<String, String> params) {
+        return webClient.get()
+                .uri(uriBuilder -> {
+                    uriBuilder
+                            .path("/query")
+                            .queryParam("function", function)
+                            .queryParam("apikey", apiKey);
+
+                    params.forEach(uriBuilder::queryParam);
+
+                    return uriBuilder.build();
+                })
+                .retrieve();
+    }
+
 }
 
