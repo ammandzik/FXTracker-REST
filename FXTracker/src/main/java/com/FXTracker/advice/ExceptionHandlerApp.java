@@ -83,6 +83,16 @@ public class ExceptionHandlerApp {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(ExistingResourceException.class)
+    public ResponseEntity<ErrorResponse> handleExistingResourceException(ExistingResourceException exception) {
+
+        log.error("Handling ExistingResourceException: {}", exception.getMessage());
+
+        var response = createResponse(HttpStatus.NOT_ACCEPTABLE, exception);
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+    }
+
     private ErrorResponse createResponse(HttpStatusCode status, Exception exception) {
 
         return ErrorResponse.builder()

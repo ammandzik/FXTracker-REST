@@ -25,5 +25,5 @@ public class Wallet {
     @Field(name = "currency")
     private String currency;
     @Field(name = "balance")
-    private Float balance;
+    private double balance;
 }

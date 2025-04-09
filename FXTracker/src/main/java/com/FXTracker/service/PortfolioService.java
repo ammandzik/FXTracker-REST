@@ -1,13 +1,11 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.PortfolioDto;
-import com.FXTracker.exception.InsufficientStockException;
-import com.FXTracker.exception.PortfolioServiceException;
-import com.FXTracker.exception.ResourceNotFoundException;
-import com.FXTracker.exception.StockServiceException;
+import com.FXTracker.exception.*;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.repository.PortfolioRepository;
+import com.FXTracker.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -32,6 +30,8 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final PortfolioMapper portfolioMapper;
     private final StockService stockService;
+    private final WalletRepository walletRepository;
+    private final WalletService walletService;
     private static final String LOG_NULL = "Null values occurred while updating portfolio";
 
     /**
@@ -46,8 +46,12 @@ public class PortfolioService {
         Map<String, String> stocks = new HashMap<>();
 
         if (portfolioDto == null) {
-            log.warn("Error saving portfolio to DB {}", portfolioDto);
+            log.warn("Error saving portfolio to DB");
             throw new PortfolioServiceException("Error occurred while saving Portfolio");
+        }
+        if(portfolioExists(portfolioDto.getUserId())){
+            log.warn("Portfolio with given ID already exists!");
+            throw new ExistingResourceException(String.format("Portfolio with user ID: %s already exists!", portfolioDto.getUserId()));
         }
 
         var entity = portfolioMapper.toEntity(portfolioDto);
@@ -133,7 +137,7 @@ public class PortfolioService {
             throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
         }
 
-        addStock(portfolio.getStocks(), quantity, symbol);
+        addStock(portfolio.getStocks(), quantity, symbol, userId);
         updatePortfolio(portfolio, symbol, quantity);
 
         log.info("Saving updated portfolio for user with ID {}", userId);
@@ -147,9 +151,13 @@ public class PortfolioService {
      * @param quantity represents the amount of stock bought/sold
      * @param symbol   represents stock symbol
      */
-    public void addStock(Map<String, String> stocks, String quantity, String symbol) {
+    public void addStock(Map<String, String> stocks, String quantity, String symbol, String userId) {
 
         log.info("Invoked addStock method");
+        double priceSum = stockService.countStocksTotalPrice(symbol, quantity);
+        walletService.updateWalletBalance(userId, priceSum);
+
+
         if (stocks == null || quantity == null || symbol == null) {
             log.warn(LOG_NULL);
             throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
@@ -176,10 +184,6 @@ public class PortfolioService {
     public Integer parseIfContainsSymbol(Map<String, String> stocks, String symbol) {
 
         log.info("Invoked parseIfContainsSymbol method");
-        if (stocks == null || symbol == null) {
-            log.warn(LOG_NULL);
-            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.getDescription());
-        }
 
         int owned = 0;
 
@@ -240,9 +244,9 @@ public class PortfolioService {
 
         for (Map.Entry<String, String> entry : stocks.entrySet()) {
 
-            var stock = stockService.getStock(entry.getKey());
-            double price = Double.parseDouble(stock.getPrice());
-            balance += Double.parseDouble(entry.getValue()) * price;
+            double sum = stockService.countStocksTotalPrice(entry.getKey(), entry.getValue());
+
+            balance += sum;
         }
         portfolio.setBalance(balance);
         return balance;
@@ -288,6 +292,12 @@ public class PortfolioService {
                 .stream()
                 .map(portfolioMapper::toDto)
                 .toList();
+    }
+
+    public boolean portfolioExists(String userId) {
+
+        log.info("Invoked portfolioExists method");
+        return portfolioRepository.existsByUserId(userId);
     }
 
 }
