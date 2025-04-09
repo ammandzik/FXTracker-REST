@@ -47,32 +47,28 @@ public class WalletService {
     }
 
     /**
-     * @param walletDto takes object of class WalletDto as a parameter
-     * @param amount    represents amount, which should be added/taken from the wallet
-     * @return sum of amount and initial balance
+     * @param userId takes user id as a parameter
+     * @param amount represents amount, which should be added/taken from the wallet
+     * @return sum consisting of amount and initial balance
      */
-    public double manageWalletFundsBalance(WalletDto walletDto, double amount) {
 
+    //todo
+    public double updateWalletBalance(String userId, double amount) {
+
+        var wallet = walletRepository.findByUserId(userId)
+                        .orElseThrow(()-> new ResourceNotFoundException(String.format("No portfolio found for user with ID: %s",userId)));
         log.info("Invoked manageFundsBalance method");
-        if (walletDto == null) {
+        if (wallet == null) {
             log.warn("Wallet is null value.");
             throw new WalletServiceException(OPERATION_NOT_ALLOWED.getDescription());
 
         }
-        double initBalance = walletDto.getBalance();
-        double sum = initBalance + amount;
-        if (sum < 0) {
+        double sum = wallet.getBalance() + (amount * -1);
+        if (sum < 0)
             throw new InsufficientFundsException("Operation not allowed - insufficient funds.");
-        }
-        walletDto.setBalance(initBalance + amount);
+        else wallet.setBalance(sum);
 
         log.info("Returning wallet balance sum");
         return sum;
-    }
-    public WalletDto findById(String userId){
-        return walletRepository.findByUserId(userId)
-                .map(WalletMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Wallet was not found with given id %s", userId)));
-
     }
 }

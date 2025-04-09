@@ -154,10 +154,11 @@ public class PortfolioService {
     //todo fix test, handle exceptions
     public void addStock(Map<String, String> stocks, String quantity, String symbol, String userId) {
 
-        var wallet = walletService.findById(userId);
+        var wallet = walletRepository.findByUserId(userId).get();
         double priceSum = stockService.countStockFinalPrice(symbol, quantity);
 
-        walletService.manageWalletFundsBalance(wallet, priceSum);
+
+        walletService.updateWalletBalance(userId, priceSum);
 
         log.info("Invoked addStock method");
         if (stocks == null || quantity == null || symbol == null) {
