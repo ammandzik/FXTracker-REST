@@ -61,7 +61,7 @@ public class WalletService {
         log.info("Invoked updateWalletBalance method");
 
         var wallet = walletRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("No portfolio found for user with ID: %s", userId)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("No wallet was found for user with ID: %s", userId)));
 
         if (userId == null) {
             log.warn("userId is null!");
