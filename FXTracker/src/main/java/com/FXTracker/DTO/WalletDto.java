@@ -19,5 +19,5 @@ public class WalletDto {
     @NotNull
     private String userId;
     private String currency;
-    private Float balance;
+    private double balance;
 }

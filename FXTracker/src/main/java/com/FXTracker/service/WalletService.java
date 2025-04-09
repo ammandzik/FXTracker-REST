@@ -2,6 +2,7 @@ package com.FXTracker.service;
 
 import com.FXTracker.DTO.WalletDto;
 import com.FXTracker.exception.InsufficientFundsException;
+import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.exception.WalletServiceException;
 import com.FXTracker.mapper.WalletMapper;
 import com.FXTracker.model.Wallet;
@@ -50,7 +51,7 @@ public class WalletService {
      * @param amount    represents amount, which should be added/taken from the wallet
      * @return sum of amount and initial balance
      */
-    public float manageFundsBalance(WalletDto walletDto, float amount) {
+    public double manageWalletFundsBalance(WalletDto walletDto, double amount) {
 
         log.info("Invoked manageFundsBalance method");
         if (walletDto == null) {
@@ -58,8 +59,8 @@ public class WalletService {
             throw new WalletServiceException(OPERATION_NOT_ALLOWED.getDescription());
 
         }
-        float initBalance = walletDto.getBalance();
-        float sum = initBalance + amount;
+        double initBalance = walletDto.getBalance();
+        double sum = initBalance + amount;
         if (sum < 0) {
             throw new InsufficientFundsException("Operation not allowed - insufficient funds.");
         }
@@ -67,5 +68,11 @@ public class WalletService {
 
         log.info("Returning wallet balance sum");
         return sum;
+    }
+    public WalletDto findById(String userId){
+        return walletRepository.findByUserId(userId)
+                .map(WalletMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Wallet was not found with given id %s", userId)));
+
     }
 }

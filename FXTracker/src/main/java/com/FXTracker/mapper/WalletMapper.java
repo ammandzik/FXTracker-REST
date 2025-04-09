@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WalletMapper {
 
-    public WalletDto toDto(Wallet wallet){
+    public static WalletDto toDto(Wallet wallet){
 
         return WalletDto.builder()
                 .id(wallet.getId())

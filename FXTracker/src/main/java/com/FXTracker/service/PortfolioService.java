@@ -8,6 +8,7 @@ import com.FXTracker.exception.StockServiceException;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.repository.PortfolioRepository;
+import com.FXTracker.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,8 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final PortfolioMapper portfolioMapper;
     private final StockService stockService;
+    private final WalletRepository walletRepository;
+    private final WalletService walletService;
     private static final String LOG_NULL = "Null values occurred while updating portfolio";
 
     /**
@@ -46,7 +49,7 @@ public class PortfolioService {
         Map<String, String> stocks = new HashMap<>();
 
         if (portfolioDto == null) {
-            log.warn("Error saving portfolio to DB {}", portfolioDto);
+            log.warn("Error saving portfolio to DB");
             throw new PortfolioServiceException("Error occurred while saving Portfolio");
         }
 
@@ -133,7 +136,7 @@ public class PortfolioService {
             throw new ResourceNotFoundException(String.format("No stocks were found for portfolio ID: %s", portfolio.getId()));
         }
 
-        addStock(portfolio.getStocks(), quantity, symbol);
+        addStock(portfolio.getStocks(), quantity, symbol, userId);
         updatePortfolio(portfolio, symbol, quantity);
 
         log.info("Saving updated portfolio for user with ID {}", userId);
@@ -147,7 +150,14 @@ public class PortfolioService {
      * @param quantity represents the amount of stock bought/sold
      * @param symbol   represents stock symbol
      */
-    public void addStock(Map<String, String> stocks, String quantity, String symbol) {
+
+    //todo fix test, handle exceptions
+    public void addStock(Map<String, String> stocks, String quantity, String symbol, String userId) {
+
+        var wallet = walletService.findById(userId);
+        double priceSum = stockService.countStockFinalPrice(symbol, quantity);
+
+        walletService.manageWalletFundsBalance(wallet, priceSum);
 
         log.info("Invoked addStock method");
         if (stocks == null || quantity == null || symbol == null) {
@@ -240,9 +250,9 @@ public class PortfolioService {
 
         for (Map.Entry<String, String> entry : stocks.entrySet()) {
 
-            var stock = stockService.getStock(entry.getKey());
-            double price = Double.parseDouble(stock.getPrice());
-            balance += Double.parseDouble(entry.getValue()) * price;
+            double sum = stockService.countStockFinalPrice(entry.getKey(), entry.getValue());
+
+            balance += sum;
         }
         portfolio.setBalance(balance);
         return balance;

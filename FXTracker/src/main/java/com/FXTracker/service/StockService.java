@@ -134,4 +134,20 @@ public class StockService {
         return stockRepository.existsBySymbol(symbol);
     }
 
+    //todo
+
+    public double countStockFinalPrice(String symbol, String quantity){
+
+        if(symbol == null || quantity == null){
+            throw new StockServiceException("Symbol or quantity holds empty value.");
+        }
+
+        var stock = getStock(symbol);
+        double price = Double.parseDouble(stock.getPrice());
+        double sum = price * Double.parseDouble(quantity);
+
+        return sum;
+
+    }
+
 }
