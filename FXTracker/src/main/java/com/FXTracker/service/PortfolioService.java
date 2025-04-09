@@ -157,7 +157,6 @@ public class PortfolioService {
         var wallet = walletRepository.findByUserId(userId).get();
         double priceSum = stockService.countStockFinalPrice(symbol, quantity);
 
-
         walletService.updateWalletBalance(userId, priceSum);
 
         log.info("Invoked addStock method");
@@ -187,10 +186,6 @@ public class PortfolioService {
     public Integer parseIfContainsSymbol(Map<String, String> stocks, String symbol) {
 
         log.info("Invoked parseIfContainsSymbol method");
-        if (stocks == null || symbol == null) {
-            log.warn(LOG_NULL);
-            throw new PortfolioServiceException(OPERATION_NOT_ALLOWED.getDescription());
-        }
 
         int owned = 0;
 

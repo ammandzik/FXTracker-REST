@@ -6,6 +6,8 @@ import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.model.Stock;
+import com.FXTracker.model.User;
+import com.FXTracker.model.Wallet;
 import com.FXTracker.utils.DataTest;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class PortfolioServiceTest {
     private static HashMap<String, String> stocks;
     private static Portfolio portfolio;
+    private static User user;
+    private static Wallet wallet;
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
@@ -41,6 +45,8 @@ class PortfolioServiceTest {
         stocks.put("HSBC", "10");
         stocks.put("TSLA", "10");
         portfolio = DataTest.createPortfolioDto(stocks, "1", 0d, 0d, 0d, 0d);
+        user = DataTest.createUser();
+        wallet = DataTest.createWallet();
 
 
     }
@@ -53,6 +59,8 @@ class PortfolioServiceTest {
         mongoTemplate.save(new Stock("3", "TSLA", "337.80", "337.80", "-4.68", null), "stocks");
         mongoTemplate.save(new Stock("4", "AAPL", "245.55", "245.55", "-0.28", null), "stocks");
         mongoTemplate.save((portfolio), "portfolios");
+        mongoTemplate.save((user), "users");
+        mongoTemplate.save(wallet, "wallets");
     }
 
     @Test
@@ -95,7 +103,7 @@ class PortfolioServiceTest {
         var map = portfolio.getStocks();
 
         //when
-        assertDoesNotThrow(() -> portfolioService.addStock(map, "20", "HSBC"), "Should not throw any exceptions.");
+        assertDoesNotThrow(() -> portfolioService.addStock(map, "20", "HSBC", "1"), "Should not throw any exceptions.");
 
         //then
         assertEquals("30", map.get("HSBC"), "Number of stocks should be equal.");
@@ -107,7 +115,7 @@ class PortfolioServiceTest {
 
         var portfolioStocks = portfolio.getStocks();
 
-        assertThrows(InsufficientStockException.class, () -> portfolioService.addStock(portfolioStocks, "-11", "AAPL"));
+        assertThrows(InsufficientStockException.class, () -> portfolioService.addStock(portfolioStocks, "-11", "AAPL", "1"));
     }
 
     @Test
@@ -144,6 +152,7 @@ class PortfolioServiceTest {
 
 
     }
+
     @Test
     void countBudgetSpentTest() {
 
