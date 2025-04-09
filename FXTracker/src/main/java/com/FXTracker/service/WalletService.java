@@ -52,23 +52,24 @@ public class WalletService {
      * @return sum consisting of amount and initial balance
      */
 
-    //todo
-    public double updateWalletBalance(String userId, double amount) {
+    //todo test
+    public Wallet updateWalletBalance(String userId, double amount) {
+
+        log.info("Invoked manageFundsBalance method");
 
         var wallet = walletRepository.findByUserId(userId)
-                        .orElseThrow(()-> new ResourceNotFoundException(String.format("No portfolio found for user with ID: %s",userId)));
-        log.info("Invoked manageFundsBalance method");
-        if (wallet == null) {
-            log.warn("Wallet is null value.");
-            throw new WalletServiceException(OPERATION_NOT_ALLOWED.getDescription());
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("No portfolio found for user with ID: %s", userId)));
 
+        if (wallet == null) {
+            log.warn("Wallet is a null value.");
+            throw new WalletServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         double sum = wallet.getBalance() + (amount * -1);
         if (sum < 0)
-            throw new InsufficientFundsException("Operation not allowed - insufficient funds.");
+            throw new InsufficientFundsException("Operation could not be finished due to insufficient funds.");
         else wallet.setBalance(sum);
 
-        log.info("Returning wallet balance sum");
-        return sum;
+        log.info("Saving updated wallet to DB");
+        return walletRepository.save(wallet);
     }
 }
