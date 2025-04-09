@@ -1,6 +1,7 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.PortfolioDto;
+import com.FXTracker.exception.InsufficientFundsException;
 import com.FXTracker.exception.InsufficientStockException;
 import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.mapper.PortfolioMapper;
@@ -107,6 +108,17 @@ class PortfolioServiceTest {
 
         //then
         assertEquals("30", map.get("HSBC"), "Number of stocks should be equal.");
+
+    }
+
+    @Test
+    void addStockShouldThrowInsufficientFundsExceptionTest() {
+
+        //given
+        var portfolioStocks = portfolio.getStocks();
+
+        //when & then
+        assertThrows(InsufficientFundsException.class, () -> portfolioService.addStock(portfolioStocks, "20000", "AAPL", "1"));
 
     }
 
