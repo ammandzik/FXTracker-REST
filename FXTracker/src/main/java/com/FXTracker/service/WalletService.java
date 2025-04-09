@@ -1,6 +1,7 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.WalletDto;
+import com.FXTracker.exception.ExistingResourceException;
 import com.FXTracker.exception.InsufficientFundsException;
 import com.FXTracker.exception.ResourceNotFoundException;
 import com.FXTracker.exception.WalletServiceException;
@@ -39,11 +40,14 @@ public class WalletService {
             log.warn("Error while saving wallet - wallet is null");
             throw new WalletServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
+        if(walletExists(walletDto.getUserId())){
+            log.warn("Wallet with user Id {} already exists", walletDto.getUserId());
+            throw new ExistingResourceException(String.format("Wallet with user ID: %s already exists!", walletDto.getUserId()));
+        }
         var entity = walletMapper.toEntity(walletDto);
         log.info("Saving created wallet for user with ID {} to DB", walletDto.getUserId());
         walletRepository.save(entity);
         return entity;
-
     }
 
     /**
@@ -52,24 +56,32 @@ public class WalletService {
      * @return sum consisting of amount and initial balance
      */
 
-    //todo test
     public Wallet updateWalletBalance(String userId, double amount) {
 
-        log.info("Invoked manageFundsBalance method");
+        log.info("Invoked updateWalletBalance method");
 
         var wallet = walletRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("No portfolio found for user with ID: %s", userId)));
 
-        if (wallet == null) {
-            log.warn("Wallet is a null value.");
+        if (userId == null) {
+            log.warn("userId is null!");
             throw new WalletServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         double sum = wallet.getBalance() + (amount * -1);
         if (sum < 0)
             throw new InsufficientFundsException("Operation could not be finished due to insufficient funds.");
-        else wallet.setBalance(sum);
+        else {
+            log.info("Updating balance in wallet");
+            wallet.setBalance(sum);
+        }
 
         log.info("Saving updated wallet to DB");
         return walletRepository.save(wallet);
+    }
+
+    public boolean walletExists(String userId) {
+
+        log.info("Invoked walletExists method");
+        return walletRepository.existsByUserId(userId);
     }
 }

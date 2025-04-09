@@ -1,10 +1,7 @@
 package com.FXTracker.service;
 
 import com.FXTracker.DTO.PortfolioDto;
-import com.FXTracker.exception.InsufficientStockException;
-import com.FXTracker.exception.PortfolioServiceException;
-import com.FXTracker.exception.ResourceNotFoundException;
-import com.FXTracker.exception.StockServiceException;
+import com.FXTracker.exception.*;
 import com.FXTracker.mapper.PortfolioMapper;
 import com.FXTracker.model.Portfolio;
 import com.FXTracker.repository.PortfolioRepository;
@@ -51,6 +48,10 @@ public class PortfolioService {
         if (portfolioDto == null) {
             log.warn("Error saving portfolio to DB");
             throw new PortfolioServiceException("Error occurred while saving Portfolio");
+        }
+        if(portfolioExists(portfolioDto.getUserId())){
+            log.warn("Portfolio with given ID already exists!");
+            throw new ExistingResourceException(String.format("Portfolio with user ID: %s already exists!", portfolioDto.getUserId()));
         }
 
         var entity = portfolioMapper.toEntity(portfolioDto);
@@ -150,16 +151,13 @@ public class PortfolioService {
      * @param quantity represents the amount of stock bought/sold
      * @param symbol   represents stock symbol
      */
-
-    //todo fix test, handle exceptions
     public void addStock(Map<String, String> stocks, String quantity, String symbol, String userId) {
 
-        var wallet = walletRepository.findByUserId(userId).get();
-        double priceSum = stockService.countStockFinalPrice(symbol, quantity);
-
+        log.info("Invoked addStock method");
+        double priceSum = stockService.countStocksTotalPrice(symbol, quantity);
         walletService.updateWalletBalance(userId, priceSum);
 
-        log.info("Invoked addStock method");
+
         if (stocks == null || quantity == null || symbol == null) {
             log.warn(LOG_NULL);
             throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
@@ -246,7 +244,7 @@ public class PortfolioService {
 
         for (Map.Entry<String, String> entry : stocks.entrySet()) {
 
-            double sum = stockService.countStockFinalPrice(entry.getKey(), entry.getValue());
+            double sum = stockService.countStocksTotalPrice(entry.getKey(), entry.getValue());
 
             balance += sum;
         }
@@ -294,6 +292,12 @@ public class PortfolioService {
                 .stream()
                 .map(portfolioMapper::toDto)
                 .toList();
+    }
+
+    public boolean portfolioExists(String userId) {
+
+        log.info("Invoked portfolioExists method");
+        return portfolioRepository.existsByUserId(userId);
     }
 
 }

@@ -26,6 +26,7 @@ public class User {
     private String name;
     @Field(name = "surname")
     private String surname;
+    //todo unique field, no duplicates allowed
     @Field(name = "email")
     private String email;
     @Field(name = "password")
