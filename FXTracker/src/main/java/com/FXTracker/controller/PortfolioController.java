@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +22,18 @@ class PortfolioController {
     private final PortfolioService portfolioService;
 
     @PostMapping
-    public ResponseEntity<Portfolio> createNewPortfolio(@Valid @RequestBody PortfolioDto portfolio) {
+    public ResponseEntity<?> createNewPortfolio(@RequestBody @Valid PortfolioDto portfolio, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            log.warn("Validation failed while creating new portfolio");
+            List<String> errorMessages = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .toList();
+            return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
+        }
 
         return new ResponseEntity<>(portfolioService.createPortfolio(portfolio), HttpStatus.CREATED);
-
     }
 
     //todo when security applied, should find id of logged in user

@@ -1,5 +1,6 @@
 package com.FXTracker.DTO;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,8 @@ import lombok.NoArgsConstructor;
 public class WalletDto {
 
     private String id;
-    @NotNull
+    @NotNull(message = "User ID cannot be null")
+    @NotEmpty(message = "User ID cannot be empty")
     private String userId;
     private String currency;
     private double balance;
