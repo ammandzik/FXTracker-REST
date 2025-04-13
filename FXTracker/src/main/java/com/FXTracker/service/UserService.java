@@ -17,11 +17,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.FXTracker.service.TokenService.tokenExpired;
+import static com.FXTracker.service.TokenService.tokenUsed;
 
 /**
  * Service class for handling operations on users.
@@ -37,6 +39,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
+    private final TokenService tokenService;
 
     /**
      * creates and saves new user to DB
@@ -76,6 +79,11 @@ public class UserService {
         return userMapper.toDto(user.get());
     }
 
+    /**
+     * Method responsible for sending register activation link for user
+     *
+     * @param email represents email of the user
+     */
     public void sendActivationLink(String email) {
 
         var token = UUID.randomUUID().toString();
@@ -85,6 +93,11 @@ public class UserService {
         emailService.send(email, "Complete your registration here: " + link);
     }
 
+    /**
+     * Method responsible for completing registration of the user
+     *
+     * @param userDto represents user registration data as DTO
+     */
     @Transactional
     public void completeRegistration(UserCompleteRegistrationDto userDto) {
 
@@ -96,11 +109,11 @@ public class UserService {
         var token = tokenRepository.findByToken(userDto.getToken())
                 .orElseThrow(() -> new ResourceNotFoundException("Provided token was not found."));
 
-        if(token.getExpiresAt().isBefore(LocalDateTime.now())){
+        if (tokenExpired(token)) {
             throw new TokenExpiredException("Token has already expired.");
         }
 
-        if (token.isConfirmed()) {
+        if (tokenUsed(token)) {
             throw new TokenExpiredException("Token has been already used.");
         }
 
@@ -125,6 +138,12 @@ public class UserService {
         tokenRepository.delete(token);
     }
 
+    /**
+     * Checks if user with given email is already registered
+     *
+     * @param email represents user email
+     * @return true if user exists, false if not
+     */
     private boolean userExists(String email) {
         return userRepository.existsByEmail(email);
     }
