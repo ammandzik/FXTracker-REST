@@ -4,7 +4,6 @@ import com.FXTracker.DTO.UserDto;
 import com.FXTracker.DTO.registration.UserCompleteRegistrationDto;
 import com.FXTracker.exception.ExistingResourceException;
 import com.FXTracker.exception.ResourceNotFoundException;
-import com.FXTracker.exception.TokenExpiredException;
 import com.FXTracker.exception.UserServiceException;
 import com.FXTracker.mapper.UserMapper;
 import com.FXTracker.model.Role;
@@ -22,8 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.FXTracker.service.TokenService.tokenExpired;
-import static com.FXTracker.service.TokenService.tokenUsed;
+import static com.FXTracker.service.TokenService.validateToken;
 
 /**
  * Service class for handling operations on users.
@@ -89,7 +87,7 @@ public class UserService {
         var token = UUID.randomUUID().toString();
         tokenRepository.save(new VerificationToken(token, email));
 
-        var link = "http://localhost:8080/api/register/complete?token=" + token;
+        var link = "http://localhost:8080/api/user/complete-registration?token=" + token;
         emailService.send(email, "Complete your registration here: " + link);
     }
 
@@ -109,17 +107,11 @@ public class UserService {
         var token = tokenRepository.findByToken(userDto.getToken())
                 .orElseThrow(() -> new ResourceNotFoundException("Provided token was not found."));
 
-        if (tokenExpired(token)) {
-            throw new TokenExpiredException("Token has already expired.");
-        }
-
-        if (tokenUsed(token)) {
-            throw new TokenExpiredException("Token has been already used.");
-        }
-
         if (userExists(token.getEmail())) {
             throw new ExistingResourceException(String.format("User with given email address %s already exists!", token.getEmail()));
         }
+
+        validateToken(token);
 
         List<Role> roles = new ArrayList<>();
         roles.add(Role.CLIENT);
