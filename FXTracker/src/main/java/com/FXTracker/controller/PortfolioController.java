@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,17 +22,25 @@ class PortfolioController {
     private final PortfolioService portfolioService;
 
     @PostMapping
-    public ResponseEntity<Portfolio> createNewPortfolio(@Valid @RequestBody PortfolioDto portfolio) {
+    public ResponseEntity<?> createNewPortfolio(@RequestBody @Valid PortfolioDto portfolio, BindingResult bindingResult) {
 
-        return  ResponseEntity.status(HttpStatus.CREATED).body(portfolioService.createPortfolio(portfolio));
+        if (bindingResult.hasErrors()) {
+            log.warn("Validation failed while creating new portfolio");
+            List<String> errorMessages = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .toList();
+            return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
+        }
 
+        return new ResponseEntity<>(portfolioService.createPortfolio(portfolio), HttpStatus.CREATED);
     }
 
     //todo when security applied, should find id of logged in user
     @PutMapping("/trade")
     public ResponseEntity<Portfolio> tradeStocks(@RequestParam String userId, @RequestParam String symbol, @RequestParam String quantity) {
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(portfolioService.updateStocksInPortfolio(userId, symbol, quantity));
+        return new ResponseEntity<>(portfolioService.updateStocksInPortfolio(userId, symbol, quantity), HttpStatus.ACCEPTED);
 
     }
 

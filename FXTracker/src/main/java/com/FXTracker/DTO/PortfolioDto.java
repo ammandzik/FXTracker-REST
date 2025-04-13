@@ -1,5 +1,6 @@
 package com.FXTracker.DTO;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,8 @@ import java.util.Map;
 public class PortfolioDto {
 
     private String id;
-    @NotNull
+    @NotNull(message = "User ID cannot be null")
+    @NotEmpty(message = "User ID cannot be empty")
     private String userId;
     private Map<String, String> stocks;
     private Double balance;
