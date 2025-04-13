@@ -1,6 +1,8 @@
 package com.FXTracker.controller;
 
+import com.FXTracker.DTO.registration.UserCompleteRegistrationDto;
 import com.FXTracker.DTO.UserDto;
+import com.FXTracker.DTO.registration.UserRegistrationRequestDto;
 import com.FXTracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +38,18 @@ class UserController {
 
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable String id) {
+    @PostMapping("/activation")
+    public ResponseEntity<?> registerEmail(@RequestBody @Valid UserRegistrationRequestDto userDto) {
 
-        var user = userService.getUserById(id);
-
-        return ResponseEntity.ok(user);
-
+        userService.sendActivationLink(userDto.getEmail());
+        return ResponseEntity.ok("Email with confirmation link has been sent. Please check and open to complete registration.");
     }
 
+    @PostMapping("/complete")
+    public ResponseEntity<?> completeRegistration(@RequestBody @Valid UserCompleteRegistrationDto userDto) {
+        userService.completeRegistration(userDto);
+        return ResponseEntity.ok("User has been registered successfully");
+    }
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable String id) {
 

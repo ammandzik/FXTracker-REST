@@ -1,7 +1,6 @@
 package com.FXTracker.DTO;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import com.FXTracker.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,13 +18,10 @@ import java.util.List;
 public class UserDto {
 
     private String id;
-    @NotEmpty(message = "Name must be filled in!")
     private String name;
-    @NotEmpty(message = "Surname must be filled in!")
     private String surname;
-    @NotEmpty(message = "Email cannot be empty!")
     private String email;
-    @NotBlank
     private String password;
-    private List<String> roles;
+    private List<Role> roles;
+    private boolean enabled;
 }

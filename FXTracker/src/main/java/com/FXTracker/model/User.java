@@ -31,5 +31,6 @@ public class User {
     @Field(name = "password")
     private String password;
     @Field(name = "roles")
-    private List<String> roles;
+    private List<Role> roles;
+    private boolean enabled = false;
 }
