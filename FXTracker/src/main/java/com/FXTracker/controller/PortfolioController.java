@@ -23,7 +23,7 @@ class PortfolioController {
     @PostMapping
     public ResponseEntity<Portfolio> createNewPortfolio(@Valid @RequestBody PortfolioDto portfolio) {
 
-        return  ResponseEntity.status(HttpStatus.CREATED).body(portfolioService.createPortfolio(portfolio));
+        return new ResponseEntity<>(portfolioService.createPortfolio(portfolio), HttpStatus.CREATED);
 
     }
 
@@ -31,7 +31,7 @@ class PortfolioController {
     @PutMapping("/trade")
     public ResponseEntity<Portfolio> tradeStocks(@RequestParam String userId, @RequestParam String symbol, @RequestParam String quantity) {
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(portfolioService.updateStocksInPortfolio(userId, symbol, quantity));
+        return new ResponseEntity<>(portfolioService.updateStocksInPortfolio(userId, symbol, quantity), HttpStatus.ACCEPTED);
 
     }
 

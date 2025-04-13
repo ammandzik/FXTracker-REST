@@ -21,7 +21,7 @@ class UserController {
     @PostMapping
     public ResponseEntity<User> createNewUser(@Valid @RequestBody UserDto userDto) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDto));
+        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
 
     }
 
@@ -39,7 +39,7 @@ class UserController {
 
         var user = userService.getUserById(id);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
+        return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
     }
 
 }
