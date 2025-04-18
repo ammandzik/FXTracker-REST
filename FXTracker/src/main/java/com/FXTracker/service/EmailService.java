@@ -1,10 +1,23 @@
 package com.FXTracker.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
-    public void send(String receiver, String content) {
-        System.out.println(String.format("Sending email to %s : %s", receiver, content));
+
+    @Autowired
+    JavaMailSender mailSender;
+
+    public void send(String receiver, String content, String subject) {
+
+        var message = new SimpleMailMessage();
+        message.setFrom("fxtracker-service@gmail.com");
+        message.setTo(receiver);
+        message.setText(content);
+
+        mailSender.send(message);
     }
 }

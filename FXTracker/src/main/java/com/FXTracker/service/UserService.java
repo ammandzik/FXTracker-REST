@@ -88,7 +88,7 @@ public class UserService {
         tokenRepository.save(new VerificationToken(token, email));
 
         var link = "http://localhost:8080/api/user/complete-registration?token=" + token;
-        emailService.send(email, "Complete your registration here: " + link);
+        emailService.send(email, "Complete your registration here: " + link, "Registration");
     }
 
     /**
