@@ -3,6 +3,7 @@ target/
 !FXTracker/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.env
 
 # Log file
 *.log
@@ -11,7 +12,7 @@ target/
 .apt_generated
 .classpath
 .factorypath
-.project
+.projectó
 .settings
 .springBeans
 .sts4-cache
