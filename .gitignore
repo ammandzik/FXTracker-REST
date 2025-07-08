@@ -3,8 +3,10 @@ target/
 !FXTracker/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+.env
 
 # Log file
+logs
 *.log
 
 ### STS ###

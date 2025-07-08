@@ -4,7 +4,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://admin:stocks1234@localhost:27017/stocks?authSource=admin
+      uri: mongodb://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=${DB_USER}
       port: 27017
 
   application:
@@ -18,11 +18,6 @@ spring:
     ansi:
       enabled: always
 
-  file:
-    name: logs/application.log
-  pattern:
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
-
 server:
   servlet:
     session:
@@ -32,7 +27,7 @@ alphavantage:
   api:
     key: 6FZME81OT4D69JJV
     url: https://www.alphavantage.co/query
-    
+
 de:
   flapdoodle:
     mongodb:
@@ -41,8 +36,9 @@ de:
 
 logging:
   file:
-    path: logs
     name: logs/application.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
   level:
     root: WARN
     com.FXTracker: INFO
