@@ -27,6 +27,7 @@ public class StockService {
 
     private final StockMapper stockMapper;
     private final StockRepository stockRepository;
+    private static final String NULL_VALUES_WARN = "Provided values are null";
 
     /**
      * @param stockDto represents object of StockDto class
@@ -37,7 +38,7 @@ public class StockService {
         log.info("Invoked addStock method.");
 
         if (stockDto == null) {
-            log.warn("Provided values are null");
+            log.warn(NULL_VALUES_WARN);
             throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         try {
@@ -59,7 +60,7 @@ public class StockService {
         log.info("Invoked getStock method.");
 
         if (symbol == null) {
-            log.warn("Provided values are null");
+            log.warn(NULL_VALUES_WARN);
             throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         log.info("Invoked findByStockSymbol method for symbol {}", symbol);
@@ -84,7 +85,7 @@ public class StockService {
         log.info("Invoked updateStock method");
 
         if (stock == null || symbol == null) {
-            log.warn("Provided values are null");
+            log.warn(NULL_VALUES_WARN);
             throw new StockServiceException(OPERATION_NOT_ALLOWED.getDescription());
         }
         log.info("Invoked getStock method for symbol {}", symbol);
@@ -132,6 +133,30 @@ public class StockService {
 
         log.info("Invoked stockExistsInDatabase method");
         return stockRepository.existsBySymbol(symbol);
+    }
+
+
+    /**
+     * @param symbol   represents symbol of the stock
+     * @param quantity represents quantity of the stock
+     * @return
+     */
+    public double countStocksTotalPrice(String symbol, String quantity) {
+
+        log.info("Invoked countStocksTotalPrice");
+
+        if (symbol == null || quantity == null) {
+            log.warn("Symbol or quantity is holding null value!");
+            throw new StockServiceException("Symbol or quantity holds empty value.");
+        }
+
+        var stock = getStock(symbol);
+        double price = Double.parseDouble(stock.getPrice());
+        double sum = price * Double.parseDouble(quantity);
+
+        log.info("returning total price of stocks");
+        return sum;
+
     }
 
 }

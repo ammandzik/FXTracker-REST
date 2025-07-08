@@ -2,11 +2,9 @@ package com.FXTracker.utils;
 
 import com.FXTracker.DTO.StockDto;
 import com.FXTracker.model.Portfolio;
-import com.FXTracker.model.Stock;
 import com.FXTracker.model.User;
+import com.FXTracker.model.Wallet;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DataTest {
@@ -19,6 +17,16 @@ public class DataTest {
                 .surname("Fasola")
                 .email("ola221@gmail.com")
                 .password("Puszolinda23422")
+                .build();
+    }
+
+    public static Wallet createWallet(){
+
+        return Wallet.builder()
+                .id("1")
+                .userId("1")
+                .balance(300000d)
+                .currency("USD")
                 .build();
     }
 
@@ -43,27 +51,6 @@ public class DataTest {
                 .loss(loss)
                 .fundsSpent(fundsSpent)
                 .build();
-    }
-
-    public static List<Portfolio> createPortfolioList() {
-
-        return List.of(
-                new Portfolio("1", "1", new HashMap<>(), 100d, 100d, 100d, 100d),
-                new Portfolio("2", "2", new HashMap<>(), 100d, 100d, 100d, 100d)
-
-        );
-
-    }
-
-    public static List<Stock> createTestStocksList() {
-
-        return List.of(
-                new Stock("1", "HSBC", "56.08", "56.08", "0,20", null),
-                new Stock("2", "TTWO", "211.65", "211.65", "-1.67", null),
-                new Stock("3", "TSLA", "337.80", "337.80", "-4.68", null)
-
-        );
-
     }
 
 
