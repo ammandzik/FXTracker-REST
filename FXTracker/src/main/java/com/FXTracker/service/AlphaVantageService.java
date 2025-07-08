@@ -29,6 +29,7 @@ public class AlphaVantageService {
     private final StockMapper.StockSearchMapper stockSearchMapper;
 
     public AlphaVantageService(@Value("${alphavantage.api.key}") String apiKey, WebClient webClient, StockMapper stockMapper, StockMapper.StockSearchMapper stockSearchMapper) {
+
         this.apiKey = apiKey;
         this.webClient = webClient;
         this.stockMapper = stockMapper;

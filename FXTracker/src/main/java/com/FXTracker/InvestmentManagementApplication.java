@@ -13,6 +13,7 @@ public class InvestmentManagementApplication {
         System.setProperty("DB_HOST", EnvLoader.get("DB_HOST"));
         System.setProperty("DB_PORT", EnvLoader.get("DB_PORT"));
         System.setProperty("DB_NAME", EnvLoader.get("DB_NAME"));
+        System.setProperty("API_KEY", EnvLoader.get("API_KEY"));
 
         SpringApplication.run(InvestmentManagementApplication.class, args);
 

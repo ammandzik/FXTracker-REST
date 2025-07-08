@@ -25,7 +25,7 @@ server:
 
 alphavantage:
   api:
-    key: 6FZME81OT4D69JJV
+    key: ${API_KEY}
     url: https://www.alphavantage.co/query
 
 de:
